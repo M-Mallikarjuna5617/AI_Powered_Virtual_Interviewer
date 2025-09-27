@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify OTP - AI Virtual Interviewer</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+    input, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 6px; }
+    input { border: 1px solid #ccc; }
+    button { background: #28a745; color: white; border: none; cursor: pointer; }
+    button:hover { background: #218838; }
+    a { display: block; text-align: center; margin-top: 10px; color: #007bff; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Enter OTP</h2>
+    <form method="POST">
+      <input type="text" name="otp" placeholder="Enter OTP" required>
+      <button type="submit">Verify OTP</button>
+    </form>
+    <a href="{{ url_for('auth.login') }}">Back to Login</a>
+  </div>
+</body>
+</html>

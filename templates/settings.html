@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block header %}Account Settings{% endblock %}
+{% block subheader %}Manage your profile, password, and notification preferences.{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+  <!-- Profile Update -->
+  <div class="glass p-6 rounded-xl shadow">
+    <h3 class="text-xl font-semibold mb-4 text-indigo-600">Update Profile</h3>
+    <form method="POST" action="{{ url_for('routes.settings') }}" class="flex flex-col gap-4">
+      <label class="font-medium text-gray-700">Full Name</label>
+      <input type="text" name="full_name" value="{{ username }}" class="border rounded p-2 w-full">
+
+      <label class="font-medium text-gray-700">Email</label>
+      <input type="email" name="email" value="{{ session.get('email', '') }}" class="border rounded p-2 w-full">
+
+      <label class="font-medium text-gray-700">Profile Picture</label>
+      <input type="file" name="profile_pic" class="border rounded p-2 w-full">
+
+      <button type="submit" class="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition">Save Profile</button>
+    </form>
+  </div>
+
+  <!-- Password Change -->
+  <div class="glass p-6 rounded-xl shadow">
+    <h3 class="text-xl font-semibold mb-4 text-red-600">Change Password</h3>
+    <form method="POST" action="{{ url_for('routes.settings') }}" class="flex flex-col gap-4">
+      <label class="font-medium text-gray-700">Current Password</label>
+      <input type="password" name="current_password" class="border rounded p-2 w-full">
+
+      <label class="font-medium text-gray-700">New Password</label>
+      <input type="password" name="new_password" class="border rounded p-2 w-full">
+
+      <label class="font-medium text-gray-700">Confirm New Password</label>
+      <input type="password" name="confirm_new_password" class="border rounded p-2 w-full">
+
+      <button type="submit" class="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition">Update Password</button>
+    </form>
+  </div>
+
+  <!-- Notification Preferences -->
+  <div class="glass p-6 rounded-xl shadow md:col-span-2">
+    <h3 class="text-xl font-semibold mb-4 text-blue-600">Notification Preferences</h3>
+    <form method="POST" action="{{ url_for('routes.settings') }}" class="flex flex-col gap-4">
+      <div class="flex items-center gap-2">
+        <input type="checkbox" id="email_notifications" name="email_notifications" checked>
+        <label for="email_notifications" class="text-gray-700">Receive email notifications for updates</label>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <input type="checkbox" id="sms_notifications" name="sms_notifications">
+        <label for="sms_notifications" class="text-gray-700">Receive SMS notifications</label>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <input type="checkbox" id="gd_reminders" name="gd_reminders" checked>
+        <label for="gd_reminders" class="text-gray-700">GD session reminders</label>
+      </div>
+
+      <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition w-48 mt-2">Save Preferences</button>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

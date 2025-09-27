@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Feedback & Reports{% endblock %}
+{% block header %}Feedback & Performance Reports{% endblock %}
+{% block subheader %}View detailed insights from your aptitude, GD, and HR sessions.{% endblock %}
+{% block content %}
+<div class="glass p-6 rounded-xl shadow">
+  <table class="min-w-full border-collapse border border-gray-200 text-left">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="p-2 border">Module</th>
+        <th class="p-2 border">Score</th>
+        <th class="p-2 border">Status</th>
+        <th class="p-2 border">Feedback</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for report in reports %}
+      <tr class="hover:bg-gray-50">
+        <td class="p-2 border">{{ report.module }}</td>
+        <td class="p-2 border">{{ report.score }}</td>
+        <td class="p-2 border">{{ report.status }}</td>
+        <td class="p-2 border">{{ report.feedback }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

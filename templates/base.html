@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Dashboard{% endblock %} — AI-Powered Virtual Interviewer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <style>
+    .glass { background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); }
+    .dropdown { opacity: 0; transform: translateY(-10px); transition: all 0.3s; display: none; position: absolute; top: 100%; right: 0; background: white; border-radius: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.15); min-width: 200px; z-index: 50; }
+    .dropdown.show { display: block; opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-100 to-purple-100 min-h-screen font-sans">
+
+  <!-- Navbar -->
+  <header class="bg-white/80 backdrop-blur-md sticky top-0 shadow flex justify-between items-center px-6 py-3 relative z-50">
+    <h1 class="text-2xl font-bold text-indigo-700">AI-Powered Virtual Interviewer</h1>
+    <div class="relative">
+      <button id="profileCircle" class="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center focus:outline-none shadow-lg hover:scale-105 transition-transform">
+        <span data-feather="user"></span>
+      </button>
+    <div id="dropdownMenu" class="dropdown">
+  <a href="{{ url_for('routes.dashboard') }}" class="flex items-center gap-2 p-3 hover:bg-indigo-50 rounded text-gray-700">
+    <span data-feather="home"></span> Home
+  </a>
+  <a href="{{ url_for('routes.upload') }}" class="flex items-center gap-2 p-3 hover:bg-indigo-50 rounded">
+    <span data-feather="upload"></span> Upload Documents
+  </a>
+  <a href="{{ url_for('routes.companies') }}" class="flex items-center gap-2 p-3 hover:bg-indigo-50 rounded">
+    <span data-feather="briefcase"></span> Company Recommendations
+  </a>
+  <a href="{{ url_for('routes.settings') }}" class="flex items-center gap-2 p-3 hover:bg-indigo-50 rounded">
+    <span data-feather="settings"></span> Settings
+  </a>
+  <a href="{{ url_for('auth.logout') }}" class="flex items-center gap-2 p-3 hover:bg-red-100 text-red-600 rounded">
+    <span data-feather="log-out"></span> Logout
+  </a>
+</div>
+
+    </div>
+  </header>
+
+  <!-- Page Header -->
+  <section class="p-8 text-center">
+    <h2 class="text-3xl md:text-4xl font-bold text-slate-800 mb-2">{% block header %}Welcome back, {{ username }}!{% endblock %}</h2>
+    <p class="text-slate-600">{% block subheader %}Your personalized dashboard — access every step of your interview journey.{% endblock %}</p>
+  </section>
+
+  <!-- Page Content -->
+  <main class="max-w-6xl mx-auto p-6">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-10 text-center text-xs text-slate-500 p-4">
+    © 2025 AI-Powered Virtual Interviewer • All rights reserved
+  </footer>
+
+  <script>
+    feather.replace();
+    const profileBtn = document.getElementById('profileCircle');
+    const dropdown = document.getElementById('dropdownMenu');
+    profileBtn.addEventListener('click', () => {
+      dropdown.classList.toggle('show');
+    });
+    window.addEventListener('click', (e) => {
+      if (!profileBtn.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.remove('show');
+      }
+    });
+  </script>
+</body>
+</html>

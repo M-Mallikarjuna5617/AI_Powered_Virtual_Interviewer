@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}AI HR Interview{% endblock %}
+{% block header %}AI HR Interview{% endblock %}
+{% block subheader %}Simulate HR interviews with AI and receive instant evaluation.{% endblock %}
+{% block content %}
+<div class="glass p-6 rounded-xl shadow">
+  <p class="mb-4 text-gray-700">Start your HR interview session:</p>
+  <a href="{{ url_for('routes.hr_interview') }}" class="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition">Start Interview</a>
+</div>
+{% endblock %}

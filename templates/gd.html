@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Group Discussion{% endblock %}
+{% block header %}Virtual Group Discussion{% endblock %}
+{% block subheader %}Practice GD sessions with AI participants and get instant feedback.{% endblock %}
+{% block content %}
+<div class="glass p-6 rounded-xl shadow">
+  <p class="mb-4 text-gray-700">Join or create a GD session:</p>
+  <div class="flex flex-col gap-4">
+    <a href="{{ url_for('routes.gd') }}" 
+   class="bg-pink-600 text-white py-2 px-4 rounded hover:bg-pink-700 transition text-center">
+   Start New GD
+</a>
+
+
+    <a href="{{ url_for('routes.gd') }}" class="bg-pink-400 text-white py-2 px-4 rounded hover:bg-pink-500 transition text-center">Join Existing GD</a>
+  </div>
+</div>
+{% endblock %}

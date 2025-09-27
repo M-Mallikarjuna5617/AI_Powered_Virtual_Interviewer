@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Aptitude Test{% endblock %}
+{% block header %}Aptitude Test{% endblock %}
+{% block subheader %}Test your logical reasoning and quantitative skills.{% endblock %}
+{% block content %}
+<div class="glass p-6 rounded-xl shadow">
+  <p class="mb-4 text-gray-700">Select a topic to start the test:</p>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    {% for topic in topics %}
+    <a href="{{ url_for('dashboard.start_aptitude', topic_id=topic.id) }}" class="glass p-4 rounded shadow hover:shadow-lg transition transform hover:-translate-y-1">
+      <h3 class="font-semibold text-yellow-600">{{ topic.name }}</h3>
+      <p class="text-gray-600 mt-1">{{ topic.description }}</p>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
