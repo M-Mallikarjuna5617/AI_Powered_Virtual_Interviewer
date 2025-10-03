@@ -16,7 +16,6 @@ DB_PATH = "users.db"
 def index():
     return render_template("index.html")
 
-
 # ---------------------------------------------
 # Dashboard Route
 # ---------------------------------------------
