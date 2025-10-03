@@ -1,37 +1,80 @@
-{% extends "base.html" %}
-{% block title %}Upload Documents{% endblock %}
-{% block header %}Upload Resume & Certificates{% endblock %}
-{% block subheader %}Store your documents securely.{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Resume</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #4e73df, #1cc88a);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        input[type=file] {
+            margin: 15px 0;
+            padding: 10px;
+            background: #fff;
+            border-radius: 8px;
+            color: #333;
+        }
+        button {
+            padding: 12px 20px;
+            background: #1cc88a;
+            border: none;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #17a673;
+        }
+        .flash {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 6px;
+        }
+        .flash-success { background: #28a745; color: white; }
+        .flash-warning { background: #ffc107; color: black; }
+        .flash-error { background: #dc3545; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Upload Your Resume</h2>
 
-{% block content %}
-<div class="glass p-6 rounded-xl shadow">
-  <form method="POST" enctype="multipart/form-data" class="space-y-4">
-    <div>
-      <label class="block mb-2 text-sm font-semibold">File Type</label>
-      <select name="file_type" class="border rounded p-2 w-full">
-        <option value="resume">Resume</option>
-        <option value="certificate">Certificate</option>
-      </select>
-    </div>
-    <div>
-      <input type="file" name="file" class="border p-2 rounded w-full">
-    </div>
-    <button type="submit" class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">
-      Upload
-    </button>
-  </form>
-</div>
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
 
-<div class="mt-6">
-  <h3 class="text-lg font-semibold mb-3">Uploaded Files</h3>
-  <ul class="space-y-2">
-    {% for f in files %}
-      <li class="p-3 glass rounded flex justify-between items-center">
-        <span>{{ f.file_name }} ({{ f.file_type }})</span>
-        <a href="{{ url_for('upload.download', file_id=f.id) }}" 
-           class="text-yellow-600 hover:underline">Download</a>
-      </li>
-    {% endfor %}
-  </ul>
-</div>
-{% endblock %}
+        <!-- Upload Form -->
+        <form action="{{ url_for('dashboard.upload_resume') }}" method="post" enctype="multipart/form-data">
+            <input type="file" name="resume" accept=".pdf,.docx" required><br>
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -121,8 +121,7 @@ def login():
             return redirect(url_for("auth.login"))
 
         # Successful login
-        session["email"] = user["email"]
-        session["name"] = user["name"]
+        session['user'] = {"name": user["name"], "email": user["email"]}
         flash("Logged in successfully!", "success")
         return redirect(url_for("routes.dashboard"))
 

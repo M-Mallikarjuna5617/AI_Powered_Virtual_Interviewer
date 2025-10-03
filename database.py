@@ -41,3 +41,49 @@ def get_user(email):
     if user:
         return {"name": user[0], "email": user[1], "password": user[2]}
     return None
+def get_connection():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def init_resume_tables():
+    conn = get_connection()
+    c = conn.cursor()
+    
+    # Students table
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS students (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT UNIQUE,
+        name TEXT,
+        cgpa REAL,
+        graduation_year INTEGER,
+        skills TEXT
+    )
+    """)
+    
+    # Resumes table
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS resumes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_id INTEGER,
+        file_path TEXT
+    )
+    """)
+    
+    # Companies table
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS companies (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        min_cgpa REAL,
+        required_skills TEXT,
+        graduation_year INTEGER,
+        role TEXT,
+        package_offered TEXT,
+        location TEXT
+    )
+    """)
+    
+    conn.commit()
+    conn.close()

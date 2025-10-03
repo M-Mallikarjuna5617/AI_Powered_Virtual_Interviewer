@@ -1,6 +1,9 @@
 from flask import Blueprint, render_template, session, redirect, url_for, flash, request
+import os
+from utils import parse_resume, match_companies
 
-dashboard_bp = Blueprint('dashboard', __name__, template_folder='templates')
+# Blueprint
+dashboard_bp = Blueprint('dashboard', __name__, template_folder='templates', url_prefix='/dashboard')
 
 # -------------------- Login Required Decorator --------------------
 def login_required(f):
@@ -23,27 +26,49 @@ def get_username():
 def index():
     return render_template('dashboard.html', username=get_username())
 
-# -------------------- Feature Pages --------------------
-@dashboard_bp.route('/aptitude')
+# -------------------- Resume Upload --------------------
+@dashboard_bp.route('/upload_resume', methods=['GET', 'POST'])
 @login_required
-def aptitude():
-    topics = [
-        {"id": 1, "name": "Quantitative Aptitude", "description": "Math and problem-solving questions."},
-        {"id": 2, "name": "Logical Reasoning", "description": "Assess logical thinking skills."},
-        {"id": 3, "name": "Verbal Ability", "description": "English grammar and comprehension tests."},
-    ]
-    return render_template('aptitude.html', username=get_username(), topics=topics)
+def upload_resume():
+    if request.method == 'POST':
+        file = request.files.get('resume')
+        if file and file.filename.endswith(('.pdf', '.docx')):
+            os.makedirs("uploads", exist_ok=True)
+            save_path = os.path.join("uploads", file.filename)
+            file.save(save_path)
 
+            # Parse resume & update student profile
+            student_email = session['user']['email']
+            student_data = parse_resume(save_path, student_email)
+
+            flash(f"Resume uploaded & profile updated for {student_data['name']}", "success")
+            return redirect(url_for('dashboard.upload_resume'))
+        else:
+            flash("Please upload a valid PDF or DOCX file.", "warning")
+
+    return render_template('upload.html', username=get_username())
+
+# -------------------- Companies --------------------
+@dashboard_bp.route('/companies')
+@login_required
+def companies_page():
+    student_email = session['user']['email']
+    eligible_companies = match_companies(student_email)
+    return render_template('companies.html', username=get_username(), companies=eligible_companies)
+
+# -------------------- Group Discussion --------------------
 @dashboard_bp.route('/gd')
 @login_required
 def gd():
     return render_template('gd.html', username=get_username())
 
+# -------------------- HR Interview --------------------
 @dashboard_bp.route('/hr-interview')
 @login_required
 def hr_interview():
     return render_template('hr_interview.html', username=get_username())
 
+# -------------------- Feedback --------------------
 @dashboard_bp.route('/feedback')
 @login_required
 def feedback():
@@ -54,68 +79,42 @@ def feedback():
     ]
     return render_template('feedback.html', username=get_username(), reports=reports)
 
-# -------------------- Dropdown Pages --------------------
-@dashboard_bp.route('/upload', methods=['GET', 'POST'])
-@login_required
-def upload():
-    if request.method == 'POST':
-        # Here you can implement actual file upload logic
-        flash("Files uploaded successfully!", "success")
-    return render_template('upload.html', username=get_username())
-
-@dashboard_bp.route('/companies')
-@login_required
-def companies():
-    companies = [
-        {"name": "Google", "position": "Software Engineer", "description": "Tech giant, world-class projects.", "apply_link": "#"},
-        {"name": "Amazon", "position": "Data Analyst", "description": "E-commerce leader, data-driven culture.", "apply_link": "#"},
-        {"name": "Microsoft", "position": "Product Manager", "description": "Innovative cloud solutions.", "apply_link": "#"},
-        {"name": "Infosys", "position": "Software Developer", "description": "Global IT services company.", "apply_link": "#"},
-    ]
-    return render_template('companies.html', username=get_username(), companies=companies)
-
-# -------------------- Settings Page --------------------
+# -------------------- Settings --------------------
 @dashboard_bp.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
     user = session.get('user', {})
     if request.method == 'POST':
-        # -------- Profile Update --------
+        # Profile update
         full_name = request.form.get('full_name')
         email = request.form.get('email')
-        profile_pic = request.files.get('profile_pic')  # Save file logic goes here
-        if full_name:
-            user['name'] = full_name
-        if email:
-            user['email'] = email
-        # For demo, we just store filename in session
+        profile_pic = request.files.get('profile_pic')
+        if full_name: user['name'] = full_name
+        if email: user['email'] = email
         if profile_pic and profile_pic.filename != '':
             user['profile_pic'] = profile_pic.filename
             flash("Profile picture updated (demo).", "success")
 
-        # -------- Password Change --------
+        # Password change
         current_password = request.form.get('current_password')
         new_password = request.form.get('new_password')
         confirm_password = request.form.get('confirm_new_password')
-        # For demo, assume current password is "password123"
         if current_password and new_password and confirm_password:
             if current_password != "password123":
                 flash("Current password is incorrect.", "error")
             elif new_password != confirm_password:
                 flash("New passwords do not match.", "error")
             else:
-                user['password'] = new_password  # In real app, hash the password
+                user['password'] = new_password
                 flash("Password updated successfully!", "success")
 
-        # -------- Notification Preferences --------
+        # Notification preferences
         user['notifications'] = {
             "email": bool(request.form.get('email_notifications')),
             "sms": bool(request.form.get('sms_notifications')),
             "gd_reminders": bool(request.form.get('gd_reminders'))
         }
-        flash("Settings updated successfully!", "success")
-
-        # Save back to session
         session['user'] = user
+        flash("Settings updated successfully!", "success")
 
     return render_template('settings.html', username=user.get('name', 'User'))

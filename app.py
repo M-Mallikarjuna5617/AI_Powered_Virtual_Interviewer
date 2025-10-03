@@ -3,9 +3,8 @@ import os
 
 from auth import auth_bp, init_oauth
 from routes import routes_bp
-from database import init_db   # absolute import
-
-init_db()
+from dashboard import dashboard_bp
+from database import init_db
 
 app = Flask(__name__)
 app.secret_key = "super_secret_key"
@@ -17,6 +16,7 @@ if not os.path.exists("users.db"):
 # Register Blueprints
 app.register_blueprint(auth_bp)
 app.register_blueprint(routes_bp)
+app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
 
 # Init OAuth
 init_oauth(app)
