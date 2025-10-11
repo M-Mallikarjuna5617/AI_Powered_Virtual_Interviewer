@@ -1,13 +1,22 @@
-from flask import Blueprint, render_template, session, redirect, url_for, flash, request
+from flask import Blueprint, render_template, session, redirect, url_for, flash, request, send_file
 import sqlite3
 import os
+from werkzeug.utils import secure_filename
 
-# Database utility (assumes you have a get_user function)
-from database import get_user
+# Database utility
+from database import get_user, save_resume, get_resume_by_email
 
 routes_bp = Blueprint("routes", __name__)
 
 DB_PATH = "users.db"
+UPLOAD_FOLDER = "uploads/resumes"
+ALLOWED_EXTENSIONS = {'pdf', 'doc', 'docx'}
+
+# Create upload folder if it doesn't exist
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # ---------------------------------------------
 # Public / Index Routes
@@ -24,11 +33,39 @@ def dashboard():
     if "email" not in session:
         flash("Please login first!", "warning")
         return redirect(url_for("auth.login"))
-    return render_template("dashboard.html", username=session.get("name"), email=session.get("email"))
+    
+    # Check if user has uploaded a resume
+    email = session.get("email")
+    resume_path = get_resume_by_email(email)
+    
+    return render_template("dashboard.html", 
+                         username=session.get("name"), 
+                         email=session.get("email"),
+                         has_resume=resume_path is not None,
+                         resume_filename=os.path.basename(resume_path) if resume_path else None)
 
 
 # ---------------------------------------------
-# Upload Documents
+# View Resume Route
+# ---------------------------------------------
+@routes_bp.route("/view-resume")
+def view_resume():
+    if "email" not in session:
+        flash("Please login first!", "warning")
+        return redirect(url_for("auth.login"))
+    
+    email = session.get("email")
+    resume_path = get_resume_by_email(email)
+    
+    if not resume_path or not os.path.exists(resume_path):
+        flash("No resume found. Please upload one first.", "warning")
+        return redirect(url_for("routes.upload"))
+    
+    return send_file(resume_path, as_attachment=False)
+
+
+# ---------------------------------------------
+# Upload Documents - FIXED VERSION
 # ---------------------------------------------
 @routes_bp.route("/upload", methods=["GET", "POST"])
 def upload():
@@ -36,15 +73,53 @@ def upload():
         flash("Please login first!", "warning")
         return redirect(url_for("auth.login"))
 
+    email = session["email"]
+    
     if request.method == "POST":
-        file = request.files.get("document")
-        if file:
-            save_path = os.path.join("uploads", file.filename)
-            os.makedirs(os.path.dirname(save_path), exist_ok=True)
-            file.save(save_path)
-            flash("Document uploaded successfully!", "success")
-        else:
+        # Check if file was uploaded
+        if 'document' not in request.files:
+            flash("No file part in the request!", "danger")
+            return redirect(request.url)
+        
+        file = request.files['document']
+        
+        # Check if user selected a file
+        if file.filename == '':
             flash("No file selected!", "warning")
+            return redirect(request.url)
+        
+        # Validate file type
+        if file and allowed_file(file.filename):
+            # Secure the filename and create unique name
+            filename = secure_filename(file.filename)
+            unique_filename = f"{email}_{filename}"
+            file_path = os.path.join(UPLOAD_FOLDER, unique_filename)
+            
+            try:
+                # Save the file
+                file.save(file_path)
+                
+                # Save to database
+                save_resume(email, file_path)
+                
+                # Parse resume immediately after upload
+                from utils import parse_resume
+                try:
+                    parsed_data = parse_resume(file_path, email)
+                    flash(f"Resume uploaded and analyzed successfully! Found {len(parsed_data['skills'].split(','))} skills.", "success")
+                except Exception as e:
+                    flash(f"Resume uploaded but parsing failed: {str(e)}", "warning")
+                
+                return redirect(url_for("routes.companies"))
+            
+            except Exception as e:
+                flash(f"Error uploading file: {str(e)}", "danger")
+                return redirect(request.url)
+        else:
+            flash("Invalid file type! Please upload PDF, DOC, or DOCX only.", "danger")
+            return redirect(request.url)
+    
+    # GET request - show upload form
     return render_template("upload.html", username=session.get("name"))
 
 
@@ -56,9 +131,49 @@ def companies():
     if "email" not in session:
         flash("Please login first!", "warning")
         return redirect(url_for("auth.login"))
-    # Placeholder: Replace with real recommendation logic
-    recommended_companies = ["Google", "Microsoft", "Amazon", "Tesla"]
-    return render_template("companies.html", companies=recommended_companies)
+    
+    from utils import match_companies, init_company_data, parse_resume, get_selected_company
+    
+    email = session.get("email")
+    resume_path = get_resume_by_email(email)
+    
+    # Initialize company data if not exists
+    init_company_data()
+    
+    # Check if resume is uploaded
+    if not resume_path:
+        flash("Please upload your resume first to get company recommendations!", "warning")
+        return redirect(url_for("routes.upload"))
+    
+    # Parse resume if not already parsed
+    try:
+        parse_resume(resume_path, email)
+    except Exception as e:
+        flash(f"Error parsing resume: {str(e)}", "danger")
+    
+    # Get matched companies
+    recommended_companies = match_companies(email)
+    selected_company = get_selected_company(email)
+    
+    return render_template("companies.html", 
+                         companies=recommended_companies,
+                         selected_company=selected_company,
+                         username=session.get("name"))
+
+
+@routes_bp.route("/select_company/<int:company_id>", methods=["POST"])
+def select_company(company_id):
+    if "email" not in session:
+        flash("Please login first!", "warning")
+        return redirect(url_for("auth.login"))
+    
+    from utils import set_selected_company
+    
+    email = session.get("email")
+    set_selected_company(email, company_id)
+    
+    flash("Company selected! Interview questions will be customized for this company.", "success")
+    return redirect(url_for("routes.companies"))
 
 
 # ---------------------------------------------

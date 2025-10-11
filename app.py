@@ -9,9 +9,8 @@ from database import init_db
 app = Flask(__name__)
 app.secret_key = "super_secret_key"
 
-# Init DB
-if not os.path.exists("users.db"):
-    init_db()
+# ALWAYS Init DB (it uses CREATE TABLE IF NOT EXISTS, so it's safe)
+init_db()
 
 # Register Blueprints
 app.register_blueprint(auth_bp)
