@@ -5,12 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI-Powered Virtual Interviewer</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    
     body {
       font-family: 'Poppins', sans-serif;
       color: #1e293b;
-      background: #f8fafc;
+      background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
       line-height: 1.6;
     }
 
@@ -18,10 +20,11 @@
       position: sticky;
       top: 0;
       width: 100%;
-      background: white;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
       z-index: 100;
     }
+    
     nav {
       max-width: 1100px;
       margin: auto;
@@ -30,23 +33,28 @@
       justify-content: space-between;
       align-items: center;
     }
+    
     nav h1 {
       font-size: 1.4rem;
       font-weight: 700;
-      color: #2563eb;
+      color: white;
     }
+    
     nav ul {
       list-style: none;
       display: flex;
       gap: 20px;
     }
+    
     nav ul li a {
       text-decoration: none;
-      color: #1e293b;
+      color: white;
       font-weight: 500;
+      transition: opacity 0.3s;
     }
+    
     nav ul li a:hover {
-      color: #2563eb;
+      opacity: 0.8;
     }
 
     /* Hero */
@@ -56,43 +64,75 @@
       align-items: center;
       max-width: 1100px;
       margin: auto;
-      padding: 60px 20px;
-      gap: 40px;
+      padding: 80px 20px;
+      gap: 60px;
     }
+    
     .hero-text h2 {
-      font-size: 2.6rem;
+      font-size: 2.8rem;
       font-weight: 700;
-      color: #111827;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       margin-bottom: 16px;
     }
+    
     .hero-text p {
       font-size: 1.1rem;
       color: #475569;
       margin-bottom: 30px;
     }
-    .btn-group { display: flex; gap: 16px; }
+    
+    .btn-group { 
+      display: flex; 
+      gap: 16px; 
+    }
+    
     .btn {
-      padding: 12px 24px;
-      border-radius: 8px;
+      padding: 14px 32px;
+      border-radius: 50px;
       font-weight: 600;
       font-size: 1rem;
       cursor: pointer;
       text-decoration: none;
-      transition: 0.3s;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
-    .btn-primary { background: #2563eb; color: white; }
-    .btn-primary:hover { background: #1d4ed8; }
+    
+    .btn-primary { 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+    }
+    
+    .btn-primary:hover { 
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+    
     .btn-secondary {
-      border: 2px solid #2563eb;
-      color: #2563eb;
-      background: transparent;
+      border: 2px solid #667eea;
+      color: #667eea;
+      background: white;
     }
-    .btn-secondary:hover { background: #2563eb; color: white; }
+    
+    .btn-secondary:hover { 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      transform: translateY(-3px);
+    }
 
     .hero img {
       width: 100%;
-      border-radius: 14px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
     }
 
     /* Sections */
@@ -105,83 +145,172 @@
       transform: translateY(40px);
       transition: all 0.7s ease;
     }
+    
     section.show {
       opacity: 1;
       transform: translateY(0);
     }
+    
     section h2 {
-      font-size: 2rem;
+      font-size: 2.2rem;
       margin-bottom: 18px;
       font-weight: 700;
-      color: #111827;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
+    
     section p {
       color: #475569;
       max-width: 700px;
       margin: auto;
-      margin-bottom: 40px;
+      margin-bottom: 50px;
+      font-size: 1.05rem;
     }
 
     .features {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
     }
+    
     .feature-card {
       background: white;
-      padding: 24px;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-      transition: transform 0.2s;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+      transition: all 0.4s;
+      position: relative;
+      overflow: hidden;
     }
-    .feature-card:hover { transform: translateY(-6px); }
+    
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+    
+    .feature-card:hover { 
+      transform: translateY(-10px);
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+    }
+
+    .feature-card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: #111827;
+    }
 
     /* Workflow */
     .workflow {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
+      gap: 25px;
     }
+    
     .workflow-step {
       background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      transition: all 0.3s;
+    }
+    
+    .workflow-step:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.15);
     }
 
-    /* Organisers / Guides */
+    .workflow-step h3 {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+
+    /* Team */
     .team {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 26px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 30px;
     }
+    
     .member {
       background: white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      transition: all 0.3s;
     }
+    
+    .member:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
+    }
+    
     .member img {
-      width: 90px;
-      height: 90px;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
       object-fit: cover;
-      margin-bottom: 12px;
+      margin-bottom: 15px;
+      border: 4px solid transparent;
+      background: linear-gradient(white, white) padding-box,
+                  linear-gradient(135deg, #667eea 0%, #764ba2 100%) border-box;
+    }
+
+    .member h3 {
+      color: #111827;
+      margin-bottom: 8px;
+    }
+
+    .member a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .member a:hover {
+      text-decoration: underline;
     }
 
     /* Footer */
     footer {
-      background: #111827;
-      color: #e2e8f0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
       text-align: center;
-      padding: 30px 20px;
-      font-size: 0.9rem;
-      margin-top: 50px;
+      padding: 40px 20px;
+      font-size: 0.95rem;
+      margin-top: 60px;
+    }
+
+    footer img {
+      width: 80px;
+      margin-top: 15px;
+      border-radius: 10px;
     }
 
     @media (max-width: 850px) {
-      .hero { grid-template-columns: 1fr; text-align: center; }
+      .hero { 
+        grid-template-columns: 1fr; 
+        text-align: center; 
+        padding: 50px 20px;
+      }
       .btn-group { justify-content: center; }
+      nav ul { display: none; }
     }
   </style>
 </head>
@@ -190,7 +319,7 @@
   <!-- Navbar -->
   <header>
     <nav>
-      <h1>AI-Powered Virtual Interviewer[API]</h1>
+      <h1><i class="fas fa-robot"></i> AI-Powered Virtual Interviewer[API]</h1>
       <ul>
         <li><a href="#features">Features</a></li>
         <li><a href="#workflow">Workflow</a></li>
@@ -210,7 +339,7 @@
         and <b>receive AI-driven feedback</b> to boost their career readiness.
       </p>
       <div class="btn-group">
-        <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Register</a>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Get Started</a>
         <a href="{{ url_for('auth.login') }}" class="btn btn-secondary">Login</a>
       </div>
     </div>
@@ -224,12 +353,30 @@
     <h2>✨ Features</h2>
     <p>Comprehensive tools to make your interview preparation smarter, faster, and bias-free.</p>
     <div class="features">
-      <div class="feature-card"><h3>📄 Document Upload</h3><p>Upload resumes & certificates for instant AI-based screening.</p></div>
-      <div class="feature-card"><h3>🏢 Company Recommendations</h3><p>Get matched with companies based on your profile & skills.</p></div>
-      <div class="feature-card"><h3>📝 Aptitude Test</h3><p>Take adaptive aptitude tests with real-time scoring.</p></div>
-      <div class="feature-card"><h3>💬 Group Discussion</h3><p>Simulate GDs with AI peers & get language fluency feedback.</p></div>
-      <div class="feature-card"><h3>👨‍💼 HR Interview</h3><p>Face dynamic, AI-generated HR interview questions.</p></div>
-      <div class="feature-card"><h3>📊 Feedback Reports</h3><p>Receive personalized reports with actionable suggestions.</p></div>
+      <div class="feature-card">
+        <h3>📄 Document Upload</h3>
+        <p>Upload resumes & certificates for instant AI-based screening.</p>
+      </div>
+      <div class="feature-card">
+        <h3>🏢 Company Recommendations</h3>
+        <p>Get matched with companies based on your profile & skills.</p>
+      </div>
+      <div class="feature-card">
+        <h3>📝 Aptitude Test</h3>
+        <p>Take adaptive aptitude tests with real-time scoring.</p>
+      </div>
+      <div class="feature-card">
+        <h3>💬 Group Discussion</h3>
+        <p>Simulate GDs with AI peers & get language fluency feedback.</p>
+      </div>
+      <div class="feature-card">
+        <h3>👨‍💼 HR Interview</h3>
+        <p>Face dynamic, AI-generated HR interview questions.</p>
+      </div>
+      <div class="feature-card">
+        <h3>📊 Feedback Reports</h3>
+        <p>Receive personalized reports with actionable suggestions.</p>
+      </div>
     </div>
   </section>
 
@@ -245,14 +392,29 @@
 
   <!-- Workflow -->
   <section id="workflow">
-    <h2>⚙ Workflow</h2>
+    <h2>⚙️ Workflow</h2>
     <p>Step-by-step process ensuring structured learning and placement success.</p>
     <div class="workflow">
-      <div class="workflow-step"><h3>01 Registration</h3><p>Secure Gmail-based sign up & profile creation.</p></div>
-      <div class="workflow-step"><h3>02 Document Upload</h3><p>Upload resumes & academic records for analysis.</p></div>
-      <div class="workflow-step"><h3>03 Practice</h3><p>Engage in aptitude tests & group discussions.</p></div>
-      <div class="workflow-step"><h3>04 Interview Simulation</h3><p>Face AI-powered HR interviews with dynamic questions.</p></div>
-      <div class="workflow-step"><h3>05 Feedback</h3><p>Get detailed performance reports & growth suggestions.</p></div>
+      <div class="workflow-step">
+        <h3>01 Registration</h3>
+        <p>Secure Gmail-based sign up & profile creation.</p>
+      </div>
+      <div class="workflow-step">
+        <h3>02 Document Upload</h3>
+        <p>Upload resumes & academic records for analysis.</p>
+      </div>
+      <div class="workflow-step">
+        <h3>03 Practice</h3>
+        <p>Engage in aptitude tests & group discussions.</p>
+      </div>
+      <div class="workflow-step">
+        <h3>04 Interview Simulation</h3>
+        <p>Face AI-powered HR interviews with dynamic questions.</p>
+      </div>
+      <div class="workflow-step">
+        <h3>05 Feedback</h3>
+        <p>Get detailed performance reports & growth suggestions.</p>
+      </div>
     </div>
   </section>
 
@@ -261,36 +423,36 @@
     <h2>👨‍💻 Team</h2>
     <div class="team">
       <div class="member">
-        <img src="https://randomuser.me/api/portraits//44.jpg" alt="A Likith">
+        <img src="https://randomuser.me/api/portraits/men/44.jpg" alt="A Likith">
         <h3>A Likith</h3>
         <p>Front Designer</p>
         <p>Member</p>
-        <p><a href="https://linkedin.com/in/likith-amdyal-468a62381" target="_blank">LinkedIn</a> 
-        <a href="tel:+9193530 80625">+91-93530 80625</a></p>
+        <p><a href="https://linkedin.com/in/likith-amdyal-468a62381" target="_blank">LinkedIn</a> | 
+        <a href="tel:+919353080625">+91-93530 80625</a></p>
       </div>
       <div class="member">
-        <img src="{{ url_for('static', filename='images/malli.jpg') }}" alt="...">
+        <img src="{{ url_for('static', filename='images/malli.jpg') }}" alt="Mallikarjuna">
         <h3>M Mallikarjuna Swamy</h3>
         <p>Full Stack Web Designer</p>
         <p>Project Lead</p>
-        <p><a href="https://linkedin.com/in/M. Mallikarjuna Swamy" target="_blank">LinkedIn</a> 
+        <p><a href="https://linkedin.com/in/M. Mallikarjuna Swamy" target="_blank">LinkedIn</a> | 
         <a href="tel:+919347307009">+91-9347307009</a></p>
       </div>
       <div class="member">
-        <img src="{{ url_for('static', filename='images/raheel.jpg') }}" alt="...">
+        <img src="{{ url_for('static', filename='images/raheel.jpg') }}" alt="Raheel">
         <h3>MD Raheel</h3>
         <p>Developer</p>
-        <p>Memeber</p>
-        <p><a href="https://linkedin.com/in/mohammad-raheel" target="_blank">LinkedIn</a>  
-        <a href="tel:+9163626006235">+91-6362006235</a></p>
+        <p>Member</p>
+        <p><a href="https://linkedin.com/in/mohammad-raheel" target="_blank">LinkedIn</a> | 
+        <a href="tel:+916362006235">+91-6362006235</a></p>
       </div>
       <div class="member">
-        <img src="https://randomuser.me/api/portraits/33.jpg" alt="MD Fahad">
+        <img src="https://randomuser.me/api/portraits/men/33.jpg" alt="MD Fahad">
         <h3>MD Fahad</h3>
         <p>Frontend Expert</p>
-        <p>Memeber</p>
-        <p><a href="http://www.linkedin.com/in/mohammed-fahad-790545263" target="_blank">LinkedIn</a> 
-        <a href="tel:+916361 671 803">+91-6361 671 803</a></p>
+        <p>Member</p>
+        <p><a href="http://www.linkedin.com/in/mohammed-fahad-790545263" target="_blank">LinkedIn</a> | 
+        <a href="tel:+916361671803">+91-6361 671 803</a></p>
       </div>
     </div>
   </section>
@@ -300,13 +462,13 @@
     <h2>🎓 Project Guide</h2>
     <div class="team">
       <div class="member">
-        <img src="{{ url_for('static', filename='images/aiml-hod.jpg') }}" alt="...">
-        <h3>"Dr.B.M Vidyavathi"</h3>
-        <p>HOD.Dept of AIML</p>
+        <img src="{{ url_for('static', filename='images/aiml-hod.jpg') }}" alt="Guide">
+        <h3>Dr. B.M Vidyavathi</h3>
+        <p>HOD, Dept of AIML</p>
         <p>Ballari Institute Of Technology And Management</p>
-        <p>karnataka,Ballari-583104</p>
+        <p>Karnataka, Ballari-583104</p>
         <p><a href="https://in.linkedin.com/in/dr-vidyavathi-b-m-68759136" target="_blank">LinkedIn</a> | 
-        <a href="tel:+91 94496 22973">+91 94496 22973</a></p>
+        <a href="tel:+919449622973">+91 94496 22973</a></p>
       </div>
     </div>
   </section>
@@ -314,21 +476,19 @@
   <!-- Contact -->
   <section id="contact">
     <h2>📬 Contact Us</h2>
-    <p><b>Email:</b> <a href="mailto:msmsmallikarjuna@gmail.com">msmsmallikarjuna@gmail.com</a></p>
-    <p><b>Phone:</b> <a href="tel:+919347307009">+91-9347307009</a></p>
-    <p><b>Website:</b> <a href="https://bitm.edu.in" target="_blank">Ballari Institute of Technology & Management</a></p>
+    <p><b>Email:</b> <a href="mailto:msmsmallikarjuna@gmail.com" style="color: #667eea;">msmsmallikarjuna@gmail.com</a></p>
+    <p><b>Phone:</b> <a href="tel:+919347307009" style="color: #667eea;">+91-9347307009</a></p>
+    <p><b>Website:</b> <a href="https://bitm.edu.in" target="_blank" style="color: #667eea;">Ballari Institute of Technology & Management</a></p>
     <p><b>Address:</b> Ballari, Karnataka, India</p>
   </section>
 
   <!-- Footer -->
   <footer>
     <p>&copy; 2025 AI-Powered Virtual Interviewer. All rights reserved.</p>
-    <div class="organisers">
-      <p>Organised by: Department of Artificial Intelligence and Machine Learning</p>
-      <p>Supported by: Ballari Institute of Technology and Management</p>
-      <p>Ballari (583104), Karnataka, India</p>
-      <img src="{{ url_for('static', filename='images/clglogo.jpg') }}" alt="...">
-    </div>
+    <p>Organised by: Department of Artificial Intelligence and Machine Learning</p>
+    <p>Supported by: Ballari Institute of Technology and Management</p>
+    <p>Ballari (583104), Karnataka, India</p>
+    <img src="{{ url_for('static', filename='images/clglogo.jpg') }}" alt="College Logo">
   </footer>
 
   <!-- JS for scroll animation -->

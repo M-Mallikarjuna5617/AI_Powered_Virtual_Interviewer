@@ -203,7 +203,21 @@
                         </div>
                     {% else %}
                         <div class="match-score">
-                            {{ company.skill_match }}% Match
+                            {% if company.get('selection_probability') %}
+                                {{ company.selection_probability }}% Match
+                                <small style="display:block; font-size:0.7rem; margin-top:2px;">
+                                    {% if company.get('recommendation_type') == 'random_forest' %}
+                                        🤖 ML Prediction
+                                    {% elif company.get('recommendation_type') == 'decision_tree' %}
+                                        🌳 Decision Tree
+                                    {% else %}
+                                        📊 Rule-Based
+                                    {% endif %}
+                                </small>
+                            {% elif company.get('skill_match') %}
+                                {{ company.skill_match }}% Match
+                                <small style="display:block; font-size:0.7rem; margin-top:2px;">📊 Skill Match</small>
+                            {% endif %}
                         </div>
                     {% endif %}
 
@@ -243,15 +257,19 @@
                             <!-- Skills -->
                             <div class="mb-3">
                                 <strong class="d-block mb-2">Required Skills:</strong>
-                                {% for skill in company.required_skills.split(',') %}
-                                    {% if skill.strip().lower() in company.matched_skills %}
-                                        <span class="skill-badge matched">
-                                            <i class="fas fa-check-circle me-1"></i>{{ skill.strip() }}
-                                        </span>
-                                    {% else %}
-                                        <span class="skill-badge">{{ skill.strip() }}</span>
-                                    {% endif %}
-                                {% endfor %}
+                                {% if company.get('required_skills') %}
+                                    {% for skill in company.required_skills.split(',') %}
+                                        {% if company.get('matched_skills') and skill.strip().lower() in [s.lower() for s in company.matched_skills] %}
+                                            <span class="skill-badge matched">
+                                                <i class="fas fa-check-circle me-1"></i>{{ skill.strip() }}
+                                            </span>
+                                        {% else %}
+                                            <span class="skill-badge">{{ skill.strip() }}</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="skill-badge">General Skills Required</span>
+                                {% endif %}
                             </div>
 
                             <!-- Select Button -->

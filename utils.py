@@ -131,9 +131,23 @@ def parse_resume(file_path, student_email):
     }
 
 
-# -------------------- Match Companies --------------------
-def match_companies(student_email):
-    """Match student profile with suitable companies."""
+# -------------------- Match Companies (Rule-Based - Fallback) --------------------
+def match_companies(student_email, use_ml=True):
+    """
+    Match student profile with suitable companies.
+    
+    Args:
+        student_email: Student's email
+        use_ml: If True, use ML models; if False, use rule-based approach
+    """
+    if use_ml:
+        try:
+            from ml_company_matcher import ml_recommend_companies
+            return ml_recommend_companies(student_email, model_type="random_forest")
+        except Exception as e:
+            print(f"ML recommendation failed: {e}. Falling back to rule-based.")
+    
+    # Fallback to rule-based approach
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     
@@ -164,7 +178,7 @@ def match_companies(student_email):
         skill_match_percent = (len(matched_skills) / len(required_skills) * 100) if required_skills else 0
         
         # Check eligibility
-        is_eligible = cgpa >= min_cgpa and skill_match_percent >= 30  # At least 30% skills match
+        is_eligible = cgpa >= min_cgpa and skill_match_percent >= 30
         
         if is_eligible:
             eligible_companies.append({
@@ -177,11 +191,12 @@ def match_companies(student_email):
                 "min_cgpa": min_cgpa,
                 "required_skills": req_skills,
                 "skill_match": round(skill_match_percent, 1),
-                "matched_skills": list(matched_skills)
+                "matched_skills": list(matched_skills),
+                "recommendation_type": "rule_based"
             })
     
     # Sort by skill match percentage
-    eligible_companies.sort(key=lambda x: x['skill_match'], reverse=True)
+    eligible_companies.sort(key=lambda x: x.get('skill_match', 0), reverse=True)
     
     return eligible_companies
 
