@@ -199,6 +199,17 @@ def gd():
 
 
 # ---------------------------------------------
+# Technical Round (NEW)
+# ---------------------------------------------
+@routes_bp.route("/technical")
+def technical():
+    if "email" not in session:
+        flash("Please login first!", "warning")
+        return redirect(url_for("auth.login"))
+    return render_template("technical.html", username=session.get("name"))
+
+
+# ---------------------------------------------
 # AI HR Interview
 # ---------------------------------------------
 @routes_bp.route("/hr_interview")
@@ -221,6 +232,7 @@ def feedback():
     feedback_list = [
         {"round": "Aptitude", "score": 85},
         {"round": "GD", "score": 90},
+        {"round": "Technical", "score": 92},
         {"round": "HR", "score": 88},
     ]
     return render_template("feedback.html", feedback=feedback_list)

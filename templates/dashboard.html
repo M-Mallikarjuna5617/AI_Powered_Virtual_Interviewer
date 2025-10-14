@@ -13,6 +13,7 @@
             --info-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
             --danger-gradient: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+            --technical-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
         }
         
         body {
@@ -123,6 +124,7 @@
         .feature-card.info::before { background: var(--info-gradient); }
         .feature-card.warning::before { background: var(--warning-gradient); }
         .feature-card.danger::before { background: var(--danger-gradient); }
+        .feature-card.technical::before { background: var(--technical-gradient); }
 
         .icon-wrapper {
             width: 80px;
@@ -147,6 +149,7 @@
         .feature-card.info .icon-wrapper { background: var(--info-gradient); }
         .feature-card.warning .icon-wrapper { background: var(--warning-gradient); }
         .feature-card.danger .icon-wrapper { background: var(--danger-gradient); }
+        .feature-card.technical .icon-wrapper { background: var(--technical-gradient); }
 
         .feature-card .card-body {
             padding: 2rem 1.5rem;
@@ -189,6 +192,7 @@
         .btn-gradient.info { background: var(--info-gradient); }
         .btn-gradient.warning { background: var(--warning-gradient); }
         .btn-gradient.danger { background: var(--danger-gradient); }
+        .btn-gradient.technical { background: var(--technical-gradient); }
 
         .progress-section {
             background: white;
@@ -403,11 +407,27 @@
                 </div>
             </div>
 
+            <!-- Technical Round -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card technical">
+                    <div class="card-body">
+                        <div class="icon-wrapper floating" style="animation-delay: 0.8s;">
+                            <i class="fas fa-laptop-code"></i>
+                        </div>
+                        <h5 class="card-title">Technical Round</h5>
+                        <p class="card-text">Solve coding challenges & technical problem-solving questions</p>
+                        <a href="{{ url_for('routes.technical') }}" class="btn btn-gradient technical">
+                            Start Coding <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
             <!-- HR Interview -->
             <div class="col-md-6 col-lg-4">
                 <div class="card feature-card danger">
                     <div class="card-body">
-                        <div class="icon-wrapper floating" style="animation-delay: 0.8s;">
+                        <div class="icon-wrapper floating" style="animation-delay: 1s;">
                             <i class="fas fa-user-tie"></i>
                         </div>
                         <h5 class="card-title">AI HR Interview</h5>
@@ -423,7 +443,7 @@
             <div class="col-md-6 col-lg-4">
                 <div class="card feature-card primary">
                     <div class="card-body">
-                        <div class="icon-wrapper floating" style="animation-delay: 1s;">
+                        <div class="icon-wrapper floating" style="animation-delay: 1.2s;">
                             <i class="fas fa-chart-line"></i>
                         </div>
                         <h5 class="card-title">Performance Reports</h5>
