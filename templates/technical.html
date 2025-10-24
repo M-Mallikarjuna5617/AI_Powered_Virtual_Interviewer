@@ -3,305 +3,628 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Technical Round - AI Virtual Interviewer</title>
+    <title>Technical Round - Coding Challenge</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --technical-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
         body {
-            background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
-            min-height: 100vh;
+            background: #1e1e1e;
+            color: #d4d4d4;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .navbar {
-            background: var(--technical-gradient) !important;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-
-        .hero-section {
-            background: white;
-            border-radius: 20px;
-            padding: 3rem 2rem;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-            margin-bottom: 2rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: var(--technical-gradient);
-        }
-
-        .hero-section h2 {
-            background: var(--technical-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 700;
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .difficulty-card {
-            background: white;
-            border: none;
-            border-radius: 20px;
-            overflow: hidden;
-            transition: all 0.4s;
-            height: 100%;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-            cursor: pointer;
-            position: relative;
-        }
-
-        .difficulty-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .difficulty-card.easy::before {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-        }
-
-        .difficulty-card.medium::before {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-        }
-
-        .difficulty-card.hard::before {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-
-        .difficulty-card:hover::before {
-            opacity: 1;
-        }
-
-        .difficulty-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 45px rgba(0,0,0,0.15);
-        }
-
-        .icon-wrapper {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-        }
-
-        .difficulty-card.easy .icon-wrapper {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-        }
-
-        .difficulty-card.medium .icon-wrapper {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-        }
-
-        .difficulty-card.hard .icon-wrapper {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-
-        .icon-wrapper i {
-            font-size: 2.2rem;
-            color: white;
-        }
-
-        .badge-custom {
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .badge-easy {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            color: white;
-        }
-
-        .badge-medium {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            color: white;
-        }
-
-        .badge-hard {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-        }
-
-        .btn-gradient {
-            border: none;
-            color: white;
-            padding: 12px 32px;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-        }
-
-        .btn-gradient:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-            color: white;
-        }
-
-        .btn-gradient.technical {
-            background: var(--technical-gradient);
-        }
-
-        .info-section {
-            background: linear-gradient(135deg, #11998e15 0%, #38ef7d15 100%);
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            border-left: 4px solid #11998e;
-        }
-
-        .feature-list {
-            list-style: none;
+            margin: 0;
             padding: 0;
+            overflow: hidden;
         }
 
-        .feature-list li {
-            padding: 0.8rem 0;
+        .ide-container {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            height: 100vh;
+            gap: 0;
+        }
+
+        .problem-section {
+            background: #252526;
+            overflow-y: auto;
+            border-right: 1px solid #3e3e42;
+        }
+
+        .code-section {
+            display: flex;
+            flex-direction: column;
+            background: #1e1e1e;
+        }
+
+        .top-bar {
+            background: #2d2d30;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #3e3e42;
+        }
+
+        .timer-display {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+        }
+
+        .timer-display.warning {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            animation: pulse 1s infinite;
+        }
+
+        .problem-content {
+            padding: 25px;
+        }
+
+        .problem-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #e0e0e0;
+            margin-bottom: 10px;
+        }
+
+        .difficulty-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .difficulty-easy { background: #10b981; color: white; }
+        .difficulty-medium { background: #f59e0b; color: white; }
+        .difficulty-hard { background: #ef4444; color: white; }
+
+        .problem-description {
+            color: #b0b0b0;
+            line-height: 1.8;
+            margin: 20px 0;
+        }
+
+        .section-title {
+            color: #569cd6;
+            font-weight: 600;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #3e3e42;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+        }
+
+        .test-case {
+            background: #2d2d30;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 3px solid #569cd6;
+        }
+
+        .language-selector {
+            background: #2d2d30;
+            color: #d4d4d4;
+            border: 1px solid #3e3e42;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .language-selector:focus {
+            outline: none;
+            border-color: #569cd6;
+        }
+
+        .editor-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #codeEditor {
+            width: 100%;
+            height: 100%;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            padding: 20px;
+            border: none;
+            outline: none;
+            resize: none;
+            line-height: 1.6;
+        }
+
+        .output-section {
+            background: #1e1e1e;
+            border-top: 1px solid #3e3e42;
+            padding: 15px 20px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .output-title {
+            color: #4ec9b0;
+            font-weight: 600;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
-        .feature-list li i {
-            color: #11998e;
+        .output-content {
+            background: #252526;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            color: #b0b0b0;
+        }
+
+        .output-content.success {
+            border-left: 3px solid #10b981;
+        }
+
+        .output-content.error {
+            border-left: 3px solid #ef4444;
+            color: #f87171;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn-run {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-run:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-reset {
+            background: #3e3e42;
+            border: none;
+            color: #d4d4d4;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .test-results {
+            margin-top: 15px;
+        }
+
+        .test-case-result {
+            background: #252526;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .test-case-result.passed {
+            border-left: 3px solid #10b981;
+        }
+
+        .test-case-result.failed {
+            border-left: 3px solid #ef4444;
+        }
+
+        .status-icon {
             font-size: 1.2rem;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+        .status-icon.passed { color: #10b981; }
+        .status-icon.failed { color: #ef4444; }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
         }
 
-        .floating {
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .quiz-container {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-            margin-top: 2rem;
-            display: none;
-        }
-
-        .quiz-container.active {
-            display: block;
-        }
-
-        .question-card {
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 15px;
-            margin-bottom: 2rem;
-            border-left: 4px solid #11998e;
-        }
-
-        .option-btn {
-            width: 100%;
-            text-align: left;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border: 2px solid #e9ecef;
-            background: white;
-            border-radius: 10px;
-            transition: all 0.3s;
-        }
-
-        .option-btn:hover {
-            border-color: #11998e;
-            background: #11998e10;
-        }
-
-        .option-btn.selected {
-            border-color: #11998e;
-            background: #11998e20;
-        }
-
-        .code-editor {
+        ::-webkit-scrollbar-track {
             background: #1e1e1e;
-            color: #d4d4d4;
-            padding: 1.5rem;
-            border-radius: 10px;
-            font-family: 'Courier New', monospace;
-            min-height: 300px;
-            margin: 1rem 0;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #3e3e42;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4e4e52;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border: 2px solid #3e3e42;
+            border-top: 2px solid #569cd6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand fw-bold fs-4" href="{{ url_for('routes.dashboard') }}">
-                <i class="fas fa-robot me-2"></i> AI Virtual Interviewer
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ url_for('routes.dashboard') }}">
-                            <i class="fas fa-home me-2"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white fw-semibold" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle me-2"></i> {{ username }}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{{ url_for('routes.settings') }}"><i class="fas fa-cog me-2"></i> Settings</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
+    <div class="ide-container">
+        <!-- Problem Section -->
+        <div class="problem-section">
+            <div class="problem-content">
+                <div class="mb-3">
+                    <span class="difficulty-badge difficulty-medium" id="difficultyBadge">Medium</span>
+                    <span style="color: #888; font-size: 0.9rem;">Asked in: <strong>Amazon 2024</strong></span>
+                </div>
+
+                <h1 class="problem-title" id="problemTitle">Two Sum Problem</h1>
+
+                <div class="problem-description" id="problemDescription">
+                    <p>Given an array of integers <code>nums</code> and an integer <code>target</code>, return indices of the two numbers such that they add up to target.</p>
+                    <p>You may assume that each input would have exactly one solution, and you may not use the same element twice.</p>
+                    <p>You can return the answer in any order.</p>
+                </div>
+
+                <div class="section-title">📝 Examples</div>
+                <div class="test-case">
+                    <strong>Example 1:</strong>
+                    <div class="code-block">Input: nums = [2,7,11,15], target = 9
+Output: [0,1]
+Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].</div>
+                </div>
+
+                <div class="test-case">
+                    <strong>Example 2:</strong>
+                    <div class="code-block">Input: nums = [3,2,4], target = 6
+Output: [1,2]</div>
+                </div>
+
+                <div class="section-title">⚙️ Constraints</div>
+                <div class="problem-description">
+                    <ul>
+                        <li>2 ≤ nums.length ≤ 10<sup>4</sup></li>
+                        <li>-10<sup>9</sup> ≤ nums[i] ≤ 10<sup>9</sup></li>
+                        <li>-10<sup>9</sup> ≤ target ≤ 10<sup>9</sup></li>
+                        <li>Only one valid answer exists</li>
+                    </ul>
+                </div>
+
+                <div class="section-title">💡 Hints</div>
+                <div class="problem-description">
+                    <ol>
+                        <li>Try using a hash map to store numbers you've seen</li>
+                        <li>For each number, check if (target - current number) exists in the hash map</li>
+                        <li>Time complexity should be O(n)</li>
+                    </ol>
+                </div>
             </div>
         </div>
-    </nav>
 
-    <div class="container my-5">
-        <!-- Hero Section -->
-        <div class="hero-section">
-            <h2><i class="fas fa-laptop-code me-3"></i>Technical Round</h2>
-            <p class="lead text-muted mb-0">Test your coding skills and problem-solving abilities with real-world technical challenges</p>
+        <!-- Code Section -->
+        <div class="code-section">
+            <div class="top-bar">
+                <div class="action-buttons">
+                    <select class="language-selector" id="languageSelect" onchange="changeLanguage()">
+                        <option value="python">Python</option>
+                        <option value="java">Java</option>
+                        <option value="cpp">C++</option>
+                        <option value="javascript">JavaScript</option>
+                    </select>
+                    <button class="btn-run" onclick="runCode()">
+                        <i class="fas fa-play me-2"></i>Run Code
+                    </button>
+                    <button class="btn-submit" onclick="submitCode()">
+                        <i class="fas fa-check me-2"></i>Submit
+                    </button>
+                    <button class="btn-reset" onclick="resetCode()">
+                        <i class="fas fa-undo me-2"></i>Reset
+                    </button>
+                </div>
+                <div class="timer-display" id="timerDisplay">30:00</div>
+            </div>
+
+            <div class="editor-container">
+                <textarea id="codeEditor" spellcheck="false"># Python Solution
+def twoSum(nums, target):
+    """
+    :type nums: List[int]
+    :type target: int
+    :rtype: List[int]
+    """
+    # Write your code here
+    pass
+
+# Test your solution
+if __name__ == "__main__":
+    nums = [2, 7, 11, 15]
+    target = 9
+    result = twoSum(nums, target)
+    print(result)</textarea>
+            </div>
+
+            <div class="output-section">
+                <div class="output-title">
+                    <i class="fas fa-terminal"></i>
+                    <span>Output</span>
+                    <span id="executionStatus"></span>
+                </div>
+                <div class="output-content" id="outputContent">
+                    Click "Run Code" to execute your solution...
+                </div>
+                <div class="test-results" id="testResults"></div>
+            </div>
         </div>
+    </div>
 
-        <!-- Info Section -->
-        <div class="info-section">
-            <h5 class="mb-3"><i class="fas fa-info-circle me-2"></i> What to Expect</h5>
-            <ul class="feature-list">
-                <li>
-                    <i class="fas fa-check-circle"></i>
-                    <span>Multiple difficulty levels: Easy, Medium, and Hard</span>
-                </li>
-                <li>
-                    <i class="fas fa-check-circle"></i>
+    <script>
+        let timeRemaining = 1800; // 30 minutes
+        let timerInterval;
+
+        const codeTemplates = {
+            python: `# Python Solution
+def twoSum(nums, target):
+    """
+    :type nums: List[int]
+    :type target: int
+    :rtype: List[int]
+    """
+    # Write your code here
+    pass
+
+# Test your solution
+if __name__ == "__main__":
+    nums = [2, 7, 11, 15]
+    target = 9
+    result = twoSum(nums, target)
+    print(result)`,
+            java: `class Solution {
+    public int[] twoSum(int[] nums, int target) {
+        // Write your code here
+        return new int[]{};
+    }
+    
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        int[] nums = {2, 7, 11, 15};
+        int target = 9;
+        int[] result = solution.twoSum(nums, target);
+        System.out.println(java.util.Arrays.toString(result));
+    }
+}`,
+            cpp: `#include <iostream>
+#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        // Write your code here
+        return {};
+    }
+};
+
+int main() {
+    Solution solution;
+    vector<int> nums = {2, 7, 11, 15};
+    int target = 9;
+    vector<int> result = solution.twoSum(nums, target);
+    
+    cout << "[";
+    for(int i = 0; i < result.size(); i++) {
+        cout << result[i];
+        if(i < result.size()-1) cout << ", ";
+    }
+    cout << "]" << endl;
+    
+    return 0;
+}`,
+            javascript: `/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number[]}
+ */
+var twoSum = function(nums, target) {
+    // Write your code here
+};
+
+// Test your solution
+const nums = [2, 7, 11, 15];
+const target = 9;
+const result = twoSum(nums, target);
+console.log(result);`
+        };
+
+        const testCases = [
+            { input: { nums: [2, 7, 11, 15], target: 9 }, expected: [0, 1] },
+            { input: { nums: [3, 2, 4], target: 6 }, expected: [1, 2] },
+            { input: { nums: [3, 3], target: 6 }, expected: [0, 1] }
+        ];
+
+        // Start Timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimer();
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    alert('Time is up!');
+                    submitCode();
+                }
+            }, 1000);
+        }
+
+        function updateTimer() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            const timerEl = document.getElementById('timerDisplay');
+            timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeRemaining <= 300) {
+                timerEl.classList.add('warning');
+            }
+        }
+
+        // Change Language
+        function changeLanguage() {
+            const lang = document.getElementById('languageSelect').value;
+            document.getElementById('codeEditor').value = codeTemplates[lang];
+        }
+
+        // Run Code
+        function runCode() {
+            const code = document.getElementById('codeEditor').value;
+            const outputEl = document.getElementById('outputContent');
+            const statusEl = document.getElementById('executionStatus');
+            
+            outputEl.className = 'output-content';
+            statusEl.innerHTML = '<span class="loading"></span> Running...';
+            
+            // Simulate code execution (in production, send to backend for execution)
+            setTimeout(() => {
+                try {
+                    // Simple validation
+                    if (code.includes('pass') || code.includes('// Write your code here')) {
+                        throw new Error('Please implement the solution');
+                    }
                     
+                    outputEl.className = 'output-content success';
+                    outputEl.textContent = '✓ Code executed successfully!\n\nOutput:\n[0, 1]\n\nExecution time: 45ms';
+                    statusEl.innerHTML = '<i class="fas fa-check-circle" style="color: #10b981;"></i> Success';
+                } catch (error) {
+                    outputEl.className = 'output-content error';
+                    outputEl.textContent = `✗ Error:\n${error.message}`;
+                    statusEl.innerHTML = '<i class="fas fa-times-circle" style="color: #ef4444;"></i> Error';
+                }
+            }, 1500);
+        }
+
+        // Submit Code
+        function submitCode() {
+            const code = document.getElementById('codeEditor').value;
+            const outputEl = document.getElementById('outputContent');
+            const statusEl = document.getElementById('executionStatus');
+            const resultsEl = document.getElementById('testResults');
+            
+            outputEl.className = 'output-content';
+            statusEl.innerHTML = '<span class="loading"></span> Running test cases...';
+            
+            // Simulate test case execution
+            setTimeout(() => {
+                const passedTests = Math.floor(Math.random() * 2) + 2; // 2-3 tests pass
+                const totalTests = 3;
+                
+                let resultsHTML = '<div class="mt-3"><strong>Test Results:</strong></div>';
+                
+                for (let i = 0; i < totalTests; i++) {
+                    const passed = i < passedTests;
+                    resultsHTML += `
+                        <div class="test-case-result ${passed ? 'passed' : 'failed'}">
+                            <div>
+                                <strong>Test Case ${i + 1}</strong>
+                                <div style="font-size: 0.85rem; color: #888; margin-top: 5px;">
+                                    Input: nums = ${JSON.stringify(testCases[i].input.nums)}, target = ${testCases[i].input.target}
+                                </div>
+                            </div>
+                            <i class="fas fa-${passed ? 'check' : 'times'}-circle status-icon ${passed ? 'passed' : 'failed'}"></i>
+                        </div>
+                    `;
+                }
+                
+                resultsEl.innerHTML = resultsHTML;
+                
+                if (passedTests === totalTests) {
+                    outputEl.className = 'output-content success';
+                    outputEl.textContent = `✓ All test cases passed! (${totalTests}/${totalTests})\n\nYour solution has been submitted successfully!`;
+                    statusEl.innerHTML = '<i class="fas fa-trophy" style="color: #fbbf24;"></i> All tests passed!';
+                    
+                    // Show success modal
+                    setTimeout(() => {
+                        if (confirm('Congratulations! All test cases passed. Continue to HR Interview?')) {
+                            window.location.href = '/hr_interview';
+                        }
+                    }, 2000);
+                } else {
+                    outputEl.className = 'output-content error';
+                    outputEl.textContent = `✗ ${passedTests}/${totalTests} test cases passed\n\nSome test cases failed. Please review your solution.`;
+                    statusEl.innerHTML = `<i class="fas fa-exclamation-circle" style="color: #f59e0b;"></i> ${passedTests}/${totalTests} passed`;
+                }
+            }, 2000);
+        }
+
+        // Reset Code
+        function resetCode() {
+            if (confirm('Are you sure you want to reset your code?')) {
+                changeLanguage();
+                document.getElementById('outputContent').textContent = 'Click "Run Code" to execute your solution...';
+                document.getElementById('testResults').innerHTML = '';
+                document.getElementById('executionStatus').innerHTML = '';
+            }
+        }
+
+        // Initialize
+        window.onload = () => {
+            startTimer();
+        };
+
+        // Prevent accidental close
+        window.onbeforeunload = () => {
+            if (timeRemaining > 0) {
+                return "Test is in progress. Are you sure you want to leave?";
+            }
+        };
+    </script>
+</body>
+</html>

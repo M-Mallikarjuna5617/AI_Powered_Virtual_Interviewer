@@ -1,17 +1,744 @@
-{% extends "base.html" %}
-{% block title %}Aptitude Test{% endblock %}
-{% block header %}Aptitude Test{% endblock %}
-{% block subheader %}Test your logical reasoning and quantitative skills.{% endblock %}
-{% block content %}
-<div class="glass p-6 rounded-xl shadow">
-  <p class="mb-4 text-gray-700">Select a topic to start the test:</p>
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    {% for topic in topics %}
-    <a href="{{ url_for('dashboard.start_aptitude', topic_id=topic.id) }}" class="glass p-4 rounded shadow hover:shadow-lg transition transform hover:-translate-y-1">
-      <h3 class="font-semibold text-yellow-600">{{ topic.name }}</h3>
-      <p class="text-gray-600 mt-1">{{ topic.description }}</p>
-    </a>
-    {% endfor %}
-  </div>
-</div>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aptitude Test - AI Virtual Interviewer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        body {
+            background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .test-container {
+            max-width: 900px;
+            margin: 30px auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .timer-section {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .timer {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .timer.warning {
+            color: #fbbf24;
+            animation: pulse 1s infinite;
+        }
+
+        .timer.danger {
+            color: #fca5a5;
+            animation: pulse 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .progress-bar-custom {
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: white;
+            transition: width 1s linear;
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border-left: 5px solid #667eea;
+        }
+
+        .question-number {
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #1e293b;
+            margin: 15px 0;
+            line-height: 1.6;
+        }
+
+        .option-btn {
+            width: 100%;
+            text-align: left;
+            padding: 18px 25px;
+            margin: 10px 0;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .option-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+
+        .option-btn.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+            font-weight: 600;
+        }
+
+        .option-btn.correct {
+            border-color: var(--success);
+            background: #d1fae5;
+        }
+
+        .option-btn.incorrect {
+            border-color: var(--danger);
+            background: #fee2e2;
+        }
+
+        .option-label {
+            width: 35px;
+            height: 35px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .btn-primary-custom {
+            background: var(--primary);
+            border: none;
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .result-container {
+            display: none;
+        }
+
+        .result-container.show {
+            display: block;
+        }
+
+        .feedback-section {
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #e0e7ff;
+            color: #4f46e5;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .difficulty-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .difficulty-badge.easy {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .difficulty-badge.medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .difficulty-badge.hard {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .quit-btn {
+            background: white;
+            border: 2px solid #ef4444;
+            color: #ef4444;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quit-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn-prev, .btn-next {
+            flex: 1;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-prev {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-prev:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-next {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-next:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <!-- Timer Section -->
+        <div class="timer-section">
+            <div class="header-section">
+                <h4 class="mb-0"><i class="fas fa-building me-2"></i><span id="companyName">TCS</span> - Aptitude Test</h4>
+                <button class="quit-btn" onclick="confirmQuit()">
+                    <i class="fas fa-times me-2"></i>Quit Test
+                </button>
+            </div>
+            <div class="timer" id="timer">60:00</div>
+            <div class="progress-bar-custom">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="mt-3">
+                <span id="questionProgress">Question 1 of 10</span>
+            </div>
+        </div>
+
+        <!-- Question Section -->
+        <div id="questionSection">
+            <div class="question-card">
+                <span class="question-number">Question <span id="currentQ">1</span></span>
+                <span class="category-badge" id="categoryBadge">Logical Reasoning</span>
+                <span class="difficulty-badge medium" id="difficultyBadge">Medium</span>
+                
+                <p class="question-text" id="questionText">
+                    If in a certain code, GRAPE is written as 27354 and FOUR is written as 1687, how is GROUP written in that code?
+                </p>
+
+                <div id="optionsContainer">
+                    <button class="option-btn" onclick="selectOption(0)">
+                        <div class="option-label">A</div>
+                        <div class="option-text">27685</div>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(1)">
+                        <div class="option-label">B</div>
+                        <div class="option-text">27865</div>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(2)">
+                        <div class="option-label">C</div>
+                        <div class="option-text">27684</div>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(3)">
+                        <div class="option-label">D</div>
+                        <div class="option-text">27864</div>
+                    </button>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn-prev" onclick="previousQuestion()" id="prevBtn" disabled>
+                        <i class="fas fa-arrow-left me-2"></i>Previous
+                    </button>
+                    <button class="btn-next" onclick="nextQuestion()" id="nextBtn">
+                        Next<i class="fas fa-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Section -->
+        <div id="resultSection" class="result-container">
+            <div class="text-center mb-4">
+                <h2 class="mb-3">Test Completed! 🎉</h2>
+                <p class="text-muted">Here's your performance analysis</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="scoreValue">85</div>
+                    <div class="stat-label">Score (%)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value text-success" id="correctValue">8</div>
+                    <div class="stat-label">Correct Answers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value text-danger" id="incorrectValue">2</div>
+                    <div class="stat-label">Incorrect Answers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value text-info" id="timeValue">45:30</div>
+                    <div class="stat-label">Time Taken</div>
+                </div>
+            </div>
+
+            <div class="feedback-section">
+                <h5><i class="fas fa-chart-line me-2"></i>Performance Feedback</h5>
+                <div id="feedbackText">
+                    <p><strong>Excellent performance!</strong> You've demonstrated strong aptitude skills.</p>
+                    <ul>
+                        <li>Logical Reasoning: 90% - Outstanding!</li>
+                        <li>Quantitative Aptitude: 80% - Good performance</li>
+                        <li>Verbal Ability: 85% - Above average</li>
+                    </ul>
+                    <p><strong>Recommendations:</strong></p>
+                    <ul>
+                        <li>Practice more data interpretation questions</li>
+                        <li>Focus on time management in quantitative section</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <button class="btn-primary-custom me-3" onclick="location.href='/technical'">
+                    Continue to Technical Round<i class="fas fa-arrow-right ms-2"></i>
+                </button>
+                <button class="btn btn-outline-primary" onclick="retakeTest()">
+                    <i class="fas fa-redo me-2"></i>Retake Test
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test Configuration
+        let currentQuestionIndex = 0;
+        let selectedAnswers = [];
+        let timeRemaining = 3600; // 60 minutes in seconds
+        let timerInterval;
+        let testStartTime = Date.now();
+
+        // Sample Questions (In production, fetch from backend via AJAX)
+        const questions = [
+            {
+                id: 1,
+                category: "Logical Reasoning",
+                difficulty: "Medium",
+                question: "If in a certain code, GRAPE is written as 27354 and FOUR is written as 1687, how is GROUP written in that code?",
+                options: ["27685", "27865", "27684", "27864"],
+                correctAnswer: 3,
+                explanation: "G=2, R=7, O=8, U=6, P=4. So GROUP = 27864",
+                timeLimit: 60
+            },
+            {
+                id: 2,
+                category: "Number Series",
+                difficulty: "Easy",
+                question: "Find the next number in the series: 2, 6, 12, 20, 30, ?",
+                options: ["40", "42", "44", "46"],
+                correctAnswer: 1,
+                explanation: "Differences are 4, 6, 8, 10, 12. Next is 30 + 12 = 42",
+                timeLimit: 60
+            },
+            {
+                id: 3,
+                category: "Quantitative Aptitude",
+                difficulty: "Medium",
+                question: "A train travels 60 km in 45 minutes. What is its speed in km/hr?",
+                options: ["70 km/hr", "75 km/hr", "80 km/hr", "85 km/hr"],
+                correctAnswer: 2,
+                explanation: "Speed = Distance/Time = 60/(45/60) = 60/(3/4) = 80 km/hr",
+                timeLimit: 60
+            },
+            {
+                id: 4,
+                category: "Data Interpretation",
+                difficulty: "Hard",
+                question: "A company's profit increased from 20 lakhs to 25 lakhs. What is the percentage increase?",
+                options: ["20%", "25%", "30%", "15%"],
+                correctAnswer: 1,
+                explanation: "Increase = 5 lakhs. Percentage = (5/20) × 100 = 25%",
+                timeLimit: 60
+            },
+            {
+                id: 5,
+                category: "Verbal Ability",
+                difficulty: "Easy",
+                question: "Choose the correct synonym for AMBIGUOUS:",
+                options: ["Clear", "Vague", "Precise", "Definite"],
+                correctAnswer: 1,
+                explanation: "Ambiguous means unclear or having multiple meanings, similar to vague",
+                timeLimit: 45
+            },
+            {
+                id: 6,
+                category: "Logical Reasoning",
+                difficulty: "Medium",
+                question: "If all Bloops are Razzies and all Razzies are Lazzies, then all Bloops are definitely Lazzies.",
+                options: ["True", "False", "Cannot be determined", "None of the above"],
+                correctAnswer: 0,
+                explanation: "This is a valid syllogism. If A⊆B and B⊆C, then A⊆C",
+                timeLimit: 60
+            },
+            {
+                id: 7,
+                category: "Quantitative Aptitude",
+                difficulty: "Easy",
+                question: "What is 15% of 200?",
+                options: ["25", "30", "35", "40"],
+                correctAnswer: 1,
+                explanation: "15% of 200 = (15/100) × 200 = 30",
+                timeLimit: 45
+            },
+            {
+                id: 8,
+                category: "Number Series",
+                difficulty: "Hard",
+                question: "Find the missing number: 1, 4, 9, 16, ?, 36",
+                options: ["20", "25", "30", "32"],
+                correctAnswer: 1,
+                explanation: "These are perfect squares: 1², 2², 3², 4², 5², 6². Missing is 5² = 25",
+                timeLimit: 60
+            },
+            {
+                id: 9,
+                category: "Verbal Ability",
+                difficulty: "Medium",
+                question: "Identify the grammatically correct sentence:",
+                options: [
+                    "Neither he nor I am going",
+                    "Neither he nor I is going",
+                    "Neither he nor I are going",
+                    "Neither he nor I were going"
+                ],
+                correctAnswer: 0,
+                explanation: "With 'neither...nor', the verb agrees with the subject closer to it. 'I am' is correct",
+                timeLimit: 60
+            },
+            {
+                id: 10,
+                category: "Logical Reasoning",
+                difficulty: "Easy",
+                question: "If South-East becomes North and North becomes South-West, what will West become?",
+                options: ["North-East", "North-West", "South-East", "South"],
+                correctAnswer: 0,
+                explanation: "The entire compass is rotated 135° clockwise. West becomes North-East",
+                timeLimit: 60
+            }
+        ];
+
+        // Initialize Test
+        function initTest() {
+            loadQuestion(0);
+            startTimer();
+        }
+
+        // Load Question
+        function loadQuestion(index) {
+            if (index >= questions.length) {
+                showResults();
+                return;
+            }
+
+            const q = questions[index];
+            document.getElementById('currentQ').textContent = index + 1;
+            document.getElementById('questionProgress').textContent = `Question ${index + 1} of ${questions.length}`;
+            document.getElementById('categoryBadge').textContent = q.category;
+            document.getElementById('difficultyBadge').textContent = q.difficulty;
+            document.getElementById('difficultyBadge').className = `difficulty-badge ${q.difficulty.toLowerCase()}`;
+            document.getElementById('questionText').textContent = q.question;
+
+            // Load options
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            q.options.forEach((option, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                if (selectedAnswers[index] === i) btn.classList.add('selected');
+                btn.onclick = () => selectOption(i);
+                btn.innerHTML = `
+                    <div class="option-label">${String.fromCharCode(65 + i)}</div>
+                    <div class="option-text">${option}</div>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+
+            // Update buttons
+            document.getElementById('prevBtn').disabled = index === 0;
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.innerHTML = index === questions.length - 1 ? 
+                'Submit Test<i class="fas fa-check ms-2"></i>' : 
+                'Next<i class="fas fa-arrow-right ms-2"></i>';
+        }
+
+        // Select Option
+        function selectOption(optionIndex) {
+            selectedAnswers[currentQuestionIndex] = optionIndex;
+            const options = document.querySelectorAll('.option-btn');
+            options.forEach((btn, i) => {
+                btn.classList.toggle('selected', i === optionIndex);
+            });
+        }
+
+        // Next Question
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion(currentQuestionIndex);
+            } else {
+                showResults();
+            }
+        }
+
+        // Previous Question
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion(currentQuestionIndex);
+            }
+        }
+
+        // Timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    alert('Time is up!');
+                    showResults();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            const timerEl = document.getElementById('timer');
+            timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            // Change color based on time
+            timerEl.className = 'timer';
+            if (timeRemaining <= 300) timerEl.classList.add('danger');
+            else if (timeRemaining <= 600) timerEl.classList.add('warning');
+
+            // Update progress bar
+            const totalTime = 3600;
+            const progress = ((totalTime - timeRemaining) / totalTime) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        // Show Results
+        function showResults() {
+            clearInterval(timerInterval);
+            
+            // Calculate score
+            let correctCount = 0;
+            selectedAnswers.forEach((answer, index) => {
+                if (answer === questions[index].correctAnswer) {
+                    correctCount++;
+                }
+            });
+
+            const score = Math.round((correctCount / questions.length) * 100);
+            const timeTaken = Math.floor((Date.now() - testStartTime) / 1000);
+            const minutesTaken = Math.floor(timeTaken / 60);
+            const secondsTaken = timeTaken % 60;
+
+            // Update UI
+            document.getElementById('scoreValue').textContent = score;
+            document.getElementById('correctValue').textContent = correctCount;
+            document.getElementById('incorrectValue').textContent = questions.length - correctCount;
+            document.getElementById('timeValue').textContent = `${minutesTaken}:${secondsTaken.toString().padStart(2, '0')}`;
+
+            // Generate feedback
+            let feedback = '';
+            if (score >= 80) {
+                feedback = '<p><strong>🎉 Excellent performance!</strong> You\'ve demonstrated outstanding aptitude skills.</p>';
+            } else if (score >= 60) {
+                feedback = '<p><strong>👍 Good performance!</strong> You have a solid foundation in aptitude.</p>';
+            } else if (score >= 40) {
+                feedback = '<p><strong>📚 Fair performance.</strong> Focus on improving your weak areas.</p>';
+            } else {
+                feedback = '<p><strong>⚠️ Needs improvement.</strong> Consider more practice before the actual test.</p>';
+            }
+
+            feedback += `
+                <ul>
+                    <li>Accuracy: ${score}%</li>
+                    <li>Time Management: ${timeTaken < 2400 ? 'Excellent' : 'Needs improvement'}</li>
+                    <li>Questions Attempted: ${selectedAnswers.filter(a => a !== undefined).length}/${questions.length}</li>
+                </ul>
+                <p><strong>📌 Recommendations:</strong></p>
+                <ul>
+                    <li>Practice more ${score < 60 ? 'all categories' : 'challenging questions'}</li>
+                    <li>${timeTaken > 2700 ? 'Work on time management' : 'Maintain your pace'}</li>
+                    <li>Review incorrect answers carefully</li>
+                </ul>
+            `;
+
+            document.getElementById('feedbackText').innerHTML = feedback;
+
+            // Hide question section, show results
+            document.getElementById('questionSection').style.display = 'none';
+            document.getElementById('resultSection').classList.add('show');
+
+            // Save results to backend
+            saveTestResults({
+                score: score,
+                correct: correctCount,
+                incorrect: questions.length - correctCount,
+                timeTaken: timeTaken
+            });
+        }
+
+        // Save Results
+        function saveTestResults(results) {
+            fetch('/api/save-test-results', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    test_type: 'aptitude',
+                    company_id: 1,
+                    ...results
+                })
+            }).catch(err => console.log('Error saving results:', err));
+        }
+
+        // Retake Test
+        function retakeTest() {
+            location.reload();
+        }
+
+        // Quit Test
+        function confirmQuit() {
+            if (confirm('Are you sure you want to quit? Your progress will be lost.')) {
+                window.location.href = '/dashboard';
+            }
+        }
+
+        // Initialize on page load
+        window.onload = initTest;
+
+        // Prevent accidental page close
+        window.onbeforeunload = function() {
+            if (timeRemaining > 0 && currentQuestionIndex < questions.length) {
+                return "Test is in progress. Are you sure you want to leave?";
+            }
+        };
+    </script>
+</body>
+</html>

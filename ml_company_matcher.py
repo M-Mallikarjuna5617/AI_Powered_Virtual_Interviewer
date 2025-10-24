@@ -1,288 +1,253 @@
-import pandas as pd
-import numpy as np
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
-import pickle
-import os
+"""
+Advanced Company Recommendation Algorithm
+Uses multiple factors: CGPA, Skills, Backlogs, Resume Analysis
+"""
 
-# -------------------- Generate Training Data --------------------
-def generate_training_data():
-    """
-    Generate synthetic training data based on historical placement patterns.
-    In production, replace this with real historical data.
-    """
-    data = []
+import sqlite3
+import re
+from typing import List, Dict, Any
+
+DB_PATH = "users.db"
+
+class CompanyRecommendationEngine:
     
-    # Define company profiles and their typical candidate profiles
-    company_profiles = {
-        "Google": {"min_cgpa": 8.0, "preferred_skills": ["Python", "Machine Learning", "Algorithms"], "difficulty": "high"},
-        "Microsoft": {"min_cgpa": 7.5, "preferred_skills": ["C++", "Cloud", "Data Structures"], "difficulty": "high"},
-        "Amazon": {"min_cgpa": 7.5, "preferred_skills": ["Java", "AWS", "System Design"], "difficulty": "high"},
-        "TCS": {"min_cgpa": 6.0, "preferred_skills": ["Java", "SQL"], "difficulty": "low"},
-        "Infosys": {"min_cgpa": 6.5, "preferred_skills": ["Python", "Java"], "difficulty": "low"},
-        "Flipkart": {"min_cgpa": 7.0, "preferred_skills": ["Java", "System Design"], "difficulty": "medium"},
-        "Razorpay": {"min_cgpa": 7.2, "preferred_skills": ["Python", "API"], "difficulty": "medium"},
-    }
-    
-    # Generate 500+ training samples
-    for _ in range(500):
-        cgpa = round(np.random.uniform(5.5, 9.5), 2)
-        num_skills = np.random.randint(2, 8)
-        has_ml = np.random.choice([0, 1], p=[0.6, 0.4])
-        has_dsa = np.random.choice([0, 1], p=[0.4, 0.6])
-        has_cloud = np.random.choice([0, 1], p=[0.5, 0.5])
+    def __init__(self, student_email: str):
+        self.student_email = student_email
+        self.conn = sqlite3.connect(DB_PATH)
+        self.c = self.conn.cursor()
         
-        for company, profile in company_profiles.items():
-            # Calculate match probability based on CGPA and skills
-            cgpa_match = 1 if cgpa >= profile["min_cgpa"] else 0
-            skill_bonus = num_skills / 10
-            
-            # Calculate selection probability
-            if profile["difficulty"] == "high":
-                base_prob = 0.2 if cgpa >= 8.0 else 0.05
-            elif profile["difficulty"] == "medium":
-                base_prob = 0.4 if cgpa >= 7.0 else 0.15
-            else:
-                base_prob = 0.7 if cgpa >= 6.0 else 0.3
-            
-            selection_prob = min(base_prob + skill_bonus + (has_dsa * 0.15) + (has_ml * 0.1), 0.95)
-            selected = np.random.choice([0, 1], p=[1-selection_prob, selection_prob])
-            
-            data.append({
-                "company": company,
-                "cgpa": cgpa,
-                "num_skills": num_skills,
-                "has_ml": has_ml,
-                "has_dsa": has_dsa,
-                "has_cloud": has_cloud,
-                "selected": selected
-            })
-    
-    return pd.DataFrame(data)
-
-
-# -------------------- Train Models --------------------
-def train_models():
-    """Train Decision Tree and Random Forest models."""
-    print("Generating training data...")
-    df = generate_training_data()
-    
-    # Encode company names
-    le = LabelEncoder()
-    df['company_encoded'] = le.fit_transform(df['company'])
-    
-    # Features and target
-    X = df[['company_encoded', 'cgpa', 'num_skills', 'has_ml', 'has_dsa', 'has_cloud']]
-    y = df['selected']
-    
-    # Split data
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    
-    # Train Decision Tree
-    print("Training Decision Tree...")
-    dt_model = DecisionTreeClassifier(
-        max_depth=10,
-        min_samples_split=10,
-        min_samples_leaf=5,
-        random_state=42
-    )
-    dt_model.fit(X_train, y_train)
-    dt_accuracy = dt_model.score(X_test, y_test)
-    print(f"Decision Tree Accuracy: {dt_accuracy:.2%}")
-    
-    # Train Random Forest
-    print("Training Random Forest...")
-    rf_model = RandomForestClassifier(
-        n_estimators=100,
-        max_depth=12,
-        min_samples_split=10,
-        min_samples_leaf=5,
-        random_state=42,
-        n_jobs=-1
-    )
-    rf_model.fit(X_train, y_train)
-    rf_accuracy = rf_model.score(X_test, y_test)
-    print(f"Random Forest Accuracy: {rf_accuracy:.2%}")
-    
-    # Save models
-    os.makedirs('models', exist_ok=True)
-    with open('models/dt_model.pkl', 'wb') as f:
-        pickle.dump(dt_model, f)
-    with open('models/rf_model.pkl', 'wb') as f:
-        pickle.dump(rf_model, f)
-    with open('models/label_encoder.pkl', 'wb') as f:
-        pickle.dump(le, f)
-    
-    print("✅ Models saved successfully!")
-    return dt_model, rf_model, le
-
-
-# -------------------- Load Models --------------------
-def load_models():
-    """Load trained models."""
-    try:
-        with open('models/dt_model.pkl', 'rb') as f:
-            dt_model = pickle.load(f)
-        with open('models/rf_model.pkl', 'rb') as f:
-            rf_model = pickle.load(f)
-        with open('models/label_encoder.pkl', 'rb') as f:
-            le = pickle.load(f)
-        return dt_model, rf_model, le
-    except FileNotFoundError:
-        print("Models not found. Training new models...")
-        return train_models()
-
-
-# -------------------- Extract Features from Student --------------------
-def extract_student_features(student_skills, student_cgpa):
-    """Extract ML features from student profile."""
-    skills_lower = [s.strip().lower() for s in student_skills.split(",")]
-    
-    features = {
-        "cgpa": student_cgpa,
-        "num_skills": len(skills_lower),
-        "has_ml": int(any(skill in skills_lower for skill in ["machine learning", "ml", "deep learning", "ai"])),
-        "has_dsa": int(any(skill in skills_lower for skill in ["data structures", "algorithms", "dsa"])),
-        "has_cloud": int(any(skill in skills_lower for skill in ["aws", "azure", "cloud", "docker", "kubernetes"]))
-    }
-    
-    return features
-
-
-# -------------------- ML-Based Company Recommendation --------------------
-def ml_recommend_companies(student_email, model_type="random_forest"):
-    """
-    Recommend companies using ML models.
-    
-    Args:
-        student_email: Student's email
-        model_type: "decision_tree" or "random_forest"
-    
-    Returns:
-        List of recommended companies with selection probability
-    """
-    import sqlite3
-    
-    # Load models
-    dt_model, rf_model, le = load_models()
-    model = rf_model if model_type == "random_forest" else dt_model
-    
-    # Get student data
-    conn = sqlite3.connect("users.db")
-    c = conn.cursor()
-    c.execute("SELECT * FROM students WHERE email=?", (student_email,))
-    student = c.fetchone()
-    
-    if not student:
-        conn.close()
-        return []
-    
-    _, email, name, cgpa, grad_year, skills = student
-    
-    # Extract features
-    student_features = extract_student_features(skills, cgpa)
-    
-    # Get all companies
-    c.execute("SELECT * FROM companies WHERE graduation_year=?", (grad_year,))
-    companies = c.fetchall()
-    conn.close()
-    
-    recommendations = []
-    
-    for comp in companies:
-        comp_id, cname, min_cgpa, req_skills, comp_year, role, package, location, industry = comp
+    def get_student_profile(self) -> Dict[str, Any]:
+        """Get complete student profile"""
+        self.c.execute("SELECT * FROM students WHERE email=?", (self.student_email,))
+        student = self.c.fetchone()
         
-        # Check if company exists in training data
-        try:
-            company_encoded = le.transform([cname])[0]
-        except:
-            # If company not in training data, use basic filtering
-            if cgpa >= min_cgpa:
-                student_skills_set = set([s.strip().lower() for s in skills.split(",")])
-                required_skills_set = set([s.strip().lower() for s in (req_skills or "").split(",")])
-                matched_skills = list(student_skills_set.intersection(required_skills_set))
+        if not student:
+            return None
+        
+        return {
+            "email": student[1],
+            "name": student[2],
+            "cgpa": student[3] or 6.0,
+            "graduation_year": student[4] or 2025,
+            "skills": student[5] or "",
+            "active_backlogs": 0  # Can be extended to track from DB
+        }
+    
+    def calculate_skill_match(self, student_skills: str, required_skills: str) -> Dict[str, Any]:
+        """Calculate detailed skill matching score"""
+        student_skill_set = set([s.strip().lower() for s in student_skills.split(",") if s.strip()])
+        required_skill_set = set([s.strip().lower() for s in required_skills.split(",") if s.strip()])
+        
+        if not required_skill_set:
+            return {"score": 50.0, "matched": [], "missing": []}
+        
+        matched_skills = student_skill_set.intersection(required_skill_set)
+        missing_skills = required_skill_set - student_skill_set
+        
+        match_percentage = (len(matched_skills) / len(required_skill_set)) * 100
+        
+        return {
+            "score": round(match_percentage, 1),
+            "matched": list(matched_skills),
+            "missing": list(missing_skills),
+            "total_required": len(required_skill_set),
+            "total_matched": len(matched_skills)
+        }
+    
+    def calculate_eligibility_score(self, student: Dict, company: Dict) -> Dict[str, Any]:
+        """
+        Calculate comprehensive eligibility score
+        Factors: CGPA (40%), Skills (40%), Backlogs (20%)
+        """
+        # CGPA Score (40%)
+        cgpa_score = 0
+        if student["cgpa"] >= company["min_cgpa"]:
+            cgpa_diff = student["cgpa"] - company["min_cgpa"]
+            cgpa_score = min(40, 25 + (cgpa_diff * 5))  # Base 25, bonus for higher CGPA
+        
+        # Skills Score (40%)
+        skill_match = self.calculate_skill_match(student["skills"], company["required_skills"])
+        skills_score = (skill_match["score"] / 100) * 40
+        
+        # Backlog Score (20%)
+        backlog_score = 0
+        if student.get("active_backlogs", 0) <= company.get("active_backlogs", 0):
+            backlog_score = 20
+        elif student.get("active_backlogs", 0) <= company.get("active_backlogs", 0) + 1:
+            backlog_score = 10
+        
+        total_score = cgpa_score + skills_score + backlog_score
+        
+        return {
+            "total_score": round(total_score, 1),
+            "cgpa_score": round(cgpa_score, 1),
+            "skills_score": round(skills_score, 1),
+            "backlog_score": round(backlog_score, 1),
+            "skill_match": skill_match,
+            "is_eligible": total_score >= 50 and student["cgpa"] >= company["min_cgpa"]
+        }
+    
+    def get_recommendations(self) -> List[Dict[str, Any]]:
+        """Get ranked company recommendations"""
+        student = self.get_student_profile()
+        
+        if not student:
+            return []
+        
+        # Get all companies for student's graduation year
+        self.c.execute("""
+            SELECT * FROM companies 
+            WHERE graduation_year = ?
+            ORDER BY min_cgpa ASC
+        """, (student["graduation_year"],))
+        
+        companies = self.c.fetchall()
+        recommendations = []
+        
+        for comp in companies:
+            company_data = {
+                "id": comp[0],
+                "name": comp[1],
+                "min_cgpa": comp[2],
+                "required_skills": comp[3] or "",
+                "graduation_year": comp[4],
+                "role": comp[5],
+                "package_offered": comp[6],
+                "location": comp[7],
+                "industry": comp[8],
+                "eligibility_criteria": comp[9],
+                "selection_process": comp[10],
+                "no_of_rounds": comp[11],
+                "active_backlogs": comp[12] or 0,
+                "company_description": comp[13],
+                "last_visited_year": comp[14]
+            }
+            
+            # Calculate eligibility
+            eligibility = self.calculate_eligibility_score(student, company_data)
+            
+            if eligibility["is_eligible"]:
+                # Determine recommendation strength
+                score = eligibility["total_score"]
+                if score >= 80:
+                    strength = "Excellent Match"
+                    strength_class = "success"
+                elif score >= 65:
+                    strength = "Good Match"
+                    strength_class = "primary"
+                elif score >= 50:
+                    strength = "Fair Match"
+                    strength_class = "warning"
+                else:
+                    continue  # Skip companies below 50% match
                 
                 recommendations.append({
-                    "id": comp_id,
-                    "name": cname,
-                    "role": role,
-                    "package": package,
-                    "location": location,
-                    "industry": industry,
-                    "min_cgpa": min_cgpa,
-                    "required_skills": req_skills,
-                    "matched_skills": matched_skills,
-                    "selection_probability": 50.0,  # Default probability
-                    "recommendation_type": "rule_based"
+                    **company_data,
+                    "eligibility_score": eligibility["total_score"],
+                    "cgpa_score": eligibility["cgpa_score"],
+                    "skills_score": eligibility["skills_score"],
+                    "backlog_score": eligibility["backlog_score"],
+                    "skill_match_percentage": eligibility["skill_match"]["score"],
+                    "matched_skills": eligibility["skill_match"]["matched"],
+                    "missing_skills": eligibility["skill_match"]["missing"],
+                    "recommendation_strength": strength,
+                    "strength_class": strength_class
                 })
-            continue
         
-        # Prepare features for prediction
-        X = [[
-            company_encoded,
-            student_features["cgpa"],
-            student_features["num_skills"],
-            student_features["has_ml"],
-            student_features["has_dsa"],
-            student_features["has_cloud"]
-        ]]
+        # Sort by eligibility score
+        recommendations.sort(key=lambda x: x["eligibility_score"], reverse=True)
         
-        # Predict selection probability
-        if model_type == "random_forest":
-            prob = model.predict_proba(X)[0][1]  # Probability of class 1 (selected)
-        else:
-            prob = model.predict_proba(X)[0][1] if hasattr(model, 'predict_proba') else model.predict(X)[0]
-        
-        # Only recommend if probability > 30%
-        if prob >= 0.3:
-            # Get matched skills for display
-            student_skills_set = set([s.strip().lower() for s in skills.split(",")])
-            required_skills_set = set([s.strip().lower() for s in (req_skills or "").split(",")])
-            matched_skills = list(student_skills_set.intersection(required_skills_set))
-            
-            recommendations.append({
-                "id": comp_id,
-                "name": cname,
-                "role": role,
-                "package": package,
-                "location": location,
-                "industry": industry,
-                "min_cgpa": min_cgpa,
-                "required_skills": req_skills,
-                "matched_skills": matched_skills,
-                "selection_probability": round(prob * 100, 1),
-                "recommendation_type": model_type,
-                "confidence": "high" if prob >= 0.7 else "medium" if prob >= 0.5 else "low"
-            })
+        self.conn.close()
+        return recommendations
     
-    # Sort by selection probability
-    recommendations.sort(key=lambda x: x['selection_probability'], reverse=True)
-    
-    return recommendations
+    def get_company_statistics(self, company_id: int) -> Dict[str, Any]:
+        """Get statistics for a specific company"""
+        self.c.execute("""
+            SELECT 
+                COUNT(*) as total_attempts,
+                AVG(score) as avg_score,
+                test_type
+            FROM test_history
+            WHERE company_id = ?
+            GROUP BY test_type
+        """, (company_id,))
+        
+        stats = {}
+        for row in self.c.fetchall():
+            stats[row[2]] = {
+                "total_attempts": row[0],
+                "average_score": round(row[1], 2) if row[1] else 0
+            }
+        
+        return stats
 
 
-# -------------------- Get Feature Importance --------------------
-def get_feature_importance():
-    """Get feature importance from Random Forest model."""
-    dt_model, rf_model, le = load_models()
+def recommend_companies_for_student(student_email: str) -> List[Dict[str, Any]]:
+    """Main function to get company recommendations"""
+    engine = CompanyRecommendationEngine(student_email)
+    return engine.get_recommendations()
+
+
+# Alternative: ML-Based Recommendation (if models are trained)
+def ml_recommend_companies(student_email: str):
+    """ML-based recommendation using trained models"""
+    try:
+        from ml_company_matcher import ml_recommend_companies as ml_rec
+        return ml_rec(student_email, model_type="random_forest")
+    except Exception as e:
+        print(f"ML recommendation failed: {e}")
+        return recommend_companies_for_student(student_email)
+
+
+def get_hybrid_recommendations(student_email: str) -> List[Dict[str, Any]]:
+    """
+    Hybrid approach: Combine rule-based and ML recommendations
+    """
+    # Get rule-based recommendations
+    rule_based = recommend_companies_for_student(student_email)
     
-    feature_names = ['company', 'cgpa', 'num_skills', 'has_ml', 'has_dsa', 'has_cloud']
-    importances = rf_model.feature_importances_
-    
-    importance_dict = {}
-    for name, importance in zip(feature_names, importances):
-        importance_dict[name] = round(importance, 3)
-    
-    return importance_dict
+    # Try ML recommendations
+    try:
+        from ml_company_matcher import ml_recommend_companies as ml_rec
+        ml_based = ml_rec(student_email, model_type="random_forest")
+        
+        # Merge results - prioritize ML scores but keep rule-based details
+        company_map = {comp["id"]: comp for comp in rule_based}
+        
+        for ml_comp in ml_based:
+            comp_id = ml_comp["id"]
+            if comp_id in company_map:
+                # Combine scores: 60% ML, 40% rule-based
+                ml_score = ml_comp.get("selection_probability", 50)
+                rule_score = company_map[comp_id].get("eligibility_score", 50)
+                combined_score = (ml_score * 0.6) + (rule_score * 0.4)
+                
+                company_map[comp_id]["final_score"] = round(combined_score, 1)
+                company_map[comp_id]["ml_probability"] = ml_score
+                company_map[comp_id]["recommendation_type"] = "hybrid"
+        
+        # Sort by final score
+        results = sorted(company_map.values(), key=lambda x: x.get("final_score", x.get("eligibility_score", 0)), reverse=True)
+        return results
+        
+    except:
+        # Fallback to rule-based only
+        return rule_based
 
 
 if __name__ == "__main__":
-    # Train models
-    train_models()
+    # Test the recommendation engine
+    test_email = "test@student.com"
+    recommendations = recommend_companies_for_student(test_email)
     
-    # Show feature importance
-    print("\n📊 Feature Importance:")
-    for feature, importance in get_feature_importance().items():
-        print(f"  {feature}: {importance}")
+    print(f"\n📊 Company Recommendations for {test_email}")
+    print("=" * 80)
+    
+    for idx, comp in enumerate(recommendations, 1):
+        print(f"\n{idx}. {comp['name']} - {comp['role']}")
+        print(f"   Package: {comp['package_offered']}")
+        print(f"   Location: {comp['location']}")
+        print(f"   Eligibility Score: {comp['eligibility_score']}/100")
+        print(f"   Skill Match: {comp['skill_match_percentage']}%")
+        print(f"   Recommendation: {comp['recommendation_strength']}")
+        print(f"   Matched Skills: {', '.join(comp['matched_skills'][:5])}")
