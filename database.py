@@ -58,6 +58,118 @@ def init_db():
         )
     """)
 
+    # Technical questions table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS technical_questions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            company_id INTEGER,
+            domain TEXT NOT NULL,
+            question TEXT NOT NULL,
+            test_cases TEXT,
+            difficulty TEXT DEFAULT 'medium',
+            year INTEGER,
+            language TEXT DEFAULT 'python',
+            FOREIGN KEY(company_id) REFERENCES companies(id)
+        )
+    """)
+
+    # GD topics table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS gd_topics (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            company_id INTEGER,
+            topic TEXT NOT NULL,
+            description TEXT,
+            year INTEGER,
+            difficulty TEXT DEFAULT 'medium',
+            FOREIGN KEY(company_id) REFERENCES companies(id)
+        )
+    """)
+
+    # HR questions table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS hr_questions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            company_id INTEGER,
+            question TEXT NOT NULL,
+            category TEXT,
+            difficulty TEXT DEFAULT 'medium',
+            year INTEGER,
+            FOREIGN KEY(company_id) REFERENCES companies(id)
+        )
+    """)
+
+    # Technical interview results
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS technical_results (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_email TEXT NOT NULL,
+            company_name TEXT,
+            question_id INTEGER,
+            code_submitted TEXT,
+            language TEXT,
+            test_results TEXT,
+            score REAL,
+            execution_time REAL,
+            submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(question_id) REFERENCES technical_questions(id)
+        )
+    """)
+
+    # GD results
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS gd_results (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_email TEXT NOT NULL,
+            company_name TEXT,
+            topic_id INTEGER,
+            transcript TEXT,
+            fluency_score REAL,
+            clarity_score REAL,
+            confidence_score REAL,
+            overall_score REAL,
+            feedback TEXT,
+            submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(topic_id) REFERENCES gd_topics(id)
+        )
+    """)
+
+    # HR interview results
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS hr_results (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_email TEXT NOT NULL,
+            company_name TEXT,
+            question_id INTEGER,
+            answer TEXT,
+            clarity_score REAL,
+            relevance_score REAL,
+            confidence_score REAL,
+            overall_score REAL,
+            feedback TEXT,
+            submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(question_id) REFERENCES hr_questions(id)
+        )
+    """)
+
+    # Comprehensive feedback reports
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS feedback_reports (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_email TEXT NOT NULL,
+            company_name TEXT,
+            aptitude_score REAL,
+            technical_score REAL,
+            gd_score REAL,
+            hr_score REAL,
+            overall_score REAL,
+            strengths TEXT,
+            improvements TEXT,
+            recommendations TEXT,
+            generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
     conn.commit()
     conn.close()
 
