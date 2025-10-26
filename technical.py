@@ -271,16 +271,13 @@ def submit_technical_interview():
     try:
         data = request.json
         email = session["email"]
-        answers = data.get('answers', [])
+        solutions = data.get('solutions', [])  # List of {question_id, code, test_passed}
         
         # Calculate overall score
-        total_score = 0
-        total_questions = len(answers)
+        total_questions = len(solutions)
+        total_passed = sum(1 for sol in solutions if sol.get('test_passed', False))
         
-        for answer in answers:
-            total_score += answer.get('score', 0)
-        
-        overall_score = (total_score / total_questions) if total_questions > 0 else 0
+        overall_score = (total_passed / total_questions * 100) if total_questions > 0 else 0
         
         # Get company name
         conn = sqlite3.connect(DB_PATH)
@@ -296,15 +293,31 @@ def submit_technical_interview():
         company_result = c.fetchone()
         company_name = company_result[0] if company_result else "General"
         
-        # Generate feedback
-        feedback = generate_technical_feedback(answers, overall_score)
+        # Save each solution
+        for solution in solutions:
+            c.execute("""
+                INSERT INTO technical_results 
+                (student_email, company_name, question_id, code_submitted, language, 
+                 test_results, score, execution_time)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                email, company_name, solution.get('question_id'),
+                solution.get('code', ''), solution.get('language', 'python'),
+                json.dumps(solution.get('test_results', [])),
+                solution.get('score', 0), solution.get('execution_time', 0)
+            ))
         
+        conn.commit()
         conn.close()
+        
+        # Generate feedback
+        feedback = generate_technical_feedback(solutions, overall_score)
         
         return jsonify({
             "success": True,
             "overall_score": round(overall_score, 2),
             "total_questions": total_questions,
+            "passed_tests": total_passed,
             "feedback": feedback,
             "company": company_name
         })
@@ -313,7 +326,7 @@ def submit_technical_interview():
         print(f"Error submitting technical interview: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
-def generate_technical_feedback(answers, overall_score):
+def generate_technical_feedback(solutions, overall_score):
     """Generate personalized feedback based on technical performance"""
     feedback = {
         "overall_score": overall_score,
@@ -325,31 +338,30 @@ def generate_technical_feedback(answers, overall_score):
     if overall_score >= 80:
         feedback["strengths"].append("Excellent problem-solving skills")
         feedback["strengths"].append("Strong coding fundamentals")
+        feedback["strengths"].append("All test cases passed")
         feedback["recommendations"].append("Ready for senior technical roles")
+        feedback["recommendations"].append("Consider practicing advanced algorithms")
     elif overall_score >= 60:
         feedback["strengths"].append("Good understanding of algorithms")
         feedback["improvements"].append("Practice more complex data structures")
         feedback["recommendations"].append("Focus on time complexity optimization")
+        feedback["recommendations"].append("Review edge cases")
     else:
         feedback["improvements"].append("Strengthen basic programming concepts")
         feedback["improvements"].append("Practice more coding problems")
         feedback["recommendations"].append("Consider taking programming courses")
+        feedback["recommendations"].append("Start with easy problems on LeetCode")
     
-    # Analyze specific domains
-    domain_scores = {}
-    for answer in answers:
-        domain = answer.get('domain', 'Programming')
-        score = answer.get('score', 0)
-        if domain not in domain_scores:
-            domain_scores[domain] = []
-        domain_scores[domain].append(score)
+    # Analyze code quality
+    total_tests = sum(len(s.get('test_results', [])) for s in solutions)
+    passed_tests = sum(s.get('test_passed', 0) for s in solutions)
     
-    for domain, scores in domain_scores.items():
-        avg_score = sum(scores) / len(scores)
-        if avg_score < 50:
-            feedback["improvements"].append(f"Improve {domain} skills")
-        elif avg_score > 80:
-            feedback["strengths"].append(f"Strong {domain} knowledge")
+    if total_tests > 0:
+        test_pass_rate = (passed_tests / total_tests * 100)
+        if test_pass_rate >= 90:
+            feedback["strengths"].append("High test case pass rate")
+        elif test_pass_rate < 50:
+            feedback["improvements"].append("Focus on passing all test cases")
     
     return feedback
 

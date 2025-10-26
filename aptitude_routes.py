@@ -134,36 +134,55 @@ def get_test_questions(topic):
         selected_company = get_selected_company(email)
         company_name = selected_company['name'] if selected_company else "General"
         
-        # Get student's performance history for adaptive questions
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         
+        # Get questions from question_bank table
         c.execute("""
-            SELECT topic, subtopic, accuracy 
-            FROM student_analytics 
-            WHERE student_email = ?
-        """, (email,))
+            SELECT id, question_text, option_a, option_b, option_c, option_d, 
+                   correct_answer, explanation, difficulty, subtopic, time_limit
+            FROM question_bank 
+            LIMIT 30
+        """)
         
-        performance_history = [
-            {"topic": row[0], "subtopic": row[1], "accuracy": row[2]}
-            for row in c.fetchall()
-        ]
+        rows = c.fetchall()
+        questions = []
+        for row in rows:
+            questions.append({
+                "id": row[0],
+                "question": row[1],
+                "options": [row[2], row[3], row[4], row[5]],
+                "correct_answer": row[6],
+                "explanation": row[7],
+                "difficulty": row[8],
+                "subtopic": row[9],
+                "time_limit": row[10]
+            })
+        
         conn.close()
         
-        # Get adaptive or company-specific questions
-        if performance_history and len(performance_history) > 5:
-            questions = get_adaptive_questions(email, company_name, performance_history)
-        else:
-            questions = get_questions_for_company(company_name, num_questions=20)
+        # Shuffle and select 28 questions
+        import random
+        if len(questions) > 28:
+            questions = random.sample(questions, 28)
         
-        # Remove correct answers from response
+        # Prepare response (without correct answers)
+        response_questions = []
         for q in questions:
-            q.pop('correct_answer', None)
-            q.pop('explanation', None)
+            response_questions.append({
+                "id": q["id"],
+                "question": q["question"],
+                "options": q["options"],
+                "correct_answer": q["correct_answer"],  # Keep for validation
+                "explanation": q["explanation"],
+                "difficulty": q["difficulty"],
+                "time_limit": q["time_limit"]
+            })
         
         return jsonify({
             "success": True,
-            "questions": questions,
+            "questions": response_questions,
+            "total_questions": len(response_questions),
             "company": company_name
         })
     
@@ -228,88 +247,187 @@ def submit_answer():
 
 @aptitude_bp.route("/complete-test", methods=["POST"])
 def complete_test():
-    """Complete test and calculate results"""
+    """Complete test and save results"""
     if "email" not in session:
         return jsonify({"success": False, "error": "Not authenticated"}), 401
     
     try:
         data = request.json
-        attempt_id = data.get('attempt_id')
+        email = session["email"]
+        responses = data.get('responses', [])  # List of {question_id, selected_answer, time_spent}
+        time_taken = data.get('time_taken', 0)
+        
+        # Get selected company
+        selected_company = get_selected_company(email)
+        company_name = selected_company['name'] if selected_company else "General"
+        
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        
+        # Create aptitude attempt
+        c.execute("""
+            INSERT INTO aptitude_attempts (student_email, company_name, total_questions, time_taken)
+            VALUES (?, ?, ?, ?)
+        """, (email, company_name, len(responses), time_taken))
+        
+        attempt_id = c.lastrowid
+        
+        # Calculate score and save responses
+        correct_count = 0
+        for resp in responses:
+            question_id = resp.get('question_id')
+            selected = resp.get('selected_answer')
+            time_spent = resp.get('time_spent', 0)
+            
+            # Get correct answer
+            c.execute("""
+                SELECT correct_answer, question_text FROM question_bank WHERE id = ?
+            """, (question_id,))
+            
+            result = c.fetchone()
+            if result:
+                correct_answer = result[0]
+                question_text = result[1]
+                is_correct = (selected == correct_answer)
+                
+                if is_correct:
+                    correct_count += 1
+                
+                # Save response
+                c.execute("""
+                    INSERT INTO aptitude_responses 
+                    (attempt_id, question_id, question_text, selected_answer, correct_answer, is_correct, time_spent)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                """, (attempt_id, question_id, question_text, selected, correct_answer, is_correct, time_spent))
+        
+        # Calculate score
+        score = (correct_count / len(responses) * 100) if responses else 0
+        
+        # Update attempt with score
+        c.execute("""
+            UPDATE aptitude_attempts 
+            SET correct_answers = ?, score = ?
+            WHERE id = ?
+        """, (correct_count, score, attempt_id))
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({
+            "success": True,
+            "message": "Test completed successfully",
+            "score": round(score, 2),
+            "correct_answers": correct_count,
+            "total_questions": len(responses),
+            "attempt_id": attempt_id
+        })
+
+    except Exception as e:
+        print(f"Error completing test: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@aptitude_bp.route("/history", methods=["GET"])
+def get_aptitude_history():
+    """Get student's aptitude test history"""
+    if "email" not in session:
+        return jsonify({"success": False, "error": "Not authenticated"}), 401
+    
+    try:
         email = session["email"]
         
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         
-        # Calculate results
         c.execute("""
-            SELECT COUNT(*), SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END)
-            FROM test_responses
-            WHERE attempt_id = ?
-        """, (attempt_id,))
+            SELECT id, company_name, score, correct_answers, total_questions, 
+                   time_taken, completed_at
+            FROM aptitude_attempts
+            WHERE student_email = ?
+            ORDER BY completed_at DESC
+            LIMIT 10
+        """, (email,))
         
-        total, correct = c.fetchone()
-        score = (correct / total * 100) if total > 0 else 0
-        
-        # Update attempt
-        c.execute("""
-            UPDATE test_attempts 
-            SET end_time = CURRENT_TIMESTAMP,
-                correct_answers = ?,
-                score = ?,
-                status = 'completed'
-            WHERE id = ?
-        """, (correct, score, attempt_id))
-        
-        # Get subtopic-wise performance
-        c.execute("""
-            SELECT subtopic, difficulty,
-                   COUNT(*) as total,
-                   SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END) as correct
-            FROM test_responses
-            WHERE attempt_id = ?
-            GROUP BY subtopic, difficulty
-        """, (attempt_id,))
-        
-        subtopic_performance = []
+        history = []
         for row in c.fetchall():
-            subtopic, difficulty, total, correct = row
-            accuracy = (correct / total * 100) if total > 0 else 0
-            subtopic_performance.append({
-                "subtopic": subtopic,
-                "difficulty": difficulty,
-                "total": total,
-                "correct": correct,
-                "accuracy": accuracy,
-                "needs_improvement": accuracy < 60
+            history.append({
+                "attempt_id": row[0],
+                "company": row[1],
+                "score": row[2],
+                "correct_answers": row[3],
+                "total_questions": row[4],
+                "time_taken": row[5],
+                "completed_at": row[6]
             })
-            
-                        # Update analytics
-            c.execute("""
-                INSERT INTO student_analytics (student_email, topic, subtopic, total_attempted, correct_count, accuracy, last_updated)
-                VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-                ON CONFLICT(student_email, topic, subtopic)
-                DO UPDATE SET
-                    total_attempted = total_attempted + excluded.total_attempted,
-                    correct_count = correct_count + excluded.correct_count,
-                    accuracy = ROUND(
-                        CAST(correct_count + excluded.correct_count AS REAL) /
-                        CAST(total_attempted + excluded.total_attempted AS REAL) * 100, 2
-                    ),
-                    last_updated = CURRENT_TIMESTAMP
-            """, (email, "Aptitude", subtopic, total, correct, accuracy))
-
-        conn.commit()
+        
         conn.close()
-
+        
         return jsonify({
             "success": True,
-            "message": "Test completed successfully",
-            "score": score,
-            "correct_answers": correct,
-            "total_questions": total,
-            "subtopic_performance": subtopic_performance
+            "history": history
         })
-
+    
     except Exception as e:
-        print(f"Error completing test: {e}")
+        print(f"Error getting aptitude history: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@aptitude_bp.route("/attempt/<attempt_id>", methods=["GET"])
+def get_attempt_details(attempt_id):
+    """Get detailed results for an aptitude attempt"""
+    if "email" not in session:
+        return jsonify({"success": False, "error": "Not authenticated"}), 401
+    
+    try:
+        email = session["email"]
+        
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        
+        # Get attempt info
+        c.execute("""
+            SELECT company_name, score, correct_answers, total_questions, 
+                   time_taken, completed_at
+            FROM aptitude_attempts
+            WHERE id = ? AND student_email = ?
+        """, (attempt_id, email))
+        
+        attempt = c.fetchone()
+        if not attempt:
+            return jsonify({"success": False, "error": "Attempt not found"}), 404
+        
+        # Get responses
+        c.execute("""
+            SELECT question_text, selected_answer, correct_answer, is_correct, time_spent
+            FROM aptitude_responses
+            WHERE attempt_id = ?
+        """, (attempt_id,))
+        
+        responses = []
+        for row in c.fetchall():
+            responses.append({
+                "question": row[0],
+                "selected": row[1],
+                "correct": row[2],
+                "is_correct": row[3],
+                "time_spent": row[4]
+            })
+        
+        conn.close()
+        
+        return jsonify({
+            "success": True,
+            "attempt": {
+                "company": attempt[0],
+                "score": attempt[1],
+                "correct_answers": attempt[2],
+                "total_questions": attempt[3],
+                "time_taken": attempt[4],
+                "completed_at": attempt[5]
+            },
+            "responses": responses
+        })
+    
+    except Exception as e:
+        print(f"Error getting attempt details: {e}")
         return jsonify({"success": False, "error": str(e)}), 500

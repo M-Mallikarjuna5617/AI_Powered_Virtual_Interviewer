@@ -410,11 +410,11 @@
             </div>
 
             <div class="text-center mt-4">
-                <button class="btn-primary-custom me-3" onclick="location.href='/technical'">
-                    Continue to Technical Round<i class="fas fa-arrow-right ms-2"></i>
+                <button class="btn-primary-custom me-3" onclick="window.location.href='/dashboard'">
+                    <i class="fas fa-home me-2"></i>Back to Dashboard
                 </button>
-                <button class="btn btn-outline-primary" onclick="retakeTest()">
-                    <i class="fas fa-redo me-2"></i>Retake Test
+                <button class="btn btn-outline-primary" onclick="window.location.href='/technical'">
+                    Continue to Technical Round<i class="fas fa-arrow-right ms-2"></i>
                 </button>
             </div>
         </div>
@@ -538,9 +538,27 @@
         ];
 
         // Initialize Test
-        function initTest() {
-            loadQuestion(0);
-            startTimer();
+        async function initTest() {
+            try {
+                // Fetch questions from backend
+                const response = await fetch('/aptitude/get-questions/aptitude');
+                const data = await response.json();
+                
+                if (data.success && data.questions) {
+                    questions = data.questions;
+                    // Update UI
+                    document.getElementById('companyName').textContent = data.company;
+                    
+                    loadQuestion(0);
+                    startTimer();
+                } else {
+                    console.error('Failed to load questions:', data.error);
+                    alert('Failed to load test questions. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error initializing test:', error);
+                alert('Error loading test. Please refresh the page.');
+            }
         }
 
         // Load Question
@@ -704,18 +722,39 @@
         }
 
         // Save Results
-        function saveTestResults(results) {
-            fetch('/api/save-test-results', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    test_type: 'aptitude',
-                    company_id: 1,
-                    ...results
-                })
-            }).catch(err => console.log('Error saving results:', err));
+        async function saveTestResults(results) {
+            try {
+                // Calculate time taken
+                const timeTaken = Math.floor((Date.now() - testStartTime) / 1000);
+                
+                // Prepare responses
+                const responses = [];
+                questions.forEach((q, index) => {
+                    if (selectedAnswers[index] !== undefined) {
+                        responses.push({
+                            question_id: q.id,
+                            selected_answer: String.fromCharCode(65 + selectedAnswers[index]), // A, B, C, D
+                            time_spent: Math.floor(Math.random() * 90) + 30 // Placeholder
+                        });
+                    }
+                });
+                
+                const response = await fetch('/aptitude/complete-test', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        responses: responses,
+                        time_taken: timeTaken
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    console.log('Results saved successfully!', data);
+                }
+            } catch (err) {
+                console.log('Error saving results:', err);
+            }
         }
 
         // Retake Test

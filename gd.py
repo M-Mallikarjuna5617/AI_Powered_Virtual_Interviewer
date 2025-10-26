@@ -241,6 +241,7 @@ def evaluate_gd_performance():
         data = request.json
         transcript = data.get('transcript', '')
         topic_id = data.get('topic_id')
+        duration = data.get('duration', 0)
         
         if not transcript.strip():
             return jsonify({"success": False, "error": "No transcript provided"}), 400
@@ -248,10 +249,20 @@ def evaluate_gd_performance():
         # Analyze transcript using NLP
         analysis_result = nlp_service.analyze_text(transcript)
         
-        # Calculate scores
-        fluency_score = analysis_result.get('fluency_score', 75)
-        clarity_score = analysis_result.get('clarity_score', 80)
-        confidence_score = analysis_result.get('confidence_score', 70)
+        # Calculate scores with better logic
+        transcript_length = len(transcript.split())
+        word_pause_ratio = duration / max(transcript_length, 1)
+        
+        fluency_score = min(100, max(40, 70 + (transcript_length * 0.5)))
+        clarity_score = min(100, max(50, 75 + (min(transcript_length, 100) / 2)))
+        confidence_score = min(100, max(50, 65 + (transcript_length / 3)))
+        
+        # Deduct for short responses
+        if transcript_length < 50:
+            fluency_score -= 15
+            clarity_score -= 10
+            confidence_score -= 15
+        
         overall_score = (fluency_score + clarity_score + confidence_score) / 3
         
         # Get topic details
@@ -269,16 +280,16 @@ def evaluate_gd_performance():
         company_name = topic_result[1] if topic_result else "General"
         
         c.execute("""
-    INSERT INTO gd_results 
-    (student_email, company_name, topic_id, transcript, fluency_score, 
-     clarity_score, confidence_score, overall_score, feedback)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-""", (
-    session["email"], company_name, topic_id, transcript,
-    fluency_score, clarity_score, confidence_score, overall_score,
-    json.dumps(analysis_result.get('feedback', {}))
-))
-
+            INSERT INTO gd_results 
+            (student_email, company_name, topic_id, transcript, fluency_score, 
+             clarity_score, confidence_score, overall_score, feedback)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            session["email"], company_name, topic_id, transcript,
+            round(fluency_score, 2), round(clarity_score, 2), 
+            round(confidence_score, 2), round(overall_score, 2),
+            json.dumps(analysis_result.get('feedback', {}))
+        ))
         
         conn.commit()
         conn.close()
@@ -293,7 +304,8 @@ def evaluate_gd_performance():
             },
             "feedback": analysis_result.get('feedback', {}),
             "topic": topic_name,
-            "company": company_name
+            "company": company_name,
+            "can_continue": True
         })
     
     except Exception as e:

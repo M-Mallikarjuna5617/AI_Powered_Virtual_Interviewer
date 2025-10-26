@@ -699,7 +699,7 @@
         }
 
         // Complete Interview
-        function completeInterview() {
+        async function completeInterview() {
             clearInterval(responseTimer);
             clearInterval(questionTimer);
             
@@ -710,30 +710,47 @@
             // Calculate overall score
             const overallScore = Math.floor(Math.random() * 20) + 75; // 75-95
             
-            alert(`Interview Complete!\n\nOverall Performance: ${overallScore}%\n\nThank you for participating!`);
-            
             // Save results
-            saveInterviewResults({
+            await saveInterviewResults({
                 score: overallScore,
                 questionsAnswered: hrQuestions.length,
-                totalTime: responseTime
+                totalTime: responseTime,
+                answers: [] // Add answers here if tracked
             });
             
-            // Redirect to feedback
-            if (confirm('Would you like to view your detailed feedback report?')) {
-                window.location.href = '/feedback';
-            } else {
+            // Show completion message
+            const msg = `HR Interview Complete!\n\nOverall Performance: ${overallScore}%\n\n` +
+                       `Questions Answered: ${hrQuestions.length}\n\n` +
+                       `Thank you for participating!`;
+            
+            alert(msg);
+            
+            // Ask what to do next
+            const choice = confirm('Would you like to go back to Dashboard?\n\nOK = Dashboard, Cancel = View Feedback');
+            
+            if (choice) {
                 window.location.href = '/dashboard';
+            } else {
+                window.location.href = '/feedback';
             }
         }
 
         // Save Results
-        function saveInterviewResults(results) {
-            fetch('/api/save-hr-results', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(results)
-            }).catch(err => console.log('Error saving results:', err));
+        async function saveInterviewResults(results) {
+            try {
+                const response = await fetch('/hr/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(results)
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    console.log('HR results saved successfully!', data);
+                }
+            } catch (err) {
+                console.log('Error saving HR results:', err);
+            }
         }
 
         // Initialize on load

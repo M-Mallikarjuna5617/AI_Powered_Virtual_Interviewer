@@ -590,18 +590,51 @@ console.log(result);`
                     outputEl.textContent = `✓ All test cases passed! (${totalTests}/${totalTests})\n\nYour solution has been submitted successfully!`;
                     statusEl.innerHTML = '<i class="fas fa-trophy" style="color: #fbbf24;"></i> All tests passed!';
                     
-                    // Show success modal
-                    setTimeout(() => {
-                        if (confirm('Congratulations! All test cases passed. Continue to HR Interview?')) {
-                            window.location.href = '/hr_interview';
-                        }
-                    }, 2000);
+                    // Save solution and continue
+                    const code = document.getElementById('codeEditor').value;
+                    const solutions = [{
+                        question_id: 1,
+                        code: code,
+                        test_passed: passedTests === totalTests,
+                        test_results: testCases,
+                        score: (passedTests / totalTests) * 100,
+                        execution_time: 2.0
+                    }];
+                    
+                    // Submit to backend
+                    submitTechnicalInterview(solutions, passedTests === totalTests);
                 } else {
                     outputEl.className = 'output-content error';
                     outputEl.textContent = `✗ ${passedTests}/${totalTests} test cases passed\n\nSome test cases failed. Please review your solution.`;
                     statusEl.innerHTML = `<i class="fas fa-exclamation-circle" style="color: #f59e0b;"></i> ${passedTests}/${totalTests} passed`;
                 }
             }, 2000);
+        }
+        
+        // Submit Technical Interview
+        async function submitTechnicalInterview(solutions, passed) {
+            try {
+                const response = await fetch('/technical/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ solutions: solutions })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    const msg = `Technical Round Complete!\n\nScore: ${data.overall_score}%\n\n` +
+                               `Questions: ${data.total_questions}\n` +
+                               `Passed: ${data.passed_tests}\n\n`;
+                    
+                    if (confirm(msg + 'Continue to HR Interview?\n\nOK = HR Interview, Cancel = Dashboard')) {
+                        window.location.href = '/hr';
+                    } else {
+                        window.location.href = '/dashboard';
+                    }
+                }
+            } catch (err) {
+                console.log('Error submitting technical interview:', err);
+            }
         }
 
         // Reset Code

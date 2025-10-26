@@ -736,7 +736,7 @@
         }
 
         // Show GD results
-        function showGDResults() {
+        async function showGDResults() {
             const avgScore = Object.values(metrics).reduce((a, b) => a + b, 0) / Object.values(metrics).length;
             const result = {
                 averageScore: Math.round(avgScore),
@@ -745,20 +745,45 @@
                 duration: 600 - timeRemaining
             };
             
-            if (confirm(`Group Discussion Complete!\n\nAverage Score: ${result.averageScore}%\n\nWould you like to proceed to HR Interview?`)) {
-                // Save results and redirect
-                saveGDResults(result);
-                window.location.href = '/hr_interview';
+            // Save results first
+            await saveGDResults(result);
+            
+            // Show completion message
+            const msg = `Group Discussion Complete!\n\nScore: ${result.averageScore}%\n\n` +
+                       `Fluency: ${Math.round(metrics.clarity)}%\n` +
+                       `Clarity: ${Math.round(metrics.confidence)}%\n` +
+                       `Confidence: ${Math.round(metrics.confidence)}%\n\n` +
+                       `Choose an option to proceed.`;
+            
+            const choice = confirm(msg + '\n\nOK for HR Interview, Cancel for Dashboard');
+            
+            if (choice) {
+                window.location.href = '/hr';
+            } else {
+                window.location.href = '/dashboard';
             }
         }
 
         // Save GD results
-        function saveGDResults(results) {
-            fetch('/api/save-gd-results', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(results)
-            }).catch(err => console.log('Error saving results:', err));
+        async function saveGDResults(results) {
+            try {
+                const response = await fetch('/gd/evaluate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        transcript: results.transcript,
+                        topic_id: 1, // Default topic
+                        duration: results.duration
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    console.log('GD results saved successfully!', data);
+                }
+            } catch (err) {
+                console.log('Error saving GD results:', err);
+            }
         }
 
         // Initialize on load

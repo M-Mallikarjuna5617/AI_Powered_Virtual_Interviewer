@@ -169,6 +169,47 @@ def init_db():
             generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+    
+    # Aptitude test attempts
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS aptitude_attempts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_email TEXT NOT NULL,
+            company_name TEXT,
+            total_questions INTEGER DEFAULT 30,
+            correct_answers INTEGER DEFAULT 0,
+            score REAL DEFAULT 0,
+            time_taken INTEGER,
+            status TEXT DEFAULT 'completed',
+            completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    
+    # Aptitude test responses
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS aptitude_responses (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            attempt_id INTEGER NOT NULL,
+            question_id INTEGER,
+            question_text TEXT,
+            selected_answer TEXT,
+            correct_answer TEXT,
+            is_correct BOOLEAN,
+            time_spent INTEGER,
+            FOREIGN KEY(attempt_id) REFERENCES aptitude_attempts(id)
+        )
+    """)
+    
+    # Selected companies
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS selected_companies (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_email TEXT NOT NULL,
+            company_id INTEGER NOT NULL,
+            selected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(company_id) REFERENCES companies(id)
+        )
+    """)
 
     conn.commit()
     conn.close()
