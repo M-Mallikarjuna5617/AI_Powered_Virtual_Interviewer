@@ -165,10 +165,10 @@ def get_test_questions(topic):
         
         conn.close()
         
-        # Shuffle and select 28 questions
+        # Return exactly 30 questions
         import random
-        if len(questions) > 28:
-            questions = random.sample(questions, 28)
+        if len(questions) > 30:
+            questions = random.sample(questions, 30)
         
         # Prepare response (without correct answers)
         response_questions = []

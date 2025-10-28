@@ -316,7 +316,7 @@
                     <i class="fas fa-times me-2"></i>Quit Test
                 </button>
             </div>
-            <div class="timer" id="timer">60:00</div>
+            <div class="timer" id="timer">30:00</div>
             <div class="progress-bar-custom">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
@@ -368,55 +368,7 @@
 
         <!-- Result Section -->
         <div id="resultSection" class="result-container">
-            <div class="text-center mb-4">
-                <h2 class="mb-3">Test Completed! 🎉</h2>
-                <p class="text-muted">Here's your performance analysis</p>
-            </div>
-
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value" id="scoreValue">85</div>
-                    <div class="stat-label">Score (%)</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value text-success" id="correctValue">8</div>
-                    <div class="stat-label">Correct Answers</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value text-danger" id="incorrectValue">2</div>
-                    <div class="stat-label">Incorrect Answers</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value text-info" id="timeValue">45:30</div>
-                    <div class="stat-label">Time Taken</div>
-                </div>
-            </div>
-
-            <div class="feedback-section">
-                <h5><i class="fas fa-chart-line me-2"></i>Performance Feedback</h5>
-                <div id="feedbackText">
-                    <p><strong>Excellent performance!</strong> You've demonstrated strong aptitude skills.</p>
-                    <ul>
-                        <li>Logical Reasoning: 90% - Outstanding!</li>
-                        <li>Quantitative Aptitude: 80% - Good performance</li>
-                        <li>Verbal Ability: 85% - Above average</li>
-                    </ul>
-                    <p><strong>Recommendations:</strong></p>
-                    <ul>
-                        <li>Practice more data interpretation questions</li>
-                        <li>Focus on time management in quantitative section</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="text-center mt-4">
-                <button class="btn-primary-custom me-3" onclick="window.location.href='/dashboard'">
-                    <i class="fas fa-home me-2"></i>Back to Dashboard
-                </button>
-                <button class="btn btn-outline-primary" onclick="window.location.href='/feedback?type=aptitude'">
-                    <i class="fas fa-chart-line me-2"></i>View Feedback
-                </button>
-            </div>
+            <!-- Results will be dynamically inserted here after submission -->
         </div>
     </div>
 
@@ -424,7 +376,7 @@
         // Test Configuration
         let currentQuestionIndex = 0;
         let selectedAnswers = [];
-        let timeRemaining = 3600; // 60 minutes in seconds
+        let timeRemaining = 1800; // 30 minutes in seconds
         let timerInterval;
         let testStartTime = Date.now();
 
@@ -657,77 +609,46 @@
             else if (timeRemaining <= 600) timerEl.classList.add('warning');
 
             // Update progress bar
-            const totalTime = 3600;
+            const totalTime = 1800; // 30 minutes
             const progress = ((totalTime - timeRemaining) / totalTime) * 100;
             document.getElementById('progressFill').style.width = progress + '%';
         }
 
         // Show Results
-        function showResults() {
+        async function showResults() {
             clearInterval(timerInterval);
             
-            // Calculate score
-            let correctCount = 0;
-            selectedAnswers.forEach((answer, index) => {
-                if (answer === questions[index].correctAnswer) {
-                    correctCount++;
-                }
-            });
-
-            const score = Math.round((correctCount / questions.length) * 100);
-            const timeTaken = Math.floor((Date.now() - testStartTime) / 1000);
-            const minutesTaken = Math.floor(timeTaken / 60);
-            const secondsTaken = timeTaken % 60;
-
-            // Update UI
-            document.getElementById('scoreValue').textContent = score;
-            document.getElementById('correctValue').textContent = correctCount;
-            document.getElementById('incorrectValue').textContent = questions.length - correctCount;
-            document.getElementById('timeValue').textContent = `${minutesTaken}:${secondsTaken.toString().padStart(2, '0')}`;
-
-            // Generate feedback
-            let feedback = '';
-            if (score >= 80) {
-                feedback = '<p><strong>🎉 Excellent performance!</strong> You\'ve demonstrated outstanding aptitude skills.</p>';
-            } else if (score >= 60) {
-                feedback = '<p><strong>👍 Good performance!</strong> You have a solid foundation in aptitude.</p>';
-            } else if (score >= 40) {
-                feedback = '<p><strong>📚 Fair performance.</strong> Focus on improving your weak areas.</p>';
-            } else {
-                feedback = '<p><strong>⚠️ Needs improvement.</strong> Consider more practice before the actual test.</p>';
-            }
-
-            feedback += `
-                <ul>
-                    <li>Accuracy: ${score}%</li>
-                    <li>Time Management: ${timeTaken < 2400 ? 'Excellent' : 'Needs improvement'}</li>
-                    <li>Questions Attempted: ${selectedAnswers.filter(a => a !== undefined).length}/${questions.length}</li>
-                </ul>
-                <p><strong>📌 Recommendations:</strong></p>
-                <ul>
-                    <li>Practice more ${score < 60 ? 'all categories' : 'challenging questions'}</li>
-                    <li>${timeTaken > 2700 ? 'Work on time management' : 'Maintain your pace'}</li>
-                    <li>Review incorrect answers carefully</li>
-                </ul>
-            `;
-
-            document.getElementById('feedbackText').innerHTML = feedback;
-
-            // Hide question section, show results
-            document.getElementById('questionSection').style.display = 'none';
-            document.getElementById('resultSection').classList.add('show');
-
+            // Mark test as completed
+            testCompleted = true;
+            
             // Save results to backend
-            saveTestResults({
-                score: score,
-                correct: correctCount,
-                incorrect: questions.length - correctCount,
-                timeTaken: timeTaken
-            });
+            await saveTestResults();
+            
+            // Show simple completion message with only two buttons
+            document.getElementById('questionSection').style.display = 'none';
+            
+            // Update result section to show simple completion message
+            document.getElementById('resultSection').innerHTML = `
+                <div class="text-center mb-4">
+                    <h2 class="mb-3">Test Completed!</h2>
+                    <p class="text-muted">Your test has been submitted successfully</p>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <button class="btn-primary-custom me-3" onclick="window.location.href='/dashboard'">
+                        <i class="fas fa-home me-2"></i>Back to Dashboard
+                    </button>
+                    <button class="btn btn-outline-primary" onclick="window.location.href='/feedback?type=aptitude'">
+                        <i class="fas fa-chart-line me-2"></i>View Feedback
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('resultSection').classList.add('show');
         }
 
         // Save Results
-        async function saveTestResults(results) {
+        async function saveTestResults() {
             try {
                 // Calculate time taken
                 const timeTaken = Math.floor((Date.now() - testStartTime) / 1000);
@@ -781,9 +702,12 @@
         // Initialize on page load
         window.onload = initTest;
 
+        // Track if test is completed
+        let testCompleted = false;
+        
         // Prevent accidental page close
         window.onbeforeunload = function() {
-            if (timeRemaining > 0 && currentQuestionIndex < questions.length) {
+            if (!testCompleted && timeRemaining > 0 && currentQuestionIndex < questions.length) {
                 return "Test is in progress. Are you sure you want to leave?";
             }
         };
