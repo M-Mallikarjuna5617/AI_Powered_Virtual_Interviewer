@@ -37,7 +37,7 @@ def init_hr_questions():
     c.execute("SELECT COUNT(*) FROM hr_questions")
     if c.fetchone()[0] > 0:
         conn.close()
-        print("✅ HR questions already initialized!")
+        print("HR questions already initialized!")
         return
     
     # Sample HR questions from real companies (2013-2025)
@@ -120,7 +120,7 @@ def init_hr_questions():
     
     conn.commit()
     conn.close()
-    print("✅ HR questions database initialized successfully!")
+    print("HR questions database initialized successfully!")
 @hr_bp.route("/")
 def hr_home():
     """HR interview home page"""

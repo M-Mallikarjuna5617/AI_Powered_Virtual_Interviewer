@@ -97,7 +97,7 @@ def create_tables_if_not_exist():
 
     conn.commit()
     conn.close()
-    print("✅ Tables checked/created successfully!")
+    print("Tables checked/created successfully!")
 
 
 # =======================
@@ -121,7 +121,7 @@ def initialize_question_bank():
     c.execute("SELECT id, name FROM companies")
     companies = {name: cid for cid, name in c.fetchall()}
 
-    print("📝 Populating comprehensive question banks...")
+    print("Populating comprehensive question banks...")
 
     # =======================
     # APTITUDE QUESTIONS
@@ -318,7 +318,7 @@ def initialize_question_bank():
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, tuple(q.values()))
 
-    print(f"✅ Added {len(aptitude_questions)} aptitude questions")
+    print(f"Added {len(aptitude_questions)} aptitude questions")
 
     # =======================
     # TECHNICAL QUESTIONS
@@ -413,7 +413,7 @@ def initialize_question_bank():
                   q["input_format"], q["output_format"], q["constraints"],
                   q["sample_input"], q["sample_output"], q["test_cases"], q["tags"]))
 
-    print(f"✅ Added {len(technical_questions) * len(companies)} technical questions")
+    print(f"Added {len(technical_questions) * len(companies)} technical questions")
 
     # =======================
     # GD TOPICS
@@ -461,7 +461,7 @@ def initialize_question_bank():
                 ) VALUES (?, ?, ?, ?, ?, 'Content,Communication,Leadership,Teamwork', 600, 2024)
             """, (cid, topic["topic"], topic["category"], topic["description"], topic["key_points"]))
 
-    print(f"✅ Added {len(gd_topics) * len(companies)} GD topics")
+    print(f"Added {len(gd_topics) * len(companies)} GD topics")
 
     # =======================
     # HR QUESTIONS
@@ -509,11 +509,11 @@ def initialize_question_bank():
                 ) VALUES (?, ?, ?, ?, 'Clarity,Confidence,Relevance', ?, 2024)
             """, (cid, q["question"], q["category"], q["sample_answer"], q["difficulty"]))
 
-    print(f"✅ Added {len(hr_questions) * len(companies)} HR questions")
+    print(f"Added {len(hr_questions) * len(companies)} HR questions")
 
     conn.commit()
     conn.close()
-    print(f"🎉 Question bank fully populated for {len(companies)} companies!")
+    print(f"Question bank fully populated for {len(companies)} companies!")
 # ===============================
 # FUNCTION: Fetch Questions per Company
 # ===============================

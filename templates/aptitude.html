@@ -413,8 +413,8 @@
                 <button class="btn-primary-custom me-3" onclick="window.location.href='/dashboard'">
                     <i class="fas fa-home me-2"></i>Back to Dashboard
                 </button>
-                <button class="btn btn-outline-primary" onclick="window.location.href='/technical'">
-                    Continue to Technical Round<i class="fas fa-arrow-right ms-2"></i>
+                <button class="btn btn-outline-primary" onclick="window.location.href='/feedback?type=aptitude'">
+                    <i class="fas fa-chart-line me-2"></i>View Feedback
                 </button>
             </div>
         </div>
@@ -429,7 +429,7 @@
         let testStartTime = Date.now();
 
         // Sample Questions (In production, fetch from backend via AJAX)
-        const questions = [
+        let questions = [
             {
                 id: 1,
                 category: "Logical Reasoning",
@@ -545,7 +545,12 @@
                 const data = await response.json();
                 
                 if (data.success && data.questions) {
-                    questions = data.questions;
+                    // Convert correct_answer from letter to number for frontend compatibility
+                    questions = data.questions.map(q => ({
+                        ...q,
+                        correctAnswer: q.correct_answer ? q.correct_answer.charCodeAt(0) - 65 : 0,
+                        category: q.subtopic || q.category || 'General'
+                    }));
                     // Update UI
                     document.getElementById('companyName').textContent = data.company;
                     
@@ -751,6 +756,10 @@
                 const data = await response.json();
                 if (data.success) {
                     console.log('Results saved successfully!', data);
+                    // Store attempt_id for feedback generation
+                    sessionStorage.setItem('last_aptitude_attempt_id', data.attempt_id);
+                } else {
+                    console.error('Failed to save results:', data.error);
                 }
             } catch (err) {
                 console.log('Error saving results:', err);

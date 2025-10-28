@@ -80,7 +80,7 @@ def init_aptitude_tables():
     
     # Initialize question bank
     initialize_question_bank()
-    print("✅ Aptitude test tables initialized!")
+    print("Aptitude test tables initialized!")
 
 
 @aptitude_bp.route("/start/<topic>", methods=["POST"])
@@ -124,7 +124,9 @@ def start_test(topic):
 @aptitude_bp.route("/get-questions/<topic>", methods=["GET"])
 def get_test_questions(topic):
     """Get questions for the test"""
+    print(f"Debug: Session data: {dict(session)}")
     if "email" not in session:
+        print("Debug: No email in session")
         return jsonify({"success": False, "error": "Not authenticated"}), 401
     
     try:
@@ -142,10 +144,12 @@ def get_test_questions(topic):
             SELECT id, question_text, option_a, option_b, option_c, option_d, 
                    correct_answer, explanation, difficulty, subtopic, time_limit
             FROM question_bank 
+            ORDER BY RANDOM()
             LIMIT 30
         """)
         
         rows = c.fetchall()
+        print(f"Debug: Found {len(rows)} questions in database")
         questions = []
         for row in rows:
             questions.append({

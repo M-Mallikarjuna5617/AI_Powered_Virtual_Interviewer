@@ -38,11 +38,11 @@ def init_technical_questions():
     # Check if questions already exist
     c.execute("SELECT COUNT(*) FROM technical_questions")
     if c.fetchone()[0] > 0:
-        print("✅ Technical questions already initialized!")
+        print("Technical questions already initialized!")
         conn.close()
         return
 
-    # ✅ Merge both data sections into one clean dataset
+    # Merge both data sections into one clean dataset
     questions_data = [
         # TCS Questions
         (1, "Programming", "Write a function to reverse a string without using built-in functions.",

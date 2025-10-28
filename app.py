@@ -21,12 +21,12 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
 # Initialize Database
-print("🔧 Initializing database...")
+print("Initializing database...")
 init_db()
 init_aptitude_tables()
 
 # Register Blueprints
-print("📦 Registering blueprints...")
+print("Registering blueprints...")
 app.register_blueprint(auth_bp)
 app.register_blueprint(routes_bp)
 app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
@@ -51,10 +51,10 @@ def server_error(e):
 
 if __name__ == "__main__":
     print("\n" + "="*60)
-    print("🚀 AI-Powered Virtual Interviewer - API")
+    print("AI-Powered Virtual Interviewer - API")
     print("="*60)
-    print("✅ Server starting...")
-    print("📍 URL: http://localhost:5000")
+    print("Server starting...")
+    print("URL: http://localhost:5000")
     print("="*60 + "\n")
     
     app.run(debug=True, host='0.0.0.0', port=5000)

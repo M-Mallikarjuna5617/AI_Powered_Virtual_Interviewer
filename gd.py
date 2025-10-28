@@ -39,7 +39,7 @@ def init_gd_topics():
     c.execute("SELECT COUNT(*) FROM gd_topics")
     if c.fetchone()[0] > 0:
         conn.close()
-        print("✅ GD topics already initialized!")
+        print("GD topics already initialized!")
         return
     # Sample GD topics from real companies (2013-2025)
     topics_data = [
@@ -131,7 +131,7 @@ def init_gd_topics():
     
     conn.commit()
     conn.close()
-    print("✅ GD topics database initialized successfully!")
+    print("GD topics database initialized successfully!")
 
 @gd_bp.route("/")
 def gd_home():

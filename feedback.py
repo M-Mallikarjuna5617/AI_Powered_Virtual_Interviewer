@@ -43,8 +43,8 @@ def generate_comprehensive_feedback():
         # Get aptitude scores
         c.execute("""
             SELECT AVG(score), COUNT(*) 
-            FROM test_attempts 
-            WHERE student_email = ? AND status = 'completed'
+            FROM aptitude_attempts 
+            WHERE student_email = ?
         """, (email,))
         aptitude_result = c.fetchone()
         aptitude_score = aptitude_result[0] if aptitude_result[0] else 0
@@ -253,6 +253,167 @@ def download_pdf_report():
         print(f"Error generating PDF: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
+def generate_aptitude_feedback(score, correct, total, time_taken):
+    """Generate specific feedback for aptitude test"""
+    feedback = {
+        "performance": "",
+        "strengths": [],
+        "improvements": [],
+        "recommendations": []
+    }
+    
+    # Performance analysis
+    if score >= 80:
+        feedback["performance"] = "Excellent performance! You have strong aptitude skills."
+        feedback["strengths"].append("Outstanding logical reasoning abilities")
+        feedback["strengths"].append("Quick problem-solving skills")
+    elif score >= 60:
+        feedback["performance"] = "Good performance with room for improvement."
+        feedback["strengths"].append("Solid foundation in aptitude concepts")
+        feedback["improvements"].append("Focus on time management")
+    else:
+        feedback["performance"] = "Needs improvement. Consider more practice."
+        feedback["improvements"].append("Strengthen basic aptitude concepts")
+        feedback["improvements"].append("Practice more sample questions")
+    
+    # Time management analysis
+    avg_time_per_question = time_taken / total if total > 0 else 0
+    if avg_time_per_question <= 60:
+        feedback["strengths"].append("Good time management")
+    else:
+        feedback["improvements"].append("Improve time management skills")
+    
+    # Accuracy analysis
+    accuracy = (correct / total * 100) if total > 0 else 0
+    if accuracy >= 80:
+        feedback["strengths"].append("High accuracy in answers")
+    else:
+        feedback["improvements"].append("Focus on accuracy over speed")
+    
+    # Recommendations
+    if score >= 80:
+        feedback["recommendations"].append("Ready for advanced aptitude challenges")
+        feedback["recommendations"].append("Consider competitive exam preparation")
+    elif score >= 60:
+        feedback["recommendations"].append("Practice more medium-difficulty questions")
+        feedback["recommendations"].append("Work on speed and accuracy balance")
+    else:
+        feedback["recommendations"].append("Start with basic aptitude concepts")
+        feedback["recommendations"].append("Practice regularly with timed tests")
+    
+    return feedback
+
+def generate_technical_feedback(score, domain):
+    """Generate specific feedback for technical test"""
+    feedback = {
+        "performance": "",
+        "strengths": [],
+        "improvements": [],
+        "recommendations": []
+    }
+    
+    if score >= 80:
+        feedback["performance"] = f"Excellent technical skills in {domain}!"
+        feedback["strengths"].append("Strong coding abilities")
+        feedback["strengths"].append("Good problem-solving approach")
+    elif score >= 60:
+        feedback["performance"] = f"Good technical foundation in {domain}."
+        feedback["strengths"].append("Basic understanding of concepts")
+        feedback["improvements"].append("Practice more complex problems")
+    else:
+        feedback["performance"] = f"Needs improvement in {domain}."
+        feedback["improvements"].append("Strengthen fundamental concepts")
+        feedback["improvements"].append("Practice basic coding problems")
+    
+    feedback["recommendations"].append(f"Focus on {domain} specific practice")
+    feedback["recommendations"].append("Review data structures and algorithms")
+    
+    return feedback
+
+def generate_gd_feedback(fluency, clarity, confidence, overall):
+    """Generate specific feedback for group discussion"""
+    feedback = {
+        "performance": "",
+        "strengths": [],
+        "improvements": [],
+        "recommendations": []
+    }
+    
+    if overall >= 80:
+        feedback["performance"] = "Excellent communication skills!"
+        feedback["strengths"].append("Clear and fluent expression")
+        feedback["strengths"].append("High confidence level")
+    elif overall >= 60:
+        feedback["performance"] = "Good communication with room for improvement."
+        feedback["strengths"].append("Basic communication skills")
+        feedback["improvements"].append("Work on fluency and clarity")
+    else:
+        feedback["performance"] = "Needs improvement in communication."
+        feedback["improvements"].append("Practice public speaking")
+        feedback["improvements"].append("Work on confidence building")
+    
+    if fluency >= 80:
+        feedback["strengths"].append("Fluent speech delivery")
+    else:
+        feedback["improvements"].append("Practice speaking fluently")
+    
+    if clarity >= 80:
+        feedback["strengths"].append("Clear and understandable speech")
+    else:
+        feedback["improvements"].append("Focus on clear articulation")
+    
+    if confidence >= 80:
+        feedback["strengths"].append("High confidence in expression")
+    else:
+        feedback["improvements"].append("Build confidence through practice")
+    
+    feedback["recommendations"].append("Practice group discussions regularly")
+    feedback["recommendations"].append("Read current affairs for better content")
+    
+    return feedback
+
+def generate_hr_feedback(clarity, relevance, confidence, overall):
+    """Generate specific feedback for HR interview"""
+    feedback = {
+        "performance": "",
+        "strengths": [],
+        "improvements": [],
+        "recommendations": []
+    }
+    
+    if overall >= 80:
+        feedback["performance"] = "Excellent interview performance!"
+        feedback["strengths"].append("Clear and relevant answers")
+        feedback["strengths"].append("High confidence level")
+    elif overall >= 60:
+        feedback["performance"] = "Good interview skills with room for improvement."
+        feedback["strengths"].append("Basic interview skills")
+        feedback["improvements"].append("Work on answer relevance")
+    else:
+        feedback["performance"] = "Needs improvement in interview skills."
+        feedback["improvements"].append("Practice common HR questions")
+        feedback["improvements"].append("Work on confidence and clarity")
+    
+    if clarity >= 80:
+        feedback["strengths"].append("Clear and articulate answers")
+    else:
+        feedback["improvements"].append("Practice clear communication")
+    
+    if relevance >= 80:
+        feedback["strengths"].append("Relevant and focused responses")
+    else:
+        feedback["improvements"].append("Work on staying on topic")
+    
+    if confidence >= 80:
+        feedback["strengths"].append("Confident and composed demeanor")
+    else:
+        feedback["improvements"].append("Build confidence through mock interviews")
+    
+    feedback["recommendations"].append("Practice common HR interview questions")
+    feedback["recommendations"].append("Prepare STAR method examples")
+    
+    return feedback
+
 def generate_detailed_feedback(aptitude_score, technical_score, gd_score, hr_score, overall_score):
     """Generate detailed feedback analysis"""
     feedback = {
@@ -410,6 +571,126 @@ def generate_pdf_report(report, student):
     doc.build(story)
     buffer.seek(0)
     return buffer
+
+@feedback_bp.route("/individual", methods=["POST"])
+def generate_individual_feedback():
+    """Generate individual feedback for specific test type"""
+    if "email" not in session:
+        return jsonify({"success": False, "error": "Not authenticated"}), 401
+    
+    try:
+        data = request.json
+        test_type = data.get('test_type', 'aptitude')  # aptitude, technical, gd, hr
+        email = session["email"]
+        
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        
+        feedback_data = {}
+        
+        if test_type == 'aptitude':
+            # Get latest aptitude attempt
+            c.execute("""
+                SELECT score, correct_answers, total_questions, time_taken, company_name
+                FROM aptitude_attempts 
+                WHERE student_email = ?
+                ORDER BY id DESC
+                LIMIT 1
+            """, (email,))
+            
+            result = c.fetchone()
+            if result:
+                score, correct, total, time_taken, company = result
+                feedback_data = {
+                    "test_type": "Aptitude Test",
+                    "score": score,
+                    "correct_answers": correct,
+                    "total_questions": total,
+                    "time_taken": time_taken,
+                    "company": company,
+                    "feedback": generate_aptitude_feedback(score, correct, total, time_taken)
+                }
+        
+        elif test_type == 'technical':
+            # Get latest technical attempt
+            c.execute("""
+                SELECT score, domain, time_taken
+                FROM technical_results 
+                WHERE student_email = ?
+                ORDER BY submitted_at DESC
+                LIMIT 1
+            """, (email,))
+            
+            result = c.fetchone()
+            if result:
+                score, domain, time_taken = result
+                feedback_data = {
+                    "test_type": "Technical Test",
+                    "score": score,
+                    "domain": domain,
+                    "time_taken": time_taken,
+                    "feedback": generate_technical_feedback(score, domain)
+                }
+        
+        elif test_type == 'gd':
+            # Get latest GD attempt
+            c.execute("""
+                SELECT fluency_score, clarity_score, confidence_score, overall_score, topic
+                FROM gd_results 
+                WHERE student_email = ?
+                ORDER BY submitted_at DESC
+                LIMIT 1
+            """, (email,))
+            
+            result = c.fetchone()
+            if result:
+                fluency, clarity, confidence, overall, topic = result
+                feedback_data = {
+                    "test_type": "Group Discussion",
+                    "fluency_score": fluency,
+                    "clarity_score": clarity,
+                    "confidence_score": confidence,
+                    "overall_score": overall,
+                    "topic": topic,
+                    "feedback": generate_gd_feedback(fluency, clarity, confidence, overall)
+                }
+        
+        elif test_type == 'hr':
+            # Get latest HR attempt
+            c.execute("""
+                SELECT clarity_score, relevance_score, confidence_score, overall_score, question
+                FROM hr_results 
+                WHERE student_email = ?
+                ORDER BY submitted_at DESC
+                LIMIT 1
+            """, (email,))
+            
+            result = c.fetchone()
+            if result:
+                clarity, relevance, confidence, overall, question = result
+                feedback_data = {
+                    "test_type": "HR Interview",
+                    "clarity_score": clarity,
+                    "relevance_score": relevance,
+                    "confidence_score": confidence,
+                    "overall_score": overall,
+                    "question": question,
+                    "feedback": generate_hr_feedback(clarity, relevance, confidence, overall)
+                }
+        
+        conn.close()
+        
+        if not feedback_data:
+            return jsonify({"success": False, "error": f"No {test_type} test found"}), 404
+        
+        return jsonify({
+            "success": True,
+            "feedback_data": feedback_data
+        })
+    
+    except Exception as e:
+        print(f"Error generating individual feedback: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
 
 @feedback_bp.route("/history", methods=["GET"])
 def get_feedback_history():

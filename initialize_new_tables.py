@@ -12,7 +12,7 @@ def create_new_tables():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
-    print("🔧 Initializing new database tables...")
+    print("Initializing new database tables...")
     
     # Aptitude test attempts
     cursor.execute("""
@@ -28,7 +28,7 @@ def create_new_tables():
             completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
-    print("✅ aptitude_attempts table created")
+    print("aptitude_attempts table created")
     
     # Aptitude test responses
     cursor.execute("""
@@ -44,7 +44,7 @@ def create_new_tables():
             FOREIGN KEY(attempt_id) REFERENCES aptitude_attempts(id)
         )
     """)
-    print("✅ aptitude_responses table created")
+    print("aptitude_responses table created")
     
     # Selected companies
     cursor.execute("""
@@ -56,7 +56,7 @@ def create_new_tables():
             FOREIGN KEY(company_id) REFERENCES companies(id)
         )
     """)
-    print("✅ selected_companies table created")
+    print("selected_companies table created")
     
     # Question bank (if it doesn't exist)
     cursor.execute("""
@@ -74,14 +74,33 @@ def create_new_tables():
             time_limit INTEGER DEFAULT 60
         )
     """)
-    print("✅ question_bank table checked")
+    print("question_bank table checked")
+    
+    # Feedback reports table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS feedback_reports (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_email TEXT NOT NULL,
+            company_name TEXT,
+            aptitude_score REAL DEFAULT 0,
+            technical_score REAL DEFAULT 0,
+            gd_score REAL DEFAULT 0,
+            hr_score REAL DEFAULT 0,
+            overall_score REAL DEFAULT 0,
+            strengths TEXT,
+            improvements TEXT,
+            recommendations TEXT,
+            generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    print("feedback_reports table created")
     
     # Insert sample questions if question_bank is empty
     cursor.execute("SELECT COUNT(*) FROM question_bank")
     count = cursor.fetchone()[0]
     
     if count == 0:
-        print("📝 Adding sample aptitude questions...")
+        print("Adding sample aptitude questions...")
         sample_questions = [
             ("If all Bloops are Razzies and all Razzies are Lazzies, are all Bloops definitely Lazzies?", 
              "Yes", "No", "Cannot be determined", "Insufficient data", "A",
@@ -112,20 +131,21 @@ def create_new_tables():
             (question_text, option_a, option_b, option_c, option_d, correct_answer, explanation, difficulty, subtopic)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, sample_questions)
-        print(f"✅ Added {len(sample_questions)} sample questions")
+        print(f"Added {len(sample_questions)} sample questions")
     
     conn.commit()
     conn.close()
     
-    print("\n🎉 Database initialization complete!")
-    print("✅ All new tables created successfully")
-    print("✅ Sample questions added to question_bank")
+    print("\nDatabase initialization complete!")
+    print("All new tables created successfully")
+    print("Sample questions added to question_bank")
 
 if __name__ == "__main__":
     try:
         create_new_tables()
-        print("\n✨ You can now run the application with improved test tracking!")
+        print("\nYou can now run the application with improved test tracking!")
     except Exception as e:
-        print(f"❌ Error initializing database: {e}")
+        print(f"Error initializing database: {e}")
         print("Please check your database file and permissions.")
+
 

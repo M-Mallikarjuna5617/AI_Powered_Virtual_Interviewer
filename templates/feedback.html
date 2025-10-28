@@ -505,6 +505,9 @@
     </div>
 
     <script>
+        let feedbackData = null;
+        let overallScores = {};
+
         // Set current date
         document.getElementById('interviewDate').textContent = new Date().toLocaleDateString('en-US', {
             year: 'numeric',
@@ -512,52 +515,304 @@
             day: 'numeric'
         });
 
-        // Performance Chart
-        const ctx = document.getElementById('performanceChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'radar',
-            data: {
-                labels: ['Aptitude', 'Technical', 'Group Discussion', 'HR Interview', 'Overall'],
-                datasets: [{
-                    label: 'Your Performance',
-                    data: [85, 90, 82, 88, 87],
-                    backgroundColor: 'rgba(102, 126, 234, 0.2)',
-                    borderColor: 'rgba(102, 126, 234, 1)',
-                    borderWidth: 2,
-                    pointBackgroundColor: 'rgba(102, 126, 234, 1)',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgba(102, 126, 234, 1)'
-                }, {
-                    label: 'Average Candidate',
-                    data: [70, 75, 68, 72, 71],
-                    backgroundColor: 'rgba(156, 163, 175, 0.2)',
-                    borderColor: 'rgba(156, 163, 175, 1)',
-                    borderWidth: 2,
-                    pointBackgroundColor: 'rgba(156, 163, 175, 1)',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgba(156, 163, 175, 1)'
-                }]
-            },
-            options: {
-                scales: {
-                    r: {
-                        beginAtZero: true,
-                        max: 100,
-                        ticks: {
-                            stepSize: 20
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'bottom'
+        // Load feedback data on page load
+        window.onload = async function() {
+            await loadFeedbackData();
+        };
+
+        // Load feedback data
+        async function loadFeedbackData() {
+            try {
+                // Check if we have a specific test type from URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const testType = urlParams.get('type');
+                
+                if (testType) {
+                    // Load individual feedback
+                    await loadIndividualFeedback(testType);
+                } else {
+                    // Load overall feedback
+                    await loadOverallFeedback();
+                }
+            } catch (error) {
+                console.error('Error loading feedback:', error);
+                showError('Failed to load feedback data. Please try again.');
+            }
+        }
+
+        // Load individual feedback for specific test type
+        async function loadIndividualFeedback(testType) {
+            try {
+                const response = await fetch('/feedback/individual', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({test_type: testType})
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    feedbackData = data.feedback_data;
+                    displayIndividualFeedback();
+                } else {
+                    showError(data.error || 'Failed to load individual feedback');
+                }
+            } catch (error) {
+                console.error('Error loading individual feedback:', error);
+                showError('Failed to load individual feedback');
+            }
+        }
+
+        // Load overall feedback
+        async function loadOverallFeedback() {
+            try {
+                const response = await fetch('/feedback/generate', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({})
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    overallScores = data.scores;
+                    feedbackData = data.feedback;
+                    displayOverallFeedback();
+                } else {
+                    showError(data.error || 'Failed to load overall feedback');
+                }
+            } catch (error) {
+                console.error('Error loading overall feedback:', error);
+                showError('Failed to load overall feedback');
+            }
+        }
+
+        // Display individual feedback
+        function displayIndividualFeedback() {
+            if (!feedbackData) return;
+
+            const testType = feedbackData.test_type;
+            document.querySelector('.report-header h1').textContent = `${testType} Feedback Report`;
+            
+            // Update overall score
+            const score = feedbackData.score || feedbackData.overall_score || 0;
+            document.getElementById('overallScore').textContent = Math.round(score);
+            
+            // Update performance badge
+            const badge = document.querySelector('.performance-badge');
+            if (score >= 80) {
+                badge.textContent = 'Excellent Performance';
+                badge.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+            } else if (score >= 60) {
+                badge.textContent = 'Good Performance';
+                badge.style.background = 'linear-gradient(135deg, #3b82f6, #2563eb)';
+            } else {
+                badge.textContent = 'Needs Improvement';
+                badge.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+            }
+
+            // Update company name if available
+            if (feedbackData.company) {
+                document.getElementById('companyName').textContent = feedbackData.company;
+            }
+
+            // Display specific feedback based on test type
+            if (testType === 'Aptitude Test') {
+                displayAptitudeIndividualFeedback();
+            } else if (testType === 'Technical Test') {
+                displayTechnicalIndividualFeedback();
+            } else if (testType === 'Group Discussion') {
+                displayGDIndividualFeedback();
+            } else if (testType === 'HR Interview') {
+                displayHRIndividualFeedback();
+            }
+        }
+
+        // Display overall feedback
+        function displayOverallFeedback() {
+            if (!overallScores) return;
+
+            const overallScore = overallScores.overall || 0;
+            document.getElementById('overallScore').textContent = Math.round(overallScore);
+            
+            // Update performance badge
+            const badge = document.querySelector('.performance-badge');
+            if (overallScore >= 80) {
+                badge.textContent = 'Excellent Performance';
+                badge.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+            } else if (overallScore >= 60) {
+                badge.textContent = 'Good Performance';
+                badge.style.background = 'linear-gradient(135deg, #3b82f6, #2563eb)';
+            } else {
+                badge.textContent = 'Needs Improvement';
+                badge.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+            }
+
+            // Update metrics
+            updateMetricCard('Aptitude Test', overallScores.aptitude || 0);
+            updateMetricCard('Technical Round', overallScores.technical || 0);
+            updateMetricCard('Group Discussion', overallScores.gd || 0);
+            updateMetricCard('HR Interview', overallScores.hr || 0);
+
+            // Update chart
+            updatePerformanceChart();
+        }
+
+        // Update metric card
+        function updateMetricCard(label, score) {
+            const cards = document.querySelectorAll('.metric-card');
+            cards.forEach(card => {
+                const labelElement = card.querySelector('.metric-label');
+                if (labelElement && labelElement.textContent === label) {
+                    const valueElement = card.querySelector('.metric-value');
+                    const progressElement = card.querySelector('.progress-fill-custom');
+                    
+                    valueElement.textContent = Math.round(score) + '%';
+                    progressElement.style.width = score + '%';
+                    
+                    // Update progress bar color
+                    progressElement.className = 'progress-fill-custom';
+                    if (score >= 80) {
+                        progressElement.classList.add('progress-excellent');
+                    } else if (score >= 60) {
+                        progressElement.classList.add('progress-good');
+                    } else {
+                        progressElement.classList.add('progress-average');
                     }
                 }
+            });
+        }
+
+        // Update performance chart
+        function updatePerformanceChart() {
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Aptitude', 'Technical', 'Group Discussion', 'HR Interview', 'Overall'],
+                    datasets: [{
+                        label: 'Your Performance',
+                        data: [
+                            overallScores.aptitude || 0,
+                            overallScores.technical || 0,
+                            overallScores.gd || 0,
+                            overallScores.hr || 0,
+                            overallScores.overall || 0
+                        ],
+                        backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                        borderColor: 'rgba(102, 126, 234, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(102, 126, 234, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(102, 126, 234, 1)'
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                stepSize: 20
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Display aptitude individual feedback
+        function displayAptitudeIndividualFeedback() {
+            const feedback = feedbackData.feedback;
+            if (!feedback) return;
+
+            // Update aptitude section
+            const aptitudeSection = document.querySelector('.section-card:nth-child(3)');
+            if (aptitudeSection) {
+                const title = aptitudeSection.querySelector('.section-title span');
+                title.textContent = 'Aptitude Test Analysis';
+                
+                // Add feedback content
+                let feedbackHTML = `
+                    <div class="recommendations-box">
+                        <h5><i class="fas fa-chart-line me-2"></i>Performance Analysis</h5>
+                        <p><strong>${feedback.performance}</strong></p>
+                        
+                        <h6 class="mt-3">Strengths:</h6>
+                        <ul>
+                            ${feedback.strengths.map(s => `<li><i class="fas fa-check text-success"></i> ${s}</li>`).join('')}
+                        </ul>
+                        
+                        <h6 class="mt-3">Areas for Improvement:</h6>
+                        <ul>
+                            ${feedback.improvements.map(i => `<li><i class="fas fa-arrow-right text-warning"></i> ${i}</li>`).join('')}
+                        </ul>
+                        
+                        <h6 class="mt-3">Recommendations:</h6>
+                        <ul>
+                            ${feedback.recommendations.map(r => `<li><i class="fas fa-lightbulb text-primary"></i> ${r}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                
+                aptitudeSection.innerHTML = `
+                    <div class="section-title">
+                        <div class="section-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <span>Aptitude Test Analysis</span>
+                    </div>
+                    ${feedbackHTML}
+                `;
             }
-        });
+        }
+
+        // Display technical individual feedback
+        function displayTechnicalIndividualFeedback() {
+            const feedback = feedbackData.feedback;
+            if (!feedback) return;
+
+            // Similar implementation for technical feedback
+            console.log('Technical feedback:', feedback);
+        }
+
+        // Display GD individual feedback
+        function displayGDIndividualFeedback() {
+            const feedback = feedbackData.feedback;
+            if (!feedback) return;
+
+            // Similar implementation for GD feedback
+            console.log('GD feedback:', feedback);
+        }
+
+        // Display HR individual feedback
+        function displayHRIndividualFeedback() {
+            const feedback = feedbackData.feedback;
+            if (!feedback) return;
+
+            // Similar implementation for HR feedback
+            console.log('HR feedback:', feedback);
+        }
+
+        // Show error message
+        function showError(message) {
+            const container = document.querySelector('.feedback-container');
+            container.innerHTML = `
+                <div class="report-header">
+                    <h1 class="text-danger">Error</h1>
+                    <p class="text-muted">${message}</p>
+                    <button class="btn-custom btn-primary-custom" onclick="location.href='/dashboard'">
+                        <i class="fas fa-home me-2"></i>Back to Dashboard
+                    </button>
+                </div>
+            `;
+        }
+
 
         // Download PDF Function
         async function downloadPDF() {
