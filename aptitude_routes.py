@@ -88,20 +88,16 @@ def get_test_questions(topic):
         conn = sqlite3.connect(QUESTIONS_DB_PATH)
         c = conn.cursor()
         
-        # ✅ FIX 3: Get company_id first
-        c.execute("SELECT id FROM companies WHERE name = ?", (company_name,))
+        # ✅ FIX 3: Get company_id first with normalized match
+        c.execute("SELECT id FROM companies WHERE lower(trim(name)) = lower(trim(?))", (company_name,))
         company_result = c.fetchone()
         
         if not company_result:
-            print(f"⚠️ Company '{company_name}' not found, using all questions")
-            # ✅ FIX 4: Query from aptitude_questions table (not question_bank)
-            c.execute("""
-                SELECT id, question, option_a, option_b, option_c, option_d, 
-                       correct_answer, explanation, difficulty, category, time_limit
-                FROM aptitude_questions 
-                ORDER BY RANDOM()
-                LIMIT 30
-            """)
+            conn.close()
+            return jsonify({
+                "success": False,
+                "error": f"Selected company '{company_name}' not found in questions database"
+            }), 400
         else:
             company_id = company_result[0]
             # ✅ FIX 4: Query from aptitude_questions with company filter
@@ -119,7 +115,7 @@ def get_test_questions(topic):
         
         print(f"✅ Found {len(rows)} questions in database")
         
-        # ✅ FIX 5: Build questions array with exactly 30 questions
+        # ✅ FIX 5: Build questions array; will top-up to 30 if fewer available
         questions = []
         for row in rows:
             questions.append({
@@ -133,9 +129,25 @@ def get_test_questions(topic):
                 "time_limit": row[10] if row[10] else 60
             })
         
-        # ✅ Ensure we have exactly 30 questions
+        # ✅ Ensure exactly 30 questions by sampling within the same company if needed
         if len(questions) < 30:
-            print(f"⚠️ Warning: Only {len(questions)} questions available!")
+            print(f"⚠️ Warning: Only {len(questions)} questions available for {company_name}. Topping up to 30 by sampling with replacement.")
+            import random
+            if questions:
+                while len(questions) < 30:
+                    q = random.choice(questions)
+                    # Create a shallow copy to avoid shared references
+                    questions.append({
+                        "id": q["id"],
+                        "question": q["question"],
+                        "options": list(q["options"]),
+                        "correct_answer": q["correct_answer"],
+                        "explanation": q["explanation"],
+                        "difficulty": q["difficulty"],
+                        "category": q["category"],
+                        "time_limit": q["time_limit"],
+                    })
+            # If there are zero questions, return empty result gracefully
         
         return jsonify({
             "success": True,
@@ -190,6 +202,7 @@ def complete_test():
         # Calculate score and save each response
         correct_count = 0
         
+        answered_with_keys = 0
         for resp in responses:
             question_id = resp.get('question_id')
             selected = resp.get('selected_answer')  # A, B, C, D
@@ -204,12 +217,14 @@ def complete_test():
             
             result = questions_c.fetchone()
             if result:
-                correct_answer = result[0]  # A, B, C, D
+                correct_answer = result[0]  # A, B, C, D or None
                 question_text = result[1]
-                is_correct = (selected == correct_answer)
-                
-                if is_correct:
-                    correct_count += 1
+                is_correct = None
+                if correct_answer in ("A", "B", "C", "D"):
+                    is_correct = (selected == correct_answer)
+                    answered_with_keys += 1
+                    if is_correct:
+                        correct_count += 1
                 
                 # ✅ Save response to users.db
                 users_c.execute("""
@@ -223,7 +238,8 @@ def complete_test():
         questions_conn.close()
         
         # ✅ Calculate score
-        score = (correct_count / len(responses) * 100) if responses else 0
+        # Score using only questions that have correct answers
+        score = (correct_count / answered_with_keys * 100) if answered_with_keys else 0
         
         # ✅ Update attempt with final score
         users_c.execute("""

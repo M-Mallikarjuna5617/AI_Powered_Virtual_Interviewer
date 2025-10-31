@@ -217,12 +217,58 @@ def set_selected_company(student_email, company_id):
             FOREIGN KEY(company_id) REFERENCES companies(id)
         )
     """)
+    # Ensure legacy tables have required columns
+    c.execute("PRAGMA table_info(selected_companies)")
+    cols = [row[1] for row in c.fetchall()]
+    if "student_email" not in cols:
+        try:
+            c.execute("ALTER TABLE selected_companies ADD COLUMN student_email TEXT")
+        except sqlite3.OperationalError:
+            pass
+    if "company_id" not in cols:
+        try:
+            c.execute("ALTER TABLE selected_companies ADD COLUMN company_id INTEGER NOT NULL")
+        except sqlite3.OperationalError:
+            pass
+    if "selected_at" not in cols:
+        try:
+            c.execute("ALTER TABLE selected_companies ADD COLUMN selected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+        except sqlite3.OperationalError:
+            pass
     
-    # Insert or update selection
-    c.execute("""
-        INSERT INTO selected_companies (student_email, company_id)
-        VALUES (?, ?)
-    """, (student_email, company_id))
+    # Ensure student exists and get id
+    c.execute("INSERT OR IGNORE INTO students (email) VALUES (?)", (student_email,))
+    c.execute("SELECT id FROM students WHERE email = ?", (student_email,))
+    student_row = c.fetchone()
+    student_id = student_row[0] if student_row else None
+
+    # Insert selection using compatible schema
+    if "user_id" in cols and student_id is not None:
+        # Prefer inserting user_id when present
+        if "student_email" in cols:
+            c.execute(
+                """
+                INSERT INTO selected_companies (user_id, company_id, student_email)
+                VALUES (?, ?, ?)
+                """,
+                (student_id, company_id, student_email),
+            )
+        else:
+            c.execute(
+                """
+                INSERT INTO selected_companies (user_id, company_id)
+                VALUES (?, ?)
+                """,
+                (student_id, company_id),
+            )
+    else:
+        c.execute(
+            """
+            INSERT INTO selected_companies (student_email, company_id)
+            VALUES (?, ?)
+            """,
+            (student_email, company_id),
+        )
     
     conn.commit()
     conn.close()
@@ -233,14 +279,63 @@ def get_selected_company(student_email):
     """Get the student's selected company."""
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
-    
+    # Ensure table exists and has schema
     c.execute("""
-        SELECT c.* FROM companies c
-        JOIN selected_companies sc ON c.id = sc.company_id
-        WHERE sc.student_email = ?
-        ORDER BY sc.selected_at DESC
-        LIMIT 1
-    """, (student_email,))
+        CREATE TABLE IF NOT EXISTS selected_companies (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_email TEXT NOT NULL,
+            company_id INTEGER NOT NULL,
+            selected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(company_id) REFERENCES companies(id)
+        )
+    """)
+    c.execute("PRAGMA table_info(selected_companies)")
+    cols = [row[1] for row in c.fetchall()]
+    if "student_email" not in cols:
+        try:
+            c.execute("ALTER TABLE selected_companies ADD COLUMN student_email TEXT")
+        except sqlite3.OperationalError:
+            pass
+    if "company_id" not in cols:
+        try:
+            c.execute("ALTER TABLE selected_companies ADD COLUMN company_id INTEGER NOT NULL")
+        except sqlite3.OperationalError:
+            pass
+    if "selected_at" not in cols:
+        try:
+            c.execute("ALTER TABLE selected_companies ADD COLUMN selected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+        except sqlite3.OperationalError:
+            pass
+    
+    # Build query depending on schema
+    c.execute("PRAGMA table_info(selected_companies)")
+    cols = [row[1] for row in c.fetchall()]
+    if "student_email" in cols:
+        c.execute(
+            """
+            SELECT c.* FROM companies c
+            JOIN selected_companies sc ON c.id = sc.company_id
+            WHERE sc.student_email = ?
+            ORDER BY sc.selected_at DESC
+            LIMIT 1
+            """,
+            (student_email,),
+        )
+    elif "user_id" in cols:
+        c.execute(
+            """
+            SELECT c.* FROM companies c
+            JOIN selected_companies sc ON c.id = sc.company_id
+            JOIN students s ON sc.user_id = s.id
+            WHERE s.email = ?
+            ORDER BY sc.selected_at DESC
+            LIMIT 1
+            """,
+            (student_email,),
+        )
+    else:
+        conn.close()
+        return None
     
     company = c.fetchone()
     conn.close()

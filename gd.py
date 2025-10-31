@@ -11,127 +11,18 @@ import random
 import re
 from datetime import datetime
 from ai_service import SpeechToTextService, NLPAnalysisService
+from utils import get_selected_company
 
 gd_bp = Blueprint("gd", __name__, url_prefix="/gd")
 
 DB_PATH = "users.db"
+QUESTIONS_DB_PATH = "questions.db"
 speech_service = SpeechToTextService()
 nlp_service = NLPAnalysisService()
 
 def init_gd_topics():
-    """Initialize GD topics database with real company data"""
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    
-    # Create table if it doesn't exist
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS gd_topics (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            company_id INTEGER NOT NULL,
-            topic TEXT NOT NULL,
-            description TEXT NOT NULL,
-            year INTEGER NOT NULL,
-            difficulty TEXT NOT NULL
-        )
-    """)
-    
-    # Check if topics already exist
-    c.execute("SELECT COUNT(*) FROM gd_topics")
-    if c.fetchone()[0] > 0:
-        conn.close()
-        print("GD topics already initialized!")
-        return
-    # Sample GD topics from real companies (2013-2025)
-    topics_data = [
-        # TCS Topics
-        (1, "Impact of Artificial Intelligence on Employment", 
-         "Discuss the pros and cons of AI replacing human jobs in various sectors.", 2024, "medium"),
-        (1, "Remote Work vs Office Work", 
-         "Analyze the benefits and challenges of remote work culture.", 2024, "easy"),
-        (1, "Digital India: Progress and Challenges", 
-         "Evaluate the success of Digital India initiative and remaining challenges.", 2024, "medium"),
-        
-        # Infosys Topics
-        (2, "Cybersecurity in the Digital Age", 
-         "Discuss the importance of cybersecurity and measures to protect data.", 2024, "hard"),
-        (2, "Sustainable Technology Solutions", 
-         "How can technology help in achieving environmental sustainability?", 2024, "medium"),
-        (2, "Women in Technology", 
-         "Discuss the role and challenges of women in the technology sector.", 2024, "medium"),
-        
-        # Wipro Topics
-        (3, "Cloud Computing: Future of IT Infrastructure", 
-         "Analyze the impact of cloud computing on traditional IT infrastructure.", 2024, "medium"),
-        (3, "Data Privacy in Social Media", 
-         "Discuss privacy concerns and solutions in social media platforms.", 2024, "medium"),
-        (3, "Startup Culture in India", 
-         "Evaluate the growth and impact of startup ecosystem in India.", 2024, "easy"),
-        
-        # Tech Mahindra Topics
-        (4, "5G Technology: Opportunities and Challenges", 
-         "Discuss the potential of 5G technology and implementation challenges.", 2024, "hard"),
-        (4, "Digital Transformation in Healthcare", 
-         "How technology is revolutionizing healthcare delivery.", 2024, "medium"),
-        (4, "Ethics in Technology", 
-         "Discuss ethical considerations in AI, automation, and data usage.", 2024, "hard"),
-        
-        # Accenture Topics
-        (5, "Blockchain Technology: Beyond Cryptocurrency", 
-         "Explore applications of blockchain beyond digital currencies.", 2024, "hard"),
-        (5, "Smart Cities: Vision vs Reality", 
-         "Evaluate the progress of smart city initiatives in India.", 2024, "medium"),
-        (5, "Digital Divide in India", 
-         "Discuss the gap between urban and rural digital adoption.", 2024, "medium"),
-        
-        # Cognizant Topics
-        (6, "Internet of Things (IoT) in Daily Life", 
-         "How IoT is changing our daily routines and lifestyle.", 2024, "medium"),
-        (6, "Mental Health in the Digital Age", 
-         "Discuss the impact of technology on mental health and well-being.", 2024, "medium"),
-        (6, "E-learning vs Traditional Education", 
-         "Compare the effectiveness of online and offline learning methods.", 2024, "easy"),
-        
-        # Capgemini Topics
-        (7, "Automation and Job Security", 
-         "How automation affects job security and what skills are needed.", 2024, "medium"),
-        (7, "Digital Banking Revolution", 
-         "Impact of digital banking on traditional banking systems.", 2024, "medium"),
-        (7, "Social Media Influence on Youth", 
-         "Analyze the positive and negative effects of social media on young people.", 2024, "easy"),
-        
-        # L&T Topics
-        (8, "Infrastructure Development in India", 
-         "Discuss the challenges and opportunities in infrastructure development.", 2024, "medium"),
-        (8, "Renewable Energy: India's Green Future", 
-         "Evaluate India's progress in renewable energy adoption.", 2024, "medium"),
-        (8, "Smart Manufacturing", 
-         "How Industry 4.0 is transforming manufacturing processes.", 2024, "hard"),
-        
-        # Mindtree Topics
-        (9, "Data Analytics in Business Decision Making", 
-         "Role of data analytics in modern business strategies.", 2024, "medium"),
-        (9, "Cybersecurity Threats and Solutions", 
-         "Discuss emerging cybersecurity threats and preventive measures.", 2024, "hard"),
-        (9, "Digital Literacy in Rural India", 
-         "Challenges and solutions for improving digital literacy in rural areas.", 2024, "medium"),
-        
-        # HCL Topics
-        (10, "Edge Computing: The Future of Data Processing", 
-         "Benefits and challenges of edge computing technology.", 2024, "hard"),
-        (10, "Virtual Reality in Education", 
-         "Potential of VR technology in transforming education.", 2024, "medium"),
-        (10, "Social Responsibility of Tech Companies", 
-         "Discuss the social responsibilities of technology companies.", 2024, "medium"),
-    ]
-    
-    c.executemany("""
-        INSERT INTO gd_topics (company_id, topic, description, year, difficulty)
-        VALUES (?, ?, ?, ?, ?)
-    """, topics_data)
-    
-    conn.commit()
-    conn.close()
-    print("GD topics database initialized successfully!")
+    """GD topics are managed via questions.db from JSON datasets; no-op here."""
+    return
 
 @gd_bp.route("/")
 def gd_home():
@@ -150,40 +41,40 @@ def start_gd_session():
     try:
         email = session["email"]
         
-        # Get selected company
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("""
-            SELECT c.name FROM companies c
-            JOIN selected_companies sc ON c.id = sc.company_id
-            WHERE sc.student_email = ?
-            ORDER BY sc.selected_at DESC
-            LIMIT 1
-        """, (email,))
-        
-        company_result = c.fetchone()
-        company_name = company_result[0] if company_result else "General"
-        company_id = 1  # Default to TCS if no company selected
-        
-        if company_result:
-            c.execute("SELECT id FROM companies WHERE name = ?", (company_name,))
-            company_id = c.fetchone()[0]
-        
-        # Get a random GD topic
-        c.execute("""
-            SELECT id, topic, description, difficulty
+        selected = get_selected_company(email)
+        company_name = selected["name"] if selected else None
+
+        # Map to company_id in questions.db
+        qconn = sqlite3.connect(QUESTIONS_DB_PATH)
+        qc = qconn.cursor()
+        company_id = None
+        if company_name:
+            qc.execute("SELECT id FROM companies WHERE lower(trim(name)) = lower(trim(?))", (company_name,))
+            cid_row = qc.fetchone()
+            company_id = cid_row[0] if cid_row else None
+
+        if not company_id:
+            qconn.close()
+            return jsonify({"success": False, "error": "Please select a company first"}), 400
+
+        # Get a random GD topic for this company from questions.db
+        qc.execute(
+            """
+            SELECT id, topic, description, time_limit
             FROM gd_topics
-            WHERE company_id = ? OR company_id = 1
+            WHERE company_id = ?
             ORDER BY RANDOM()
             LIMIT 1
-        """, (company_id,))
-        
-        topic_result = c.fetchone()
+            """,
+            (company_id,)
+        )
+
+        topic_result = qc.fetchone()
+        qconn.close()
         if not topic_result:
             return jsonify({"success": False, "error": "No topics available"}), 404
         
-        topic_id, topic, description, difficulty = topic_result
-        conn.close()
+        topic_id, topic, description, time_limit = topic_result
         
         return jsonify({
             "success": True,
@@ -191,8 +82,8 @@ def start_gd_session():
             "topic_id": topic_id,
             "topic": topic,
             "description": description,
-            "difficulty": difficulty,
-            "time_limit": 180  # 3 minutes
+            "difficulty": "Medium",
+            "time_limit": time_limit if time_limit else 180
         })
     
     except Exception as e:
@@ -265,17 +156,20 @@ def evaluate_gd_performance():
         
         overall_score = (fluency_score + clarity_score + confidence_score) / 3
         
-        # Get topic details
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("""
-            SELECT t.topic, c.name 
+        # Get topic details from questions.db
+        qconn = sqlite3.connect(QUESTIONS_DB_PATH)
+        qc = qconn.cursor()
+        qc.execute(
+            """
+            SELECT t.topic, c.name
             FROM gd_topics t
             JOIN companies c ON t.company_id = c.id
             WHERE t.id = ?
-        """, (topic_id,))
-        
-        topic_result = c.fetchone()
+            """,
+            (topic_id,)
+        )
+        topic_result = qc.fetchone()
+        qconn.close()
         topic_name = topic_result[0] if topic_result else "General Topic"
         company_name = topic_result[1] if topic_result else "General"
         
@@ -390,5 +284,4 @@ def generate_gd_feedback(scores, transcript):
     
     return feedback
 
-# Initialize topics when module is imported
-init_gd_topics()
+# Topics are sourced from questions.db datasets

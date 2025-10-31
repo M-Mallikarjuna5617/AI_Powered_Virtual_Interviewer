@@ -11,9 +11,11 @@ import sqlite3
 import json
 from datetime import datetime
 from ai_service import EnhancedNLPAnalysisService
+from utils import get_selected_company
 
 hr_bp = Blueprint("hr", __name__, url_prefix="/hr")
 DB_PATH = "users.db"
+QUESTIONS_DB_PATH = "questions.db"
 nlp_service = EnhancedNLPAnalysisService()
 
 @hr_bp.route("/")
@@ -31,43 +33,48 @@ def start_hr_interview():
     
     try:
         email = session["email"]
-        
-        # Get selected company
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("""
-            SELECT c.id, c.name FROM companies c
-            JOIN selected_companies sc ON c.id = sc.company_id
-            WHERE sc.student_email = ?
-            ORDER BY sc.selected_at DESC
-            LIMIT 1
-        """, (email,))
-        
-        company_result = c.fetchone()
-        if not company_result:
+
+        selected = get_selected_company(email)
+        if not selected:
             return jsonify({"success": False, "error": "Please select a company first"}), 400
+        company_name = selected["name"]
+
+        # Map to company_id in questions.db
+        qconn = sqlite3.connect(QUESTIONS_DB_PATH)
+        qc = qconn.cursor()
+        qc.execute("SELECT id FROM companies WHERE lower(trim(name)) = lower(trim(?))", (company_name,))
+        row = qc.fetchone()
+        if not row:
+            qconn.close()
+            return jsonify({"success": False, "error": "Selected company not found in questions DB"}), 400
+        company_id = row[0]
+        qconn.close()
         
-        company_id, company_name = company_result
-        
-        # Get 10 random HR questions
-        c.execute("""
-            SELECT id, question, category, ideal_answer_points, difficulty, time_limit
-            FROM hr_question_bank
+        # Get 10 random HR questions from questions.db (company-specific)
+        qconn = sqlite3.connect(QUESTIONS_DB_PATH)
+        qc = qconn.cursor()
+        qc.execute(
+            """
+            SELECT id, question
+            FROM hr_questions
             WHERE company_id = ?
             ORDER BY RANDOM()
             LIMIT 10
-        """, (company_id,))
-        
+            """,
+            (company_id,)
+        )
+
         questions = []
-        for row in c.fetchall():
-            ideal_points = json.loads(row[3]) if row[3] else []
+        rows = qc.fetchall()
+        qconn.close()
+        for row in rows:
             questions.append({
                 "id": row[0],
                 "question": row[1],
-                "category": row[2],
-                "ideal_points": ideal_points,
-                "difficulty": row[4],
-                "time_limit": row[5]
+                "category": "General",
+                "ideal_points": [],
+                "difficulty": "Medium",
+                "time_limit": 60,
             })
         
         if len(questions) < 10:
@@ -77,12 +84,16 @@ def start_hr_interview():
             }), 400
         
         # Create HR attempt
-        c.execute("""
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute(
+            """
             INSERT INTO hr_attempts (
                 student_email, company_name, total_questions, status
             ) VALUES (?, ?, 10, 'in_progress')
-        """, (email, company_name))
-        
+            """,
+            (email, company_name),
+        )
         attempt_id = c.lastrowid
         conn.commit()
         conn.close()

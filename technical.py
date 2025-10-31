@@ -11,9 +11,11 @@ import sqlite3
 import json
 import re
 from datetime import datetime
+from utils import get_selected_company
 
 technical_bp = Blueprint("technical", __name__, url_prefix="/technical")
 DB_PATH = "users.db"
+QUESTIONS_DB_PATH = "questions.db"
 
 @technical_bp.route("/start", methods=["POST"])
 def start_technical_interview():
@@ -23,38 +25,48 @@ def start_technical_interview():
     
     try:
         email = session["email"]
-        
-        # Get selected company
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("""
-            SELECT c.id, c.name FROM companies c
-            JOIN selected_companies sc ON c.id = sc.company_id
-            WHERE sc.student_email = ?
-            ORDER BY sc.selected_at DESC
-            LIMIT 1
-        """, (email,))
-        
-        company_result = c.fetchone()
-        if not company_result:
+
+        selected = get_selected_company(email)
+        if not selected:
             return jsonify({"success": False, "error": "Please select a company first"}), 400
+        company_name = selected["name"]
+
+        # Map to company_id in questions.db
+        qconn = sqlite3.connect(QUESTIONS_DB_PATH)
+        qc = qconn.cursor()
+        qc.execute("SELECT id FROM companies WHERE lower(trim(name)) = lower(trim(?))", (company_name,))
+        row = qc.fetchone()
+        if not row:
+            qconn.close()
+            return jsonify({"success": False, "error": "Selected company not found in questions DB"}), 400
+        company_id = row[0]
+        qconn.close()
         
-        company_id, company_name = company_result
-        
-        # Get 2 random coding questions
-        c.execute("""
+        # Get 2 random coding questions from questions.db (company-specific)
+        qconn = sqlite3.connect(QUESTIONS_DB_PATH)
+        qc = qconn.cursor()
+        qc.execute(
+            """
             SELECT id, question_title, question_description, difficulty,
                    input_format, output_format, constraints,
-                   sample_input_1, sample_output_1, sample_input_2, sample_output_2,
-                   test_cases, hints, time_limit, tags
-            FROM technical_coding_questions
+                   sample_input, sample_output, test_cases, time_limit, tags
+            FROM technical_questions
             WHERE company_id = ?
             ORDER BY RANDOM()
             LIMIT 2
-        """, (company_id,))
-        
+            """,
+            (company_id,)
+        )
+
         questions = []
-        for row in c.fetchall():
+        rows = qc.fetchall()
+        qconn.close()
+        for row in rows:
+            test_cases = []
+            try:
+                test_cases = json.loads(row[9]) if row[9] else []
+            except Exception:
+                test_cases = []
             questions.append({
                 "id": row[0],
                 "title": row[1],
@@ -63,14 +75,11 @@ def start_technical_interview():
                 "input_format": row[4],
                 "output_format": row[5],
                 "constraints": row[6],
-                "sample_input_1": row[7],
-                "sample_output_1": row[8],
-                "sample_input_2": row[9],
-                "sample_output_2": row[10],
-                "test_cases": json.loads(row[11]),
-                "hints": row[12],
-                "time_limit": row[13],
-                "tags": row[14]
+                "sample_input": row[7],
+                "sample_output": row[8],
+                "test_cases": test_cases,
+                "time_limit": row[10],
+                "tags": row[11],
             })
         
         if len(questions) < 2:
@@ -197,13 +206,16 @@ def run_code():
         if not validation[0].json.get('valid', False):
             return validation
         
-        # Get test cases
-        conn = sqlite3.connect(DB_PATH)
+        # Get test cases from questions.db
+        conn = sqlite3.connect(QUESTIONS_DB_PATH)
         c = conn.cursor()
-        c.execute("""
-            SELECT test_cases FROM technical_coding_questions WHERE id = ?
-        """, (question_id,))
-        
+        c.execute(
+            """
+            SELECT test_cases FROM technical_questions WHERE id = ?
+            """,
+            (question_id,)
+        )
+
         result = c.fetchone()
         conn.close()
         
@@ -312,11 +324,14 @@ def submit_technical_interview():
             language = solution.get('language', 'python')
             
             # Get test cases
-            c.execute("""
+            c.execute(
+                """
                 SELECT question_title, test_cases 
-                FROM technical_coding_questions 
+                FROM technical_questions 
                 WHERE id = ?
-            """, (question_id,))
+                """,
+                (question_id,)
+            )
             
             q_result = c.fetchone()
             if not q_result:

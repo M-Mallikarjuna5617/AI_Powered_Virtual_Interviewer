@@ -13,6 +13,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 from reportlab.lib.units import inch
+from utils import get_selected_company
 import io
 
 feedback_bp = Blueprint("feedback", __name__, url_prefix="/feedback")
@@ -36,60 +37,85 @@ def generate_comprehensive_feedback():
     try:
         email = session["email"]
         
-        # Get all scores from different rounds
+        # Get selected company context
+        selected = get_selected_company(email)
+        selected_company = selected["name"] if selected else None
+
+        # Get all scores from different rounds (scoped to selected company)
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
         
-        # Get aptitude scores
-        c.execute("""
-            SELECT AVG(score), COUNT(*) 
-            FROM aptitude_attempts 
-            WHERE student_email = ?
-        """, (email,))
-        aptitude_result = c.fetchone()
-        aptitude_score = aptitude_result[0] if aptitude_result[0] else 0
-        aptitude_attempts = aptitude_result[1] if aptitude_result[1] else 0
+        # Get latest aptitude attempt for selected company
+        if selected_company:
+            c.execute(
+                """
+                SELECT score FROM aptitude_attempts 
+                WHERE student_email = ? AND company_name = ?
+                ORDER BY completed_at DESC
+                LIMIT 1
+                """,
+                (email, selected_company),
+            )
+            row = c.fetchone()
+            aptitude_score = row[0] if row else 0
+            aptitude_attempts = 1 if row else 0
+        else:
+            aptitude_score = 0
+            aptitude_attempts = 0
         
-        # Get technical scores
-        c.execute("""
-            SELECT AVG(score), COUNT(*) 
-            FROM technical_results 
-            WHERE student_email = ?
-        """, (email,))
-        technical_result = c.fetchone()
-        technical_score = technical_result[0] if technical_result[0] else 0
-        technical_attempts = technical_result[1] if technical_result[1] else 0
+        # Get technical scores for selected company
+        if selected_company:
+            c.execute(
+                """
+                SELECT AVG(score), COUNT(*) 
+                FROM technical_results 
+                WHERE student_email = ? AND company_name = ?
+                """,
+                (email, selected_company),
+            )
+            technical_result = c.fetchone()
+            technical_score = technical_result[0] if technical_result and technical_result[0] else 0
+            technical_attempts = technical_result[1] if technical_result and technical_result[1] else 0
+        else:
+            technical_score = 0
+            technical_attempts = 0
         
-        # Get GD scores
-        c.execute("""
-            SELECT AVG(overall_score), COUNT(*) 
-            FROM gd_results 
-            WHERE student_email = ?
-        """, (email,))
-        gd_result = c.fetchone()
-        gd_score = gd_result[0] if gd_result[0] else 0
-        gd_attempts = gd_result[1] if gd_result[1] else 0
+        # Get GD scores for selected company
+        if selected_company:
+            c.execute(
+                """
+                SELECT AVG(overall_score), COUNT(*) 
+                FROM gd_results 
+                WHERE student_email = ? AND company_name = ?
+                """,
+                (email, selected_company),
+            )
+            gd_result = c.fetchone()
+            gd_score = gd_result[0] if gd_result and gd_result[0] else 0
+            gd_attempts = gd_result[1] if gd_result and gd_result[1] else 0
+        else:
+            gd_score = 0
+            gd_attempts = 0
         
-        # Get HR scores
-        c.execute("""
-            SELECT AVG(overall_score), COUNT(*) 
-            FROM hr_results 
-            WHERE student_email = ?
-        """, (email,))
-        hr_result = c.fetchone()
-        hr_score = hr_result[0] if hr_result[0] else 0
-        hr_attempts = hr_result[1] if hr_result[1] else 0
+        # Get HR scores for selected company
+        if selected_company:
+            c.execute(
+                """
+                SELECT AVG(overall_score), COUNT(*) 
+                FROM hr_results 
+                WHERE student_email = ? AND company_name = ?
+                """,
+                (email, selected_company),
+            )
+            hr_result = c.fetchone()
+            hr_score = hr_result[0] if hr_result and hr_result[0] else 0
+            hr_attempts = hr_result[1] if hr_result and hr_result[1] else 0
+        else:
+            hr_score = 0
+            hr_attempts = 0
         
-        # Get company name
-        c.execute("""
-            SELECT c.name FROM companies c
-            JOIN selected_companies sc ON c.id = sc.company_id
-            WHERE sc.student_email = ?
-            ORDER BY sc.selected_at DESC
-            LIMIT 1
-        """, (email,))
-        company_result = c.fetchone()
-        company_name = company_result[0] if company_result else "General"
+        # Use selected company name
+        company_name = selected_company if selected_company else "General"
         
         # Calculate weighted overall score
         # Aptitude: 30%, Technical: 40%, GD: 15%, HR: 15%
