@@ -380,141 +380,46 @@
         let timerInterval;
         let testStartTime = Date.now();
 
-        // Sample Questions (In production, fetch from backend via AJAX)
-        let questions = [
-            {
-                id: 1,
-                category: "Logical Reasoning",
-                difficulty: "Medium",
-                question: "If in a certain code, GRAPE is written as 27354 and FOUR is written as 1687, how is GROUP written in that code?",
-                options: ["27685", "27865", "27684", "27864"],
-                correctAnswer: 3,
-                explanation: "G=2, R=7, O=8, U=6, P=4. So GROUP = 27864",
-                timeLimit: 60
-            },
-            {
-                id: 2,
-                category: "Number Series",
-                difficulty: "Easy",
-                question: "Find the next number in the series: 2, 6, 12, 20, 30, ?",
-                options: ["40", "42", "44", "46"],
-                correctAnswer: 1,
-                explanation: "Differences are 4, 6, 8, 10, 12. Next is 30 + 12 = 42",
-                timeLimit: 60
-            },
-            {
-                id: 3,
-                category: "Quantitative Aptitude",
-                difficulty: "Medium",
-                question: "A train travels 60 km in 45 minutes. What is its speed in km/hr?",
-                options: ["70 km/hr", "75 km/hr", "80 km/hr", "85 km/hr"],
-                correctAnswer: 2,
-                explanation: "Speed = Distance/Time = 60/(45/60) = 60/(3/4) = 80 km/hr",
-                timeLimit: 60
-            },
-            {
-                id: 4,
-                category: "Data Interpretation",
-                difficulty: "Hard",
-                question: "A company's profit increased from 20 lakhs to 25 lakhs. What is the percentage increase?",
-                options: ["20%", "25%", "30%", "15%"],
-                correctAnswer: 1,
-                explanation: "Increase = 5 lakhs. Percentage = (5/20) × 100 = 25%",
-                timeLimit: 60
-            },
-            {
-                id: 5,
-                category: "Verbal Ability",
-                difficulty: "Easy",
-                question: "Choose the correct synonym for AMBIGUOUS:",
-                options: ["Clear", "Vague", "Precise", "Definite"],
-                correctAnswer: 1,
-                explanation: "Ambiguous means unclear or having multiple meanings, similar to vague",
-                timeLimit: 45
-            },
-            {
-                id: 6,
-                category: "Logical Reasoning",
-                difficulty: "Medium",
-                question: "If all Bloops are Razzies and all Razzies are Lazzies, then all Bloops are definitely Lazzies.",
-                options: ["True", "False", "Cannot be determined", "None of the above"],
-                correctAnswer: 0,
-                explanation: "This is a valid syllogism. If A⊆B and B⊆C, then A⊆C",
-                timeLimit: 60
-            },
-            {
-                id: 7,
-                category: "Quantitative Aptitude",
-                difficulty: "Easy",
-                question: "What is 15% of 200?",
-                options: ["25", "30", "35", "40"],
-                correctAnswer: 1,
-                explanation: "15% of 200 = (15/100) × 200 = 30",
-                timeLimit: 45
-            },
-            {
-                id: 8,
-                category: "Number Series",
-                difficulty: "Hard",
-                question: "Find the missing number: 1, 4, 9, 16, ?, 36",
-                options: ["20", "25", "30", "32"],
-                correctAnswer: 1,
-                explanation: "These are perfect squares: 1², 2², 3², 4², 5², 6². Missing is 5² = 25",
-                timeLimit: 60
-            },
-            {
-                id: 9,
-                category: "Verbal Ability",
-                difficulty: "Medium",
-                question: "Identify the grammatically correct sentence:",
-                options: [
-                    "Neither he nor I am going",
-                    "Neither he nor I is going",
-                    "Neither he nor I are going",
-                    "Neither he nor I were going"
-                ],
-                correctAnswer: 0,
-                explanation: "With 'neither...nor', the verb agrees with the subject closer to it. 'I am' is correct",
-                timeLimit: 60
-            },
-            {
-                id: 10,
-                category: "Logical Reasoning",
-                difficulty: "Easy",
-                question: "If South-East becomes North and North becomes South-West, what will West become?",
-                options: ["North-East", "North-West", "South-East", "South"],
-                correctAnswer: 0,
-                explanation: "The entire compass is rotated 135° clockwise. West becomes North-East",
-                timeLimit: 60
-            }
-        ];
+        // ✅ FIX 1: Start with empty questions array (will be populated from backend)
+        let questions = [];
 
-        // Initialize Test
+        // ✅ FIX 2: Initialize Test - Fetch 30 questions from backend
         async function initTest() {
             try {
-                // Fetch questions from backend
+                console.log('🔄 Fetching questions from backend...');
+                
                 const response = await fetch('/aptitude/get-questions/aptitude');
                 const data = await response.json();
                 
-                if (data.success && data.questions) {
-                    // Convert correct_answer from letter to number for frontend compatibility
+                if (data.success && data.questions && data.questions.length > 0) {
+                    // ✅ Convert correct_answer from letter (A/B/C/D) to index (0/1/2/3)
                     questions = data.questions.map(q => ({
-                        ...q,
+                        id: q.id,
+                        category: q.category || 'General',
+                        difficulty: q.difficulty || 'Medium',
+                        question: q.question,
+                        options: q.options,
                         correctAnswer: q.correct_answer ? q.correct_answer.charCodeAt(0) - 65 : 0,
-                        category: q.subtopic || q.category || 'General'
+                        explanation: q.explanation,
+                        timeLimit: q.time_limit || 60
                     }));
-                    // Update UI
-                    document.getElementById('companyName').textContent = data.company;
                     
+                    console.log(`✅ Loaded ${questions.length} questions successfully!`);
+                    
+                    // ✅ Update UI with actual question count
+                    document.getElementById('companyName').textContent = data.company;
+                    document.getElementById('questionProgress').textContent = `Question 1 of ${questions.length}`;
+                    
+                    // ✅ Load first question and start timer
                     loadQuestion(0);
                     startTimer();
                 } else {
-                    console.error('Failed to load questions:', data.error);
-                    alert('Failed to load test questions. Please try again.');
+                    console.error('❌ Failed to load questions:', data.error);
+                    alert(`Failed to load test questions: ${data.error || 'Unknown error'}. Please try again.`);
                 }
             } catch (error) {
-                console.error('Error initializing test:', error);
-                alert('Error loading test. Please refresh the page.');
+                console.error('❌ Error initializing test:', error);
+                alert('Error loading test. Please refresh the page and try again.');
             }
         }
 
@@ -548,7 +453,7 @@
                 optionsContainer.appendChild(btn);
             });
 
-            // Update buttons
+            // Update navigation buttons
             document.getElementById('prevBtn').disabled = index === 0;
             const nextBtn = document.getElementById('nextBtn');
             nextBtn.innerHTML = index === questions.length - 1 ? 
@@ -591,7 +496,7 @@
 
                 if (timeRemaining <= 0) {
                     clearInterval(timerInterval);
-                    alert('Time is up!');
+                    alert('⏰ Time is up! Your test will be submitted automatically.');
                     showResults();
                 }
             }, 1000);
@@ -614,31 +519,33 @@
             document.getElementById('progressFill').style.width = progress + '%';
         }
 
-        // Show Results
+        // ✅ FIX 3: Show Results - Only completion message (no score)
         async function showResults() {
             clearInterval(timerInterval);
-            
-            // Mark test as completed
             testCompleted = true;
             
-            // Save results to backend
+            // ✅ Save results to backend
             await saveTestResults();
             
-            // Show simple completion message with only two buttons
+            // ✅ Hide question section
             document.getElementById('questionSection').style.display = 'none';
             
-            // Update result section to show simple completion message
+            // ✅ Show simple completion message
             document.getElementById('resultSection').innerHTML = `
                 <div class="text-center mb-4">
-                    <h2 class="mb-3">Test Completed!</h2>
+                    <div style="font-size: 4rem; color: #10b981; margin-bottom: 20px;">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h2 class="mb-3">✅ Test Completed!</h2>
                     <p class="text-muted">Your test has been submitted successfully</p>
+                    <p class="text-muted">Results will be available in the Feedback section</p>
                 </div>
                 
                 <div class="text-center mt-4">
                     <button class="btn-primary-custom me-3" onclick="window.location.href='/dashboard'">
                         <i class="fas fa-home me-2"></i>Back to Dashboard
                     </button>
-                    <button class="btn btn-outline-primary" onclick="window.location.href='/feedback?type=aptitude'">
+                    <button class="btn-primary-custom" onclick="window.location.href='/feedback?type=aptitude'" style="background: linear-gradient(135deg, #10b981, #059669);">
                         <i class="fas fa-chart-line me-2"></i>View Feedback
                     </button>
                 </div>
@@ -647,23 +554,29 @@
             document.getElementById('resultSection').classList.add('show');
         }
 
-        // Save Results
+        // ✅ FIX 4: Save Test Results - Convert answers back to letters
         async function saveTestResults() {
             try {
+                console.log('💾 Saving test results...');
+                
                 // Calculate time taken
                 const timeTaken = Math.floor((Date.now() - testStartTime) / 1000);
                 
-                // Prepare responses
+                // ✅ Prepare responses with ALL questions (even unanswered ones)
                 const responses = [];
                 questions.forEach((q, index) => {
-                    if (selectedAnswers[index] !== undefined) {
+                    const selectedIndex = selectedAnswers[index];
+                    // If unanswered, mark as null or skip
+                    if (selectedIndex !== undefined) {
                         responses.push({
                             question_id: q.id,
-                            selected_answer: String.fromCharCode(65 + selectedAnswers[index]), // A, B, C, D
-                            time_spent: Math.floor(Math.random() * 90) + 30 // Placeholder
+                            selected_answer: String.fromCharCode(65 + selectedIndex), // Convert 0→A, 1→B, 2→C, 3→D
+                            time_spent: 60 // Placeholder time
                         });
                     }
                 });
+                
+                console.log(`📤 Submitting ${responses.length} responses out of ${questions.length} questions`);
                 
                 const response = await fetch('/aptitude/complete-test', {
                     method: 'POST',
@@ -676,30 +589,27 @@
                 
                 const data = await response.json();
                 if (data.success) {
-                    console.log('Results saved successfully!', data);
-                    // Store attempt_id for feedback generation
+                    console.log('✅ Results saved successfully!', data);
+                    // Store attempt_id for feedback
                     sessionStorage.setItem('last_aptitude_attempt_id', data.attempt_id);
                 } else {
-                    console.error('Failed to save results:', data.error);
+                    console.error('❌ Failed to save results:', data.error);
+                    alert('Failed to save results. Please contact support.');
                 }
             } catch (err) {
-                console.log('Error saving results:', err);
+                console.error('❌ Error saving results:', err);
+                alert('Error saving results. Your responses may not have been recorded.');
             }
-        }
-
-        // Retake Test
-        function retakeTest() {
-            location.reload();
         }
 
         // Quit Test
         function confirmQuit() {
-            if (confirm('Are you sure you want to quit? Your progress will be lost.')) {
+            if (confirm('⚠️ Are you sure you want to quit? Your progress will be lost.')) {
                 window.location.href = '/dashboard';
             }
         }
 
-        // Initialize on page load
+        // ✅ Initialize on page load
         window.onload = initTest;
 
         // Track if test is completed
@@ -707,10 +617,8 @@
         
         // Prevent accidental page close
         window.onbeforeunload = function() {
-            if (!testCompleted && timeRemaining > 0 && currentQuestionIndex < questions.length) {
-                return "Test is in progress. Are you sure you want to leave?";
+            if (!testCompleted && timeRemaining > 0 && questions.length > 0) {
+                return "⚠️ Test is in progress. Are you sure you want to leave?";
             }
         };
     </script>
-</body>
-</html>

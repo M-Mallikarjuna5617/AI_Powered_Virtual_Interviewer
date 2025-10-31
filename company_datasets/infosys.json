@@ -1,0 +1,225 @@
+{
+    "company": "Infosys",
+    "rounds": {
+        "aptitude": [
+            {
+                "id": 1,
+                "question": "If selling price = Rs 840 and profit = 20%, find cost price.",
+                "difficulty": "hard"
+            },
+            {
+                "id": 2,
+                "question": "If 12 men can complete a work in 6 days, how many days will 8 men take?",
+                "difficulty": "hard"
+            },
+            {
+                "id": 3,
+                "question": "Ratio of boys to girls is 3:5. If there are 40 girls, find total students.",
+                "difficulty": "hard"
+            },
+            {
+                "id": 4,
+                "question": "The average of 5 numbers is 36. If one number is removed, the average becomes 34. Find the removed number.",
+                "difficulty": "medium"
+            },
+            {
+                "id": 5,
+                "question": "Simplify: (25% of 1200) + (3/5 of 300).",
+                "difficulty": "easy"
+            },
+            {
+                "id": 6,
+                "question": "If SP = Rs 1440 and profit = 20%, find CP.",
+                "difficulty": "hard"
+            },
+            {
+                "id": 7,
+                "question": "Find the area of a circle with radius 7 cm (\u03c0=22/7).",
+                "difficulty": "easy"
+            },
+            {
+                "id": 8,
+                "question": "Find the LCM of 12, 18, and 24.",
+                "difficulty": "easy"
+            },
+            {
+                "id": 9,
+                "question": "If sum of first n even numbers = 420, find n.",
+                "difficulty": "medium"
+            },
+            {
+                "id": 10,
+                "question": "A sum of money doubles in 5 years at simple interest. Find the rate.",
+                "difficulty": "hard"
+            },
+            {
+                "id": 11,
+                "question": "Simplify: \u221a144 + 3\u00b2.",
+                "difficulty": "medium"
+            },
+            {
+                "id": 12,
+                "question": "If the perimeter of a square is 48 cm, find its area.",
+                "difficulty": "medium"
+            },
+            {
+                "id": 13,
+                "question": "Pipe A fills a tank in 6 hrs, pipe B in 4 hrs. How long to fill if both opened together?",
+                "difficulty": "easy"
+            },
+            {
+                "id": 14,
+                "question": "If cost price is Rs 120 and loss is 20%, find selling price.",
+                "difficulty": "hard"
+            },
+            {
+                "id": 15,
+                "question": "A person walks 10 km east, 6 km north. Find distance from start point.",
+                "difficulty": "easy"
+            },
+            {
+                "id": 16,
+                "question": "A boat can go 30 km downstream in 2 hours and return in 3 hours. Find speed in still water.",
+                "difficulty": "medium"
+            },
+            {
+                "id": 17,
+                "question": "Find compound interest on Rs 8000 at 10% for 2 years, compounded annually.",
+                "difficulty": "hard"
+            },
+            {
+                "id": 18,
+                "question": "If 3 pencils cost Rs 15, how many can be bought for Rs 45?",
+                "difficulty": "medium"
+            },
+            {
+                "id": 19,
+                "question": "A can do a work in 10 days, B in 15 days. In how many days will they complete the work together?",
+                "difficulty": "medium"
+            },
+            {
+                "id": 20,
+                "question": "A person travels 40 km at 20 km/h and returns at 40 km/h. Find average speed.",
+                "difficulty": "easy"
+            },
+            {
+                "id": 21,
+                "question": "Find missing angle in triangle with angles 70\u00b0 and 60\u00b0.",
+                "difficulty": "easy"
+            },
+            {
+                "id": 22,
+                "question": "Train A runs at 60km/h and Train B at 80km/h. Find the time difference for 240 km.",
+                "difficulty": "easy"
+            },
+            {
+                "id": 23,
+                "question": "What is the probability of getting an even number on a dice?",
+                "difficulty": "easy"
+            },
+            {
+                "id": 24,
+                "question": "Find the simple interest on Rs 4000 at 5% p.a. for 2 years.",
+                "difficulty": "easy"
+            },
+            {
+                "id": 25,
+                "question": "A man invests Rs 5000 at 12% p.a. compound interest. Find the amount after 2 years.",
+                "difficulty": "medium"
+            },
+            {
+                "id": 26,
+                "question": "Find the missing number: 7, 14, 28, 56, ?, 224.",
+                "difficulty": "medium"
+            },
+            {
+                "id": 27,
+                "question": "Convert 0.75 into fraction.",
+                "difficulty": "hard"
+            },
+            {
+                "id": 28,
+                "question": "A man buys a watch for Rs 500 and sells it for Rs 600. Find profit percentage.",
+                "difficulty": "hard"
+            },
+            {
+                "id": 29,
+                "question": "A bag has 4 red, 5 blue, 6 green balls. Find probability of drawing a red ball.",
+                "difficulty": "hard"
+            },
+            {
+                "id": 30,
+                "question": "Solve for x: 2x + 5 = 15.",
+                "difficulty": "hard"
+            }
+        ],
+        "technical": [
+            {
+                "id": 1,
+                "question": "Explain difference between list and tuple in Python.",
+                "difficulty": "hard"
+            },
+            {
+                "id": 2,
+                "question": "What is normalization in SQL?",
+                "difficulty": "hard"
+            }
+        ],
+        "gd": [
+            {
+                "id": 1,
+                "topic": "Climate change and corporate responsibility."
+            },
+            {
+                "id": 2,
+                "topic": "Impact of startup culture on youth."
+            },
+            {
+                "id": 3,
+                "topic": "Cryptocurrency \u2014 future of finance?"
+            },
+            {
+                "id": 4,
+                "topic": "Should coding be mandatory in schools?"
+            },
+            {
+                "id": 5,
+                "topic": "Work from home vs office \u2014 future of corporate culture."
+            }
+        ],
+        "hr": [
+            {
+                "id": 1,
+                "question": "Why do you want to join our company?"
+            },
+            {
+                "id": 2,
+                "question": "How do you handle stress and deadlines?"
+            },
+            {
+                "id": 3,
+                "question": "What are your salary expectations?"
+            },
+            {
+                "id": 4,
+                "question": "Where do you see yourself in 5 years?"
+            },
+            {
+                "id": 5,
+                "question": "Are you willing to relocate?"
+            },
+            {
+                "id": 6,
+                "question": "What are your strengths and weaknesses?"
+            },
+            {
+                "id": 7,
+                "question": "Why should we hire you?"
+            },
+            {
+                "id": 8,
+                "question": "Tell me about yourself."
+            }
+        ]
+    }
+}
