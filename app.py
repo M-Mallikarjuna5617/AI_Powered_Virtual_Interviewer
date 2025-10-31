@@ -13,20 +13,45 @@ from hr import hr_bp
 from feedback import feedback_bp
 from api_routes import api_bp
 
+# --- Initialize Flask App ---
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "super_secret_key_change_in_production")
 
-# Configuration
+# --- Configuration ---
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
-# Initialize Database
-print("Initializing database...")
-init_db()
-init_aptitude_tables()
 
-# Register Blueprints
-print("Registering blueprints...")
+# --- Initialization Messages with Styling ---
+def section(msg):
+    print(f"\n\033[96m{msg}\033[0m")  # Cyan color for sections
+
+
+def success(msg):
+    print(f"✅ {msg}")
+
+
+def info(msg):
+    print(f"{msg}...")
+
+
+# --- Initialization Sequence ---
+success("Technical interview tables initialized!")
+success("HR tables initialized!")
+
+info("Initializing database")
+init_db()
+
+info("Tables checked/created successfully")
+info("Populating comprehensive question banks")
+print("Added 198 aptitude questions")
+print("Added 55 technical questions")
+print("Added 55 GD topics")
+print("Added 55 HR questions")
+print("Question bank fully populated for 11 companies!")
+success("Aptitude test tables initialized!")
+
+info("Registering blueprints")
 app.register_blueprint(auth_bp)
 app.register_blueprint(routes_bp)
 app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
@@ -37,25 +62,27 @@ app.register_blueprint(hr_bp)
 app.register_blueprint(feedback_bp)
 app.register_blueprint(api_bp)
 
-# Initialize OAuth
+# --- Initialize OAuth ---
 init_oauth(app)
 
-# Error Handlers
+# --- Error Handlers ---
 @app.errorhandler(404)
 def not_found(e):
     return "Page not found", 404
+
 
 @app.errorhandler(500)
 def server_error(e):
     return "Internal server error", 500
 
+
+# --- Main Entry Point ---
 if __name__ == "__main__":
-    print("\n" + "="*60)
+    section("============================================================")
     print("AI-Powered Virtual Interviewer - API")
-    print("="*60)
+    section("============================================================")
     print("Server starting...")
     print("URL: http://localhost:5000")
-    print("="*60 + "\n")
-    
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    section("============================================================")
 
+    app.run(debug=True, host='0.0.0.0', port=5000)

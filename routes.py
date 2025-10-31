@@ -167,13 +167,81 @@ def select_company(company_id):
         flash("Please login first!", "warning")
         return redirect(url_for("auth.login"))
     
-    from utils import set_selected_company
-    
+    from utils import set_selected_company, get_company_name_by_id
+
     email = session.get("email")
     set_selected_company(email, company_id)
-    
-    flash("Company selected! Interview questions will be customized for this company.", "success")
-    return redirect(url_for("routes.companies"))
+
+    # Store the selected company name in the session
+    company_name = get_company_name_by_id(company_id)
+    session['selected_company'] = company_name.lower().replace(" ", "_")
+
+    flash(f"Company '{company_name}' selected! Aptitude questions will be customized for this company.", "success")
+    return redirect(url_for("routes.aptitude"))
+
+# ---- Add near your other routes in routes.py ----
+import json
+from flask import jsonify
+
+@routes_bp.route("/aptitude/get-questions/<round_name>")
+def api_get_round_questions(round_name):
+    """
+    Returns JSON payload used by aptitude.html front-end fetch.
+    round_name is 'aptitude' (or could be 'technical' depending on front-end use).
+    """
+    if "email" not in session:
+        return jsonify({"success": False, "error": "not_authenticated"}), 401
+
+    email = session.get("email")
+    # Try session first, then DB selected company
+    company = session.get("selected_company")
+    if not company:
+        from utils import get_selected_company
+        comp = get_selected_company(email)
+        if comp:
+            company = comp.get("name")
+        else:
+            return jsonify({"success": False, "error": "no_company_selected"}), 400
+
+    # load round items
+    from utils import load_company_round
+    # Map front-end 'aptitude' round to dataset round
+    round_key = round_name.lower()
+    # choose limits: aptitude front-end requests 30 out of 100
+    limit_map = {
+        "aptitude": 30,
+        "technical": 10,
+        "gd": 1,   # for GD front-end you might fetch one topic at a time
+        "hr": 20
+    }
+    limit = limit_map.get(round_key, None)
+
+    items = load_company_round(company, round_key, limit=limit)
+
+    # Do some compatibility formatting for the front-end:
+    # front-end expects: { success: true, company: "TCS", questions: [{id, question, options, correct_answer, category, difficulty}, ...] }
+    payload_items = []
+    for it in items:
+        # For aptitude items that are simple (no options) we still include options as empty list
+        q = {
+            "id": it.get("id"),
+            "question": it.get("question") or it.get("topic") or "",
+            "options": it.get("options") or [],
+            "correct_answer": it.get("answer") or it.get("correct_answer") or None,
+            "category": it.get("category") or "General",
+            "difficulty": it.get("difficulty") or "medium",
+            "time_limit": it.get("time_limit") or None,
+            "explanation": it.get("explanation") or None
+        }
+        # If options are missing, supply empty list (frontend must handle open-ended)
+        payload_items.append(q)
+
+    return jsonify({
+        "success": True,
+        "company": company,
+        "questions": payload_items
+    })
+# ---- end API endpoint ----
 
 
 # ---------------------------------------------
@@ -184,7 +252,24 @@ def aptitude():
     if "email" not in session:
         flash("Please login first!", "warning")
         return redirect(url_for("auth.login"))
-    return render_template("aptitude.html", username=session.get("name"))
+
+    # Prefer session-stored company name; fallback to DB last selection
+    company = session.get("selected_company")
+    if not company:
+        from utils import get_selected_company
+        comp = get_selected_company(session.get("email"))
+        company = comp.get("name") if comp else None
+
+    if not company:
+        flash("Please select a company first!", "warning")
+        return redirect(url_for("routes.companies"))
+
+    # Render template — the front-end JS will fetch questions from /aptitude/get-questions/aptitude
+    return render_template(
+        "aptitude.html",
+        username=session.get("name"),
+        company=company.title() if company else None
+    )
 
 
 # ---------------------------------------------
@@ -206,20 +291,44 @@ def technical():
     if "email" not in session:
         flash("Please login first!", "warning")
         return redirect(url_for("auth.login"))
+
+    company = session.get("selected_company")
+    if not company:
+        from utils import get_selected_company
+        comp = get_selected_company(session.get("email"))
+        company = comp.get("name") if comp else None
+
+    if not company:
+        flash("Please select a company first!", "warning")
+        return redirect(url_for("routes.companies"))
+
+    from utils import load_company_round
+    questions = load_company_round(company, "technical", limit=10)
+
+    return render_template("technical.html", username=session.get("name"), company=company.title(), questions=questions)
+
+
+@routes_bp.route("/technical", endpoint="technical_round")
+def technical():
+    if "email" not in session:
+        flash("Please login first!", "warning")
+        return redirect(url_for("auth.login"))
     return render_template("technical.html", username=session.get("name"))
 
 
-# ---------------------------------------------
-# AI HR Interview
-# ---------------------------------------------
-@routes_bp.route("/hr_interview")
+@routes_bp.route("/gd", endpoint="gd_round")
+def gd():
+    if "email" not in session:
+        flash("Please login first!", "warning")
+        return redirect(url_for("auth.login"))
+    return render_template("gd.html", username=session.get("name"))
+
+@routes_bp.route("/hr_interview", endpoint="hr_round")
 def hr_interview():
     if "email" not in session:
         flash("Please login first!", "warning")
         return redirect(url_for("auth.login"))
     return render_template("hr.html", username=session.get("name"))
-
-
 # ---------------------------------------------
 # Feedback & Reports
 # ---------------------------------------------

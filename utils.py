@@ -5,6 +5,81 @@ import os
 from database import get_connection
 
 DB_PATH = "users.db"
+# --- utils.py additions (paste after imports) ---
+import json
+import random
+
+# Directory where company JSON files live (make sure this exists)
+DATASET_DIR = r"C:\AI_Powered_Virtual_Interviewer\company_datasets"
+
+def normalize_company_name(name: str) -> str:
+    """Normalize DB company name to dataset filename (lowercase, underscores)."""
+    return name.strip().lower().replace(" ", "_")
+
+def get_company_name_by_id(company_id):
+    """Return company name (string) for a given company_id from companies table."""
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("SELECT name FROM companies WHERE id = ?", (company_id,))
+    row = c.fetchone()
+    conn.close()
+    return row[0] if row else None
+
+def load_company_round(company, round_name, limit=None):
+    """
+    Load questions/topics for a company and round from company JSON file.
+
+    - company: can be a dict (get_selected_company result) or a string name.
+    - round_name: 'aptitude' | 'technical' | 'gd' | 'hr'
+    - limit: number of items to return (random sample), or None -> return all
+    """
+    # Accept either a company dict, or a name string
+    if isinstance(company, dict):
+        company_name = company.get("name", "")
+    else:
+        company_name = company or ""
+
+    if not company_name:
+        return []
+
+    filename = normalize_company_name(company_name) + ".json"
+    path = os.path.join(DATASET_DIR, filename)
+
+    if not os.path.exists(path):
+        # no dataset found
+        print(f"[load_company_round] dataset missing: {path}")
+        return []
+
+    try:
+        with open(path, "r", encoding="utf-8") as fh:
+            data = json.load(fh)
+    except Exception as e:
+        print(f"[load_company_round] failed to load {path}: {e}")
+        return []
+
+    rounds = data.get("rounds", {})
+    items = rounds.get(round_name, []) or []
+
+    # Normalize items: ensure each item has id and expected keys
+    normalized = []
+    for idx, it in enumerate(items):
+        new = dict(it)  # copy
+        if "id" not in new:
+            new["id"] = idx + 1
+        # Standard fields for aptitude questions:
+        # question, options (optional), correct_answer (optional), difficulty, category
+        # for GD topics use 'topic' key
+        normalized.append(new)
+
+    if limit:
+        if len(normalized) > limit:
+            try:
+                normalized = random.sample(normalized, limit)
+            except Exception:
+                normalized = normalized[:limit]
+
+    return normalized
+# --- end additions ---
 
 # -------------------- Send Email (OTP demo) --------------------
 def send_email(receiver_email, otp):
