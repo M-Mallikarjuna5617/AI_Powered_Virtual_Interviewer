@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - AI-Powered Virtual Interviewer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: #1e293b;
+      background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      width: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    
+    nav {
+      max-width: 1100px;
+      margin: auto;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    nav h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: white;
+    }
+    
+    nav a {
+      text-decoration: none;
+      color: white;
+      font-weight: 500;
+      transition: opacity 0.3s;
+      background: rgba(255,255,255,0.2);
+      padding: 8px 20px;
+      border-radius: 50px;
+    }
+    
+    nav a:hover { 
+      opacity: 0.9;
+      background: rgba(255,255,255,0.3);
+    }
+
+    .register-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+    }
+
+    .register-card {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(102, 126, 234, 0.15);
+      width: 100%;
+      max-width: 450px;
+      animation: slideUp 0.6s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .register-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .register-card h2 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+
+    .register-card > p {
+      color: #64748b;
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+
+    .step-indicator {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 0.85rem;
+      color: white;
+      font-weight: 600;
+      padding: 0.6rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50px;
+    }
+
+    .form-group {
+      margin-bottom: 1.3rem;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-group small {
+      display: block;
+      margin-top: 0.5rem;
+      color: #64748b;
+      font-size: 0.8rem;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.9rem;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 1.5rem 0;
+      color: #94a3b8;
+      font-size: 0.9rem;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e2e8f0;
+    }
+
+    .divider span {
+      padding: 0 1rem;
+    }
+
+    .google-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 0.9rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      background: white;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.3s;
+      text-decoration: none;
+      color: #1e293b;
+    }
+
+    .google-btn img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .google-btn:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .links {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    .links a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+
+    .alert {
+      padding: 0.9rem 1rem;
+      border-radius: 10px;
+      margin-bottom: 1.2rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .alert-danger {
+      background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+      color: #991b1b;
+      border-left: 4px solid #ef4444;
+    }
+
+    .alert-success {
+      background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+      color: #065f46;
+      border-left: 4px solid #10b981;
+    }
+
+    .alert-info {
+      background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+      color: #1e40af;
+      border-left: 4px solid #3b82f6;
+    }
+
+    .alert-warning {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      color: #92400e;
+      border-left: 4px solid #f59e0b;
+    }
+
+    footer {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-align: center;
+      padding: 25px;
+      font-size: 0.9rem;
+      margin-top: auto;
+    }
+
+    @media (max-width: 600px) {
+      .register-card {
+        padding: 2rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header>
+    <nav>
+      <h1>AI-Powered Virtual Interviewer[API]</h1>
+      <a href="{{ url_for('home') }}">← Back to Home</a>
+    </nav>
+  </header>
+
+  <!-- Register Form -->
+  <div class="register-container">
+    <div class="register-card">
+      <h2>Create Your Account</h2>
+      <p>Join us and start your journey 🚀</p>
+
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, msg in messages %}
+            <div class="alert alert-{{ category }}">
+              {{ msg }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <!-- Google Register (shown always on step 1) -->
+      {% if not show_otp and not show_password %}
+      <a href="{{ url_for('auth.google_login') }}" class="google-btn">
+        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo">
+        Continue with Google
+      </a>
+
+      <div class="divider">
+        <span>Or sign up with</span>
+      </div>
+      {% endif %}
+
+      <!-- Step 1: Email & Name -->
+      {% if not show_otp and not show_password %}
+      <div class="step-indicator">Step 1 of 3: Enter Details</div>
+      <form method="POST" action="{{ url_for('auth.register') }}">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" placeholder="John Doe" 
+                 value="{{ name if name else '' }}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" 
+                 value="{{ email if email else '' }}" required>
+        </div>
+
+        <button type="submit" name="send_otp" class="btn btn-primary">Send OTP</button>
+      </form>
+      {% endif %}
+
+      <!-- Step 2: Verify OTP -->
+      {% if show_otp %}
+      <div class="step-indicator">Step 2 of 3: Verify OTP</div>
+      <form method="POST" action="{{ url_for('auth.register') }}">
+        <input type="hidden" name="name" value="{{ name }}">
+        <input type="hidden" name="email" value="{{ email }}">
+        
+        <div class="form-group">
+          <label for="otp">Enter OTP</label>
+          <input type="text" id="otp" name="otp" placeholder="Enter 4-digit OTP" 
+                 maxlength="4" required autofocus>
+          <small>Check your email (or console/otps.log in dev mode)</small>
+        </div>
+
+        <button type="submit" name="verify_otp" class="btn btn-primary">Verify OTP</button>
+      </form>
+      {% endif %}
+
+      <!-- Step 3: Set Password -->
+      {% if show_password %}
+      <div class="step-indicator">Step 3 of 3: Set Password</div>
+      <form method="POST" action="{{ url_for('auth.register') }}">
+        <input type="hidden" name="name" value="{{ name }}">
+        <input type="hidden" name="email" value="{{ email }}">
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" 
+                 placeholder="Create a strong password" minlength="6" required>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="password" id="confirmPassword" name="confirmPassword" 
+                 placeholder="Re-enter your password" minlength="6" required>
+        </div>
+
+        <button type="submit" name="register" class="btn btn-primary">Create Account</button>
+      </form>
+      {% endif %}
+
+      <div class="links">
+        Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 AI-Powered Virtual Interviewer. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>

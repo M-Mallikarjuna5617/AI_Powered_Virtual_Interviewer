@@ -1,0 +1,31 @@
+{
+  "aptitude": [
+    {"id":1,"q":"If 5x+3=23, what is x?","options":["2","3","4","5"],"answer":"4","topic":"algebra","type":"mcq"},
+    {"id":2,"q":"What is 15% of 200?","options":["20","25","30","35"],"answer":"30","topic":"percentages","type":"mcq"},
+    {"id":3,"q":"If a train travels 60 km in 1.5 hours, what is its speed (km/h)?","options":["30","40","45","50"],"answer":"40","topic":"time-distance","type":"mcq"}
+  ],
+  "technical": [
+    {
+      "id":"t1",
+      "title":"Two Sum",
+      "desc":"Given array nums and target, return indices of the two numbers such that they add up to target.",
+      "languages":["python","java"],
+      "testcases":[{"in":"[2,7,11,15]\\n9","out":"[0,1]"}]
+    },
+    {
+      "id":"t2",
+      "title":"Reverse Linked List",
+      "desc":"Reverse a singly linked list.",
+      "languages":["python","java"],
+      "testcases":[{"in":"[1,2,3,4,5]","out":"[5,4,3,2,1]"}]
+    }
+  ],
+  "gd": [
+    {"id":"g1","topic":"Remote work vs Office","prompt":"Discuss pros and cons of remote work vs office work."},
+    {"id":"g2","topic":"AI in Hiring","prompt":"Debate the ethical pros and cons of using AI in hiring."}
+  ],
+  "hr": [
+    {"id":"h1","q":"Tell me about yourself","time_limit":90},
+    {"id":"h2","q":"Describe a conflict you resolved at work","time_limit":90}
+  ]
+}

@@ -1,0 +1,364 @@
+{
+  "aptitude": [
+    {
+      "id": "infosys_a1",
+      "q": "What is the next number in the series: 8, 13, 18, 23, 28 ?",
+      "options": [
+        "33",
+        "34",
+        "32",
+        "35"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a2",
+      "q": "If 6x + 11 = 77, find x.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a3",
+      "q": "A box has 3 red and 4 blue balls. One ball is drawn at random. What is probability of blue?",
+      "options": [
+        "0.57",
+        "0.5",
+        "0.25",
+        "0.75"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a4",
+      "q": "Person A can finish a job in 4 days and B in 5 days. Together they take how many days?",
+      "options": [
+        "2.22",
+        "4",
+        "5",
+        "9"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a5",
+      "q": "If 2x + 3 = 11, what is x?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a6",
+      "q": "What is the next number in the series: 7, 11, 15, 19, 23 ?",
+      "options": [
+        "27",
+        "28",
+        "26",
+        "29"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a7",
+      "q": "If 6x + 5 = 35, find x.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a8",
+      "q": "A box has 3 red and 4 blue balls. One ball is drawn at random. What is probability of blue?",
+      "options": [
+        "0.57",
+        "0.5",
+        "0.25",
+        "0.75"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a9",
+      "q": "Person A can finish a job in 3 days and B in 3 days. Together they take how many days?",
+      "options": [
+        "1.5",
+        "3",
+        "3",
+        "6"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a10",
+      "q": "If 2x + 3 = 11, what is x?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a11",
+      "q": "What is the next number in the series: 2, 5, 8, 11, 14 ?",
+      "options": [
+        "17",
+        "18",
+        "16",
+        "19"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a12",
+      "q": "If 12x + 2 = 26, find x.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a13",
+      "q": "A box has 4 red and 5 blue balls. One ball is drawn at random. What is probability of blue?",
+      "options": [
+        "0.56",
+        "0.5",
+        "0.25",
+        "0.75"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a14",
+      "q": "Person A can finish a job in 2 days and B in 3 days. Together they take how many days?",
+      "options": [
+        "1.2",
+        "2",
+        "3",
+        "5"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a15",
+      "q": "If 2x + 3 = 11, what is x?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a16",
+      "q": "What is the next number in the series: 8, 13, 18, 23, 28 ?",
+      "options": [
+        "33",
+        "34",
+        "32",
+        "35"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a17",
+      "q": "If 3x + 10 = 40, find x.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a18",
+      "q": "A box has 3 red and 4 blue balls. One ball is drawn at random. What is probability of blue?",
+      "options": [
+        "0.57",
+        "0.5",
+        "0.25",
+        "0.75"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a19",
+      "q": "Person A can finish a job in 6 days and B in 4 days. Together they take how many days?",
+      "options": [
+        "2.4",
+        "6",
+        "4",
+        "10"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a20",
+      "q": "If 2x + 3 = 11, what is x?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a21",
+      "q": "What is the next number in the series: 4, 8, 12, 16, 20 ?",
+      "options": [
+        "24",
+        "25",
+        "23",
+        "26"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a22",
+      "q": "If 11x + 3 = 36, find x.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a23",
+      "q": "A box has 1 red and 2 blue balls. One ball is drawn at random. What is probability of blue?",
+      "options": [
+        "0.67",
+        "0.5",
+        "0.25",
+        "0.75"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a24",
+      "q": "Person A can finish a job in 3 days and B in 6 days. Together they take how many days?",
+      "options": [
+        "2.0",
+        "3",
+        "6",
+        "9"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a25",
+      "q": "If 2x + 3 = 11, what is x?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a26",
+      "q": "What is the next number in the series: 10, 16, 22, 28, 34 ?",
+      "options": [
+        "40",
+        "41",
+        "39",
+        "42"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a27",
+      "q": "If 5x + 1 = 6, find x.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a28",
+      "q": "A box has 4 red and 5 blue balls. One ball is drawn at random. What is probability of blue?",
+      "options": [
+        "0.56",
+        "0.5",
+        "0.25",
+        "0.75"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a29",
+      "q": "Person A can finish a job in 2 days and B in 2 days. Together they take how many days?",
+      "options": [
+        "1.0",
+        "2",
+        "2",
+        "4"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "infosys_a30",
+      "q": "If 2x + 3 = 11, what is x?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    }
+  ]
+}

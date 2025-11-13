@@ -1,0 +1,364 @@
+{
+  "aptitude": [
+    {
+      "id": "razorpay_a1",
+      "q": "What is the next number in the series: 5, 10, 15, 20, 25 ?",
+      "options": [
+        "30",
+        "31",
+        "29",
+        "32"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a2",
+      "q": "If 8x + 11 = 99, find x.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a3",
+      "q": "A box has 4 red and 5 blue balls. One ball is drawn at random. What is probability of blue?",
+      "options": [
+        "0.56",
+        "0.5",
+        "0.25",
+        "0.75"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a4",
+      "q": "Person A can finish a job in 4 days and B in 6 days. Together they take how many days?",
+      "options": [
+        "2.4",
+        "4",
+        "6",
+        "10"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a5",
+      "q": "If 2x + 3 = 11, what is x?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a6",
+      "q": "What is the next number in the series: 7, 12, 17, 22, 27 ?",
+      "options": [
+        "32",
+        "33",
+        "31",
+        "34"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a7",
+      "q": "If 7x + 5 = 40, find x.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a8",
+      "q": "A box has 4 red and 5 blue balls. One ball is drawn at random. What is probability of blue?",
+      "options": [
+        "0.56",
+        "0.5",
+        "0.25",
+        "0.75"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a9",
+      "q": "Person A can finish a job in 3 days and B in 2 days. Together they take how many days?",
+      "options": [
+        "1.2",
+        "3",
+        "2",
+        "5"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a10",
+      "q": "If 2x + 3 = 11, what is x?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a11",
+      "q": "What is the next number in the series: 6, 12, 18, 24, 30 ?",
+      "options": [
+        "36",
+        "37",
+        "35",
+        "38"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a12",
+      "q": "If 2x + 1 = 3, find x.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a13",
+      "q": "A box has 3 red and 4 blue balls. One ball is drawn at random. What is probability of blue?",
+      "options": [
+        "0.57",
+        "0.5",
+        "0.25",
+        "0.75"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a14",
+      "q": "Person A can finish a job in 3 days and B in 3 days. Together they take how many days?",
+      "options": [
+        "1.5",
+        "3",
+        "3",
+        "6"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a15",
+      "q": "If 2x + 3 = 11, what is x?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a16",
+      "q": "What is the next number in the series: 1, 6, 11, 16, 21 ?",
+      "options": [
+        "26",
+        "27",
+        "25",
+        "28"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a17",
+      "q": "If 10x + 8 = 88, find x.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a18",
+      "q": "A box has 6 red and 7 blue balls. One ball is drawn at random. What is probability of blue?",
+      "options": [
+        "0.54",
+        "0.5",
+        "0.25",
+        "0.75"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a19",
+      "q": "Person A can finish a job in 6 days and B in 3 days. Together they take how many days?",
+      "options": [
+        "2.0",
+        "6",
+        "3",
+        "9"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a20",
+      "q": "If 2x + 3 = 11, what is x?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a21",
+      "q": "What is the next number in the series: 5, 8, 11, 14, 17 ?",
+      "options": [
+        "20",
+        "21",
+        "19",
+        "22"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a22",
+      "q": "If 2x + 12 = 36, find x.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a23",
+      "q": "A box has 2 red and 3 blue balls. One ball is drawn at random. What is probability of blue?",
+      "options": [
+        "0.6",
+        "0.5",
+        "0.25",
+        "0.75"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a24",
+      "q": "Person A can finish a job in 6 days and B in 2 days. Together they take how many days?",
+      "options": [
+        "1.5",
+        "6",
+        "2",
+        "8"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a25",
+      "q": "If 2x + 3 = 11, what is x?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a26",
+      "q": "What is the next number in the series: 8, 13, 18, 23, 28 ?",
+      "options": [
+        "33",
+        "34",
+        "32",
+        "35"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a27",
+      "q": "If 6x + 2 = 14, find x.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a28",
+      "q": "A box has 4 red and 5 blue balls. One ball is drawn at random. What is probability of blue?",
+      "options": [
+        "0.56",
+        "0.5",
+        "0.25",
+        "0.75"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a29",
+      "q": "Person A can finish a job in 4 days and B in 2 days. Together they take how many days?",
+      "options": [
+        "1.33",
+        "4",
+        "2",
+        "6"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "razorpay_a30",
+      "q": "If 2x + 3 = 11, what is x?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    }
+  ]
+}

@@ -1,0 +1,214 @@
+{
+  "aptitude": [
+    {
+      "id": "cognizant_a1",
+      "q": "What is the value of 15% of 200?",
+      "options": ["20", "25", "30", "35"],
+      "correct_answer": "C",
+      "topic": "Percentages"
+    },
+    {
+      "id": "cognizant_a2",
+      "q": "If a train travels 60 km in 1.5 hours, what is its speed in km/h?",
+      "options": ["30", "35", "40", "45"],
+      "correct_answer": "C",
+      "topic": "Time and Distance"
+    },
+    {
+      "id": "cognizant_a3",
+      "q": "What is the next number in the series: 2, 4, 8, 16, ?",
+      "options": ["24", "32", "28", "30"],
+      "correct_answer": "B",
+      "topic": "Number Series"
+    },
+    {
+      "id": "cognizant_a4",
+      "q": "If 5x + 3 = 23, what is x?",
+      "options": ["3", "4", "5", "6"],
+      "correct_answer": "B",
+      "topic": "Algebra"
+    },
+    {
+      "id": "cognizant_a5",
+      "q": "A shopkeeper sells an item for $120 after giving 20% discount. What was the original price?",
+      "options": ["$140", "$150", "$144", "$160"],
+      "correct_answer": "B",
+      "topic": "Profit and Loss"
+    },
+    {
+      "id": "cognizant_a6",
+      "q": "What is the area of a circle with radius 7 cm? (Use π = 22/7)",
+      "options": ["144 sq cm", "154 sq cm", "164 sq cm", "174 sq cm"],
+      "correct_answer": "B",
+      "topic": "Geometry"
+    },
+    {
+      "id": "cognizant_a7",
+      "q": "If A:B = 3:4 and B:C = 5:6, find A:B:C.",
+      "options": ["15:20:24", "3:4:6", "5:6:8", "9:12:15"],
+      "correct_answer": "A",
+      "topic": "Ratios"
+    },
+    {
+      "id": "cognizant_a8",
+      "q": "A man buys 5 kg of apples for $20. He sells them at $5 per kg. What is his profit?",
+      "options": ["$5", "$10", "$15", "$20"],
+      "correct_answer": "A",
+      "topic": "Profit and Loss"
+    },
+    {
+      "id": "cognizant_a9",
+      "q": "What is the compound interest on $1000 at 10% per annum for 2 years?",
+      "options": ["$200", "$210", "$220", "$230"],
+      "correct_answer": "B",
+      "topic": "Compound Interest"
+    },
+    {
+      "id": "cognizant_a10",
+      "q": "If the average of 5 numbers is 20, what is their sum?",
+      "options": ["80", "90", "100", "110"],
+      "correct_answer": "C",
+      "topic": "Averages"
+    },
+    {
+      "id": "cognizant_a11",
+      "q": "A boat covers 24 km upstream in 6 hours. If the speed of current is 2 km/h, find boat speed in still water.",
+      "options": ["6 km/h", "8 km/h", "10 km/h", "12 km/h"],
+      "correct_answer": "B",
+      "topic": "Boats and Streams"
+    },
+    {
+      "id": "cognizant_a12",
+      "q": "What is the probability of rolling a 6 on a fair die?",
+      "options": ["1/6", "1/5", "1/4", "1/3"],
+      "correct_answer": "A",
+      "topic": "Probability"
+    },
+    {
+      "id": "cognizant_a13",
+      "q": "If 40% of a number is 120, what is 60% of the same number?",
+      "options": ["160", "180", "200", "220"],
+      "correct_answer": "B",
+      "topic": "Percentages"
+    },
+    {
+      "id": "cognizant_a14",
+      "q": "Find the missing number: 1, 4, 9, 16, 25, ?",
+      "options": ["30", "36", "42", "49"],
+      "correct_answer": "B",
+      "topic": "Number Series"
+    },
+    {
+      "id": "cognizant_a15",
+      "q": "A and B can complete a work in 12 days. B and C in 15 days. C and A in 20 days. How long for A alone?",
+      "options": ["25 days", "30 days", "35 days", "40 days"],
+      "correct_answer": "B",
+      "topic": "Work and Time"
+    },
+    {
+      "id": "cognizant_a16",
+      "q": "What is the LCM of 12 and 18?",
+      "options": ["24", "36", "48", "60"],
+      "correct_answer": "B",
+      "topic": "LCM and HCF"
+    },
+    {
+      "id": "cognizant_a17",
+      "q": "If sinθ = 3/5, what is cosθ?",
+      "options": ["3/4", "4/5", "5/3", "4/3"],
+      "correct_answer": "B",
+      "topic": "Trigonometry"
+    },
+    {
+      "id": "cognizant_a18",
+      "q": "A bag contains 5 red and 3 blue balls. What is probability of drawing a red ball?",
+      "options": ["3/8", "5/8", "1/2", "2/3"],
+      "correct_answer": "B",
+      "topic": "Probability"
+    },
+    {
+      "id": "cognizant_a19",
+      "q": "What is the surface area of a cube with side 5 cm?",
+      "options": ["125 sq cm", "150 sq cm", "175 sq cm", "200 sq cm"],
+      "correct_answer": "B",
+      "topic": "Geometry"
+    },
+    {
+      "id": "cognizant_a20",
+      "q": "If x + 1/x = 3, find x² + 1/x².",
+      "options": ["7", "8", "9", "10"],
+      "correct_answer": "C",
+      "topic": "Algebra"
+    },
+    {
+      "id": "cognizant_a21",
+      "q": "A man invests $5000 at 8% simple interest. What is the interest after 3 years?",
+      "options": ["$1200", "$1300", "$1400", "$1500"],
+      "correct_answer": "A",
+      "topic": "Simple Interest"
+    },
+    {
+      "id": "cognizant_a22",
+      "q": "What is the next term: 1, 1, 2, 3, 5, 8, ?",
+      "options": ["11", "12", "13", "14"],
+      "correct_answer": "C",
+      "topic": "Fibonacci Series"
+    },
+    {
+      "id": "cognizant_a23",
+      "q": "If 2x + 3y = 14 and x - y = 2, find x + y.",
+      "options": ["4", "5", "6", "7"],
+      "correct_answer": "C",
+      "topic": "Linear Equations"
+    },
+    {
+      "id": "cognizant_a24",
+      "q": "A cylinder has radius 7 cm and height 10 cm. What is its volume? (Use π = 22/7)",
+      "options": ["1540 cu cm", "1600 cu cm", "1700 cu cm", "1800 cu cm"],
+      "correct_answer": "A",
+      "topic": "Mensuration"
+    },
+    {
+      "id": "cognizant_a25",
+      "q": "What is the mean of numbers: 2, 4, 6, 8, 10?",
+      "options": ["4", "5", "6", "7"],
+      "correct_answer": "C",
+      "topic": "Statistics"
+    },
+    {
+      "id": "cognizant_a26",
+      "q": "If A can do a work in 10 days, B in 15 days, how long together?",
+      "options": ["5 days", "6 days", "7 days", "8 days"],
+      "correct_answer": "B",
+      "topic": "Work and Time"
+    },
+    {
+      "id": "cognizant_a27",
+      "q": "What is the square root of 144?",
+      "options": ["10", "11", "12", "13"],
+      "correct_answer": "C",
+      "topic": "Squares and Square Roots"
+    },
+    {
+      "id": "cognizant_a28",
+      "q": "A train 200m long crosses a platform 300m long in 20 seconds. Find train speed.",
+      "options": ["25 m/s", "30 m/s", "35 m/s", "40 m/s"],
+      "correct_answer": "A",
+      "topic": "Time and Distance"
+    },
+    {
+      "id": "cognizant_a29",
+      "q": "If tanθ = 1, what is the value of θ?",
+      "options": ["30°", "45°", "60°", "90°"],
+      "correct_answer": "B",
+      "topic": "Trigonometry"
+    },
+    {
+      "id": "cognizant_a30",
+      "q": "What is the HCF of 24 and 36?",
+      "options": ["6", "8", "12", "18"],
+      "correct_answer": "C",
+      "topic": "LCM and HCF"
+    }
+  ]
+}

@@ -1,0 +1,214 @@
+{
+  "aptitude": [
+    {
+      "id": "hcl_a1",
+      "q": "What is 35% of 800?",
+      "options": ["260", "270", "280", "290"],
+      "correct_answer": "C",
+      "topic": "Percentages"
+    },
+    {
+      "id": "hcl_a2",
+      "q": "A cyclist covers 90 km in 3 hours. Speed?",
+      "options": ["25 km/h", "28 km/h", "30 km/h", "32 km/h"],
+      "correct_answer": "C",
+      "topic": "Time and Distance"
+    },
+    {
+      "id": "hcl_a3",
+      "q": "Next: 3, 8, 15, 24, 35, ?",
+      "options": ["46", "48", "50", "52"],
+      "correct_answer": "B",
+      "topic": "Number Series"
+    },
+    {
+      "id": "hcl_a4",
+      "q": "Solve: 6x - 4 = 32",
+      "options": ["x = 5", "x = 6", "x = 7", "x = 8"],
+      "correct_answer": "B",
+      "topic": "Algebra"
+    },
+    {
+      "id": "hcl_a5",
+      "q": "CP $1200, discount 15%, profit 10%. SP?",
+      "options": ["$1092", "$1104", "$1116", "$1128"],
+      "correct_answer": "C",
+      "topic": "Profit and Loss"
+    },
+    {
+      "id": "hcl_a6",
+      "q": "Triangle area with base 12 cm, height 8 cm?",
+      "options": ["48 sq cm", "50 sq cm", "52 sq cm", "54 sq cm"],
+      "correct_answer": "A",
+      "topic": "Geometry"
+    },
+    {
+      "id": "hcl_a7",
+      "q": "A:B:C = 2:3:4. What part is B?",
+      "options": ["1/3", "1/4", "3/9", "2/9"],
+      "correct_answer": "C",
+      "topic": "Ratios"
+    },
+    {
+      "id": "hcl_a8",
+      "q": "Loss of 20% on CP $500. Loss amount?",
+      "options": ["$80", "$90", "$100", "$110"],
+      "correct_answer": "C",
+      "topic": "Profit and Loss"
+    },
+    {
+      "id": "hcl_a9",
+      "q": "Amount becomes $1331 in 3 years at 10% CI. Principal?",
+      "options": ["$900", "$950", "$1000", "$1050"],
+      "correct_answer": "C",
+      "topic": "Compound Interest"
+    },
+    {
+      "id": "hcl_a10",
+      "q": "Average of first 10 natural numbers?",
+      "options": ["4.5", "5.0", "5.5", "6.0"],
+      "correct_answer": "C",
+      "topic": "Averages"
+    },
+    {
+      "id": "hcl_a11",
+      "q": "Man swims 6 km downstream in 1 hour. Current speed?",
+      "options": ["1 km/h", "2 km/h", "3 km/h", "4 km/h"],
+      "correct_answer": "B",
+      "topic": "Boats and Streams"
+    },
+    {
+      "id": "hcl_a12",
+      "q": "P(getting 2 or 4 on die)?",
+      "options": ["1/6", "1/3", "1/2", "2/3"],
+      "correct_answer": "B",
+      "topic": "Probability"
+    },
+    {
+      "id": "hcl_a13",
+      "q": "75% of number is 300. Number?",
+      "options": ["350", "375", "400", "425"],
+      "correct_answer": "C",
+      "topic": "Percentages"
+    },
+    {
+      "id": "hcl_a14",
+      "q": "Next: 7, 14, 28, 56, ?",
+      "options": ["98", "104", "112", "120"],
+      "correct_answer": "C",
+      "topic": "Number Series"
+    },
+    {
+      "id": "hcl_a15",
+      "q": "A fills tank in 10 hours, leak empties in 15 hours. Time to fill?",
+      "options": ["25 hours", "30 hours", "35 hours", "40 hours"],
+      "correct_answer": "B",
+      "topic": "Work and Time"
+    },
+    {
+      "id": "hcl_a16",
+      "q": "LCM of 14 and 21?",
+      "options": ["21", "28", "35", "42"],
+      "correct_answer": "D",
+      "topic": "LCM and HCF"
+    },
+    {
+      "id": "hcl_a17",
+      "q": "If sinθ = 5/13, cosθ = ?",
+      "options": ["8/13", "9/13", "10/13", "11/13"],
+      "correct_answer": "C",
+      "topic": "Trigonometry"
+    },
+    {
+      "id": "hcl_a18",
+      "q": "Deck of 52 cards. P(heart)?",
+      "options": ["1/4", "1/5", "1/6", "1/7"],
+      "correct_answer": "A",
+      "topic": "Probability"
+    },
+    {
+      "id": "hcl_a19",
+      "q": "Rectangular prism volume: 8x6x4 cm?",
+      "options": ["192 cu cm", "200 cu cm", "208 cu cm", "216 cu cm"],
+      "correct_answer": "A",
+      "topic": "Geometry"
+    },
+    {
+      "id": "hcl_a20",
+      "q": "If x² + 1/x² = 7, find x + 1/x.",
+      "options": ["√5", "√6", "√7", "√8"],
+      "correct_answer": "C",
+      "topic": "Algebra"
+    },
+    {
+      "id": "hcl_a21",
+      "q": "SI on $2500 at 9% for 2.5 years?",
+      "options": ["$562.5", "$575", "$587.5", "$600"],
+      "correct_answer": "A",
+      "topic": "Simple Interest"
+    },
+    {
+      "id": "hcl_a22",
+      "q": "Lucas sequence: 2, 1, 3, 4, 7, ?",
+      "options": ["10", "11", "12", "13"],
+      "correct_answer": "B",
+      "topic": "Number Series"
+    },
+    {
+      "id": "hcl_a23",
+      "q": "Solve: 3x - 2y = 7, x + y = 5",
+      "options": ["x=3,y=2", "x=4,y=1", "x=5,y=0", "x=6,y=-1"],
+      "correct_answer": "A",
+      "topic": "Linear Equations"
+    },
+    {
+      "id": "hcl_a24",
+      "q": "Hemisphere volume, radius 9 cm? (π = 3.14)",
+      "options": ["1525.14 cu cm", "1550 cu cm", "1575 cu cm", "1600 cu cm"],
+      "correct_answer": "A",
+      "topic": "Mensuration"
+    },
+    {
+      "id": "hcl_a25",
+      "q": "Range of 5, 8, 12, 15, 20?",
+      "options": ["10", "12", "15", "20"],
+      "correct_answer": "C",
+      "topic": "Statistics"
+    },
+    {
+      "id": "hcl_a26",
+      "q": "Efficiency: A does work in 20 days, B in 30 days. A's efficiency?",
+      "options": ["125%", "133%", "150%", "167%"],
+      "correct_answer": "C",
+      "topic": "Work and Time"
+    },
+    {
+      "id": "hcl_a27",
+      "q": "Cube root of 512?",
+      "options": ["7", "8", "9", "10"],
+      "correct_answer": "B",
+      "topic": "Cubes and Cube Roots"
+    },
+    {
+      "id": "hcl_a28",
+      "q": "Two trains 100m, 120m long cross at 50 km/h, 40 km/h. Time?",
+      "options": ["8.4 sec", "9.2 sec", "10.0 sec", "11.2 sec"],
+      "correct_answer": "B",
+      "topic": "Time and Distance"
+    },
+    {
+      "id": "hcl_a29",
+      "q": "If cosecθ = 2, sinθ = ?",
+      "options": ["1/3", "1/2", "2/3", "3/4"],
+      "correct_answer": "B",
+      "topic": "Trigonometry"
+    },
+    {
+      "id": "hcl_a30",
+      "q": "HCF of 36, 48, 60?",
+      "options": ["6", "8", "12", "18"],
+      "correct_answer": "C",
+      "topic": "LCM and HCF"
+    }
+  ]
+}

@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Discussion - AI Virtual Interviewer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .gd-container {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .header-section {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        .timer-badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .timer-badge.warning {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            animation: pulse 1s infinite;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 20px;
+        }
+
+        .video-section {
+            background: #1e1e1e;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            height: 500px;
+        }
+
+        #videoElement {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            padding: 15px 25px;
+            border-radius: 50px;
+            display: flex;
+            gap: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .control-btn.mic {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .control-btn.mic.muted {
+            background: #ef4444;
+        }
+
+        .control-btn.camera {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+
+        .control-btn.camera.off {
+            background: #6b7280;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .recording-indicator {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #ef4444;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .recording-indicator.active {
+            display: flex;
+        }
+
+        .recording-dot {
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .feedback-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .topic-card {
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .topic-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .topic-description {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .participants-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .participant-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+        }
+
+        .participant-item > div:last-child {
+            flex: 1;
+        }
+
+        .company-questions-section {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        .company-questions-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .company-question-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border-left: 3px solid #667eea;
+            font-size: 0.9rem;
+        }
+
+        .company-question-item:hover {
+            background: #e9ecef;
+        }
+
+        .participant-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .participant-name {
+            font-weight: 500;
+            color: #475569;
+        }
+
+        .current-speaker {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .turn-indicator {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .turn-indicator h6 {
+            color: #92400e;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .transcript-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .transcript-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .transcript-text {
+            color: #475569;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-start {
+            flex: 1;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-next {
+            flex: 1;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border: none;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-end {
+            flex: 1;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border: none;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-end:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-skip {
+            flex: 1;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: none;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-skip:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
+        }
+
+        .completion-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .btn-feedback {
+            flex: 1;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border: none;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-feedback:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-hr {
+            flex: 1;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-hr:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .feedback-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .feedback-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .feedback-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+
+        .feedback-modal.active .feedback-content {
+            transform: scale(1);
+        }
+
+        .feedback-header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 15px;
+        }
+
+        .feedback-title {
+            color: #1e293b;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .feedback-subtitle {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .overall-score {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 20px 0;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .score-excellent { background: linear-gradient(135deg, #10b981, #059669); }
+        .score-good { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .score-average { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .score-poor { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+        .feedback-section {
+            margin: 20px 0;
+        }
+
+        .feedback-section h4 {
+            color: #1e293b;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .metric-name {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+
+        .recommendations {
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .recommendations h4 {
+            color: #1e40af;
+        }
+
+        .recommendations ul {
+            margin: 10px 0 0 0;
+            padding-left: 20px;
+        }
+
+        .recommendations li {
+            color: #1e40af;
+            margin: 5px 0;
+        }
+
+        .feedback-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #64748b;
+            padding: 5px;
+        }
+
+        .feedback-close:hover {
+            color: #1e293b;
+        }
+
+        .gd-feedback-section {
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #3b82f6;
+            display: none;
+        }
+
+        .feedback-title {
+            color: #1e40af;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 12px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .metric-label {
+            font-weight: 500;
+            color: #475569;
+            font-size: 0.9rem;
+        }
+
+        .metric-bar {
+            flex: 1;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            margin: 0 15px;
+            overflow: hidden;
+        }
+
+        .metric-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .metric-fill.excellent { background: linear-gradient(90deg, #10b981, #059669); }
+        .metric-fill.good { background: linear-gradient(90deg, #3b82f6, #2563eb); }
+        .metric-fill.average { background: linear-gradient(90deg, #f59e0b, #d97706); }
+        .metric-fill.poor { background: linear-gradient(90deg, #ef4444, #dc2626); }
+
+        .metric-score {
+            font-weight: 700;
+            color: #1e293b;
+            min-width: 40px;
+            text-align: right;
+        }
+
+        .suggestions-box {
+            background: #fffbeb;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .suggestions-box h6 {
+            color: #92400e;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .suggestions-box ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .suggestions-box li {
+            color: #78350f;
+            font-size: 0.9rem;
+            margin: 5px 0;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="gd-container">
+        <!-- Header -->
+        <div class="header-section">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="mb-1"><i class="fas fa-users me-2 text-primary"></i>Group Discussion</h3>
+                    <p class="text-muted mb-0">Practice your communication and teamwork skills</p>
+                </div>
+                <div class="timer-badge" id="gdTimer">01:30</div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <!-- Video Section -->
+            <div>
+                <div class="video-section">
+                    <video id="videoElement" autoplay muted playsinline></video>
+
+                    <div class="recording-indicator" id="recordingIndicator">
+                        <div class="recording-dot"></div>
+                        <span>Recording</span>
+                    </div>
+
+                    <div class="video-controls">
+                        <button class="control-btn mic" id="micBtn" onclick="toggleMic()">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <button class="control-btn camera" id="cameraBtn" onclick="toggleCamera()">
+                            <i class="fas fa-video"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Transcript -->
+                <div class="transcript-section mt-3">
+                    <div class="transcript-title">
+                        <i class="fas fa-closed-captioning"></i>
+                        <span>Live Transcript</span>
+                        <span class="badge bg-success ms-2" id="listeningBadge" style="display: none;">Listening...</span>
+                    </div>
+                    <div class="transcript-text" id="transcriptText">
+                        Start speaking to see the transcript here...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feedback Panel -->
+            <div class="feedback-panel">
+                <!-- Topic -->
+                <div class="topic-card">
+                    <div class="topic-title" id="topicTitle">
+                        Loading topic...
+                    </div>
+                    <div class="topic-description" id="topicDescription">
+                        Please wait while we prepare your group discussion topic.
+                    </div>
+
+                    <!-- Company Questions Section -->
+                    <div class="company-questions-section" id="companyQuestionsSection" style="display: none;">
+                        <h6 class="mt-3 mb-2"><i class="fas fa-question-circle me-2"></i>Company-Specific GD Topics</h6>
+                        <div id="companyQuestionsList" class="company-questions-list">
+                            <!-- Questions will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                    <div class="participants-section">
+                        <h6 class="mb-3"><i class="fas fa-users me-2"></i>Group Members (5)</h6>
+                        <div id="participantsList">
+                            <div class="participant-item">
+                                <div class="participant-avatar">A</div>
+                                <div>
+                                    <span class="participant-name">Alice Johnson</span>
+                                    <div class="text-muted small">Marketing Manager</div>
+                                </div>
+                            </div>
+                            <div class="participant-item">
+                                <div class="participant-avatar">B</div>
+                                <div>
+                                    <span class="participant-name">Bob Smith</span>
+                                    <div class="text-muted small">Software Engineer</div>
+                                </div>
+                            </div>
+                            <div class="participant-item">
+                                <div class="participant-avatar">C</div>
+                                <div>
+                                    <span class="participant-name">Charlie Brown</span>
+                                    <div class="text-muted small">HR Director</div>
+                                </div>
+                            </div>
+                            <div class="participant-item">
+                                <div class="participant-avatar">D</div>
+                                <div>
+                                    <span class="participant-name">Diana Wilson</span>
+                                    <div class="text-muted small">Environmental Consultant</div>
+                                </div>
+                            </div>
+                            <div class="participant-item current-speaker">
+                                <div class="participant-avatar">Y</div>
+                                <div>
+                                    <span class="participant-name">You (User)</span>
+                                    <div class="text-muted small">Aspiring Professional</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Turn Indicator -->
+                <div class="turn-indicator" id="turnIndicator" style="display: none;">
+                    <h6><i class="fas fa-microphone me-2"></i>Round 1 of 2 - Your Turn to Speak</h6>
+                    <p class="mb-0 text-muted">You have 60 seconds to express your views on the topic.</p>
+                </div>
+
+                <!-- Real-time Feedback -->
+                <div class="feedback-section" id="feedbackSection">
+                    <div class="feedback-title">
+                        <i class="fas fa-chart-line"></i>
+                        <span>AI Performance Analysis</span>
+                    </div>
+
+                    <div class="metric-item">
+                        <span class="metric-label">Clarity</span>
+                        <div class="metric-bar">
+                            <div class="metric-fill good" id="clarityBar" style="width: 75%"></div>
+                        </div>
+                        <span class="metric-score" id="clarityScore">75%</span>
+                    </div>
+
+                    <div class="metric-item">
+                        <span class="metric-label">Confidence</span>
+                        <div class="metric-bar">
+                            <div class="metric-fill excellent" id="confidenceBar" style="width: 85%"></div>
+                        </div>
+                        <span class="metric-score" id="confidenceScore">85%</span>
+                    </div>
+
+                    <div class="metric-item">
+                        <span class="metric-label">Content Quality</span>
+                        <div class="metric-bar">
+                            <div class="metric-fill average" id="contentBar" style="width: 70%"></div>
+                        </div>
+                        <span class="metric-score" id="contentScore">70%</span>
+                    </div>
+
+                    <div class="metric-item">
+                        <span class="metric-label">Teamwork</span>
+                        <div class="metric-bar">
+                            <div class="metric-fill good" id="teamworkBar" style="width: 78%"></div>
+                        </div>
+                        <span class="metric-score" id="teamworkScore">78%</span>
+                    </div>
+
+                    <div class="metric-item">
+                        <span class="metric-label">Leadership</span>
+                        <div class="metric-bar">
+                            <div class="metric-fill excellent" id="leadershipBar" style="width: 82%"></div>
+                        </div>
+                        <span class="metric-score" id="leadershipScore">82%</span>
+                    </div>
+                </div>
+
+                <!-- Suggestions -->
+                <div class="suggestions-box" id="suggestionsBox" style="display: none;">
+                    <h6><i class="fas fa-info-circle me-2"></i>AI Suggestions</h6>
+                    <ul id="suggestionsList">
+                        <li>Maintain eye contact with the camera</li>
+                        <li>Speak at a moderate pace</li>
+                        <li>Provide concrete examples to support your points</li>
+                        <li>Listen to others' viewpoints before responding</li>
+                    </ul>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn-start" id="startBtn" onclick="startGD()">
+                        <i class="fas fa-play me-2"></i>Start Discussion
+                    </button>
+                    <button class="btn-next" id="nextBtn" onclick="nextTurn()" style="display: none;">
+                        <i class="fas fa-forward me-2"></i>Next Turn
+                    </button>
+                    <button class="btn-skip" id="skipBtn" onclick="skipToNextTopic()" style="display: none;">
+                        <i class="fas fa-forward me-2"></i>Skip Topic
+                    </button>
+                    <button class="btn-end" id="endBtn" onclick="endGD()" style="display: none;">
+                        <i class="fas fa-stop me-2"></i>End Discussion
+                    </button>
+                </div>
+
+                <!-- Completion Buttons -->
+                <div class="completion-buttons" id="completionButtons" style="display: none;">
+                    <button class="btn-feedback" id="viewFeedbackBtn" onclick="showFeedback()">
+                        <i class="fas fa-chart-line me-2"></i>View Feedback
+                    </button>
+                    <button class="btn-hr" id="continueHRBtn" onclick="continueToHR()">
+                        <i class="fas fa-user-tie me-2"></i>Continue HR Interview
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div class="feedback-modal" id="feedbackModal">
+        <div class="feedback-content">
+            <button class="feedback-close" onclick="closeFeedback()">&times;</button>
+
+            <div class="feedback-header">
+                <div class="feedback-title">GD Performance Analysis</div>
+                <div class="feedback-subtitle">AI-Driven Comprehensive Feedback</div>
+            </div>
+
+            <div class="score-circle" id="overallScoreCircle">
+                <span id="overallScoreText">85%</span>
+            </div>
+
+            <div class="feedback-section">
+                <h4><i class="fas fa-chart-bar"></i> Performance Metrics</h4>
+                <div class="metric-grid" id="feedbackMetrics">
+                    <!-- Metrics will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="recommendations">
+                <h4><i class="fas fa-lightbulb"></i> AI Recommendations</h4>
+                <ul id="feedbackRecommendations">
+                    <!-- Recommendations will be populated by JavaScript -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let mediaStream = null;
+        let recognition = null;
+        let isRecording = false;
+        let timeRemaining = 60; // 60 seconds per participant
+        let timerInterval = null;
+        let transcript = '';
+        let currentRound = 0;
+        let currentSpeakerIndex = 0;
+        let maxRounds = 2;
+        let roundTranscripts = {};
+        let participantTranscripts = {};
+        let topics = [];
+        let currentTopicIndex = 0;
+        let totalTopics = 0;
+        let companyName = null;
+        let discussionFlow = [];
+        let isUserTurn = false;
+        let topicsDiscussed = new Set(); // Track which topics have been discussed
+
+        // Participants with speaking order
+        const participants = [
+            { name: "Alice Johnson", avatar: "A", isUser: false, profile: "Marketing Manager with 8 years experience, specializes in digital transformation and consumer behavior analysis" },
+            { name: "Bob Smith", avatar: "B", isUser: false, profile: "Software Engineer at Google, expert in AI/ML, passionate about ethical technology development" },
+            { name: "Charlie Brown", avatar: "C", isUser: false, profile: "HR Director at Deloitte, focuses on talent acquisition and organizational development" },
+            { name: "Diana Wilson", avatar: "D", isUser: false, profile: "Environmental Consultant, advocates for sustainable business practices and green innovation" },
+            { name: "You (User)", avatar: "Y", isUser: true, profile: "Aspiring professional seeking to develop communication and leadership skills" }
+        ];
+
+        // Sample responses for AI participants
+        const aiResponses = {
+            "Alice Johnson": [
+                "As a marketing professional, I see tremendous opportunities in digital transformation. Technology is revolutionizing how we connect with customers and analyze consumer behavior. However, we must ensure that human creativity and emotional intelligence remain at the core of marketing strategies.",
+                "The key challenge is building digital literacy across all age groups. From my experience, successful digital transformation requires not just technology adoption, but also cultural change within organizations. We need comprehensive training programs that address both technical skills and mindset shifts."
+            ],
+            "Bob Smith": [
+                "From my perspective as a software engineer at Google, the future of work lies in human-AI collaboration. Technology should enhance human capabilities, not replace them. We're seeing incredible opportunities in areas like AI-assisted coding, automated testing, and intelligent data analysis.",
+                "However, we must address the ethical implications of AI deployment. At Google, we prioritize responsible AI development that considers bias, privacy, and societal impact. The challenge is ensuring that AI systems are transparent, fair, and aligned with human values."
+            ],
+            "Charlie Brown": [
+                "As an HR director, I've witnessed firsthand how technology is reshaping talent acquisition and employee development. We're moving from traditional resume screening to AI-powered candidate matching, but we must ensure these systems don't introduce bias or overlook soft skills.",
+                "The human element remains crucial. Technology can streamline processes, but building organizational culture, fostering employee engagement, and developing leadership skills still require authentic human connections. We need to strike the right balance between efficiency and empathy."
+            ],
+            "Diana Wilson": [
+                "From an environmental perspective, technology presents both challenges and solutions for sustainable development. While data centers and electronic waste pose environmental concerns, green technologies like renewable energy systems and smart grid solutions create new opportunities.",
+                "We need to consider the full lifecycle impact of technology. This includes sustainable sourcing of materials, energy-efficient manufacturing, and circular economy principles. Companies that prioritize environmental responsibility will be better positioned for long-term success in an eco-conscious market."
+            ]
+        };
+
+        // Initialize camera and microphone
+        async function initMedia() {
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: true
+                });
+                document.getElementById('videoElement').srcObject = mediaStream;
+            } catch (error) {
+                console.error('Error accessing media devices:', error);
+                alert('Please allow camera and microphone access to continue.');
+            }
+        }
+
+        // Initialize Speech Recognition
+        function initSpeechRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = true;
+                recognition.interimResults = true;
+                recognition.lang = 'en-US';
+
+                recognition.onresult = (event) => {
+                    if (isUserTurn) {
+                        let interimTranscript = '';
+                        for (let i = event.resultIndex; i < event.results.length; i++) {
+                            const transcriptPiece = event.results[i][0].transcript;
+                            if (event.results[i].isFinal) {
+                                transcript += transcriptPiece + ' ';
+                                if (!participantTranscripts[participants[currentSpeakerIndex].name]) {
+                                    participantTranscripts[participants[currentSpeakerIndex].name] = '';
+                                }
+                                participantTranscripts[participants[currentSpeakerIndex].name] += transcriptPiece + ' ';
+                                analyzeContent(transcriptPiece);
+                            } else {
+                                interimTranscript += transcriptPiece;
+                            }
+                        }
+                        document.getElementById('transcriptText').textContent = transcript + interimTranscript;
+                    }
+                };
+
+                recognition.onerror = (event) => {
+                    console.error('Speech recognition error:', event.error);
+                };
+            } else {
+                console.warn('Speech recognition not supported');
+            }
+        }
+
+        // Simulate AI participant speaking
+        function simulateParticipantSpeech(participantName, responseIndex) {
+            const responses = aiResponses[participantName];
+            if (!responses || !responses[responseIndex]) {
+                console.log(`No response for ${participantName} round ${responseIndex}`);
+                setTimeout(() => nextSpeaker(), 1000);
+                return;
+            }
+
+            const response = responses[responseIndex];
+            console.log(`${participantName} speaking in round ${currentRound}:`, response.substring(0, 50) + '...');
+
+            // Add to transcript immediately
+            if (!participantTranscripts[participantName]) {
+                participantTranscripts[participantName] = '';
+            }
+            participantTranscripts[participantName] += response + ' ';
+            transcript += response + ' ';
+
+            // Update transcript display
+            document.getElementById('transcriptText').textContent = transcript;
+
+            // For AI participants, simulate speaking time and then move to next
+            const speakingTime = Math.max(8000, response.length * 50); // Minimum 8 seconds, or based on text length
+            console.log(`${participantName} will speak for ${speakingTime}ms`);
+
+            // Speak the text
+            speakText(response, participantName).then(() => {
+                console.log(`${participantName} finished speaking, waiting before next speaker`);
+                setTimeout(() => nextSpeaker(), 1500);
+            }).catch((error) => {
+                console.error('Speech error:', error);
+                // If speech fails, still wait the speaking time then move on
+                setTimeout(() => nextSpeaker(), speakingTime / 2);
+            });
+        }
+
+        // Text-to-Speech for AI participants
+        function speakText(text, participantName = null) {
+            return new Promise((resolve, reject) => {
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.volume = 0.7;
+
+                    // Customize voice characteristics based on participant
+                    if (participantName) {
+                        switch (participantName) {
+                            case 'Alice Johnson': // Marketing Manager - Professional, confident
+                                utterance.rate = 0.9;
+                                utterance.pitch = 1.0;
+                                break;
+                            case 'Bob Smith': // Software Engineer - Technical, precise
+                                utterance.rate = 0.95;
+                                utterance.pitch = 0.9;
+                                break;
+                            case 'Charlie Brown': // HR Director - Warm, approachable
+                                utterance.rate = 0.85;
+                                utterance.pitch = 1.1;
+                                break;
+                            case 'Diana Wilson': // Environmental Consultant - Passionate, clear
+                                utterance.rate = 0.88;
+                                utterance.pitch = 1.05;
+                                break;
+                            default:
+                                utterance.rate = 0.85;
+                                utterance.pitch = 1.0;
+                        }
+                    } else {
+                        utterance.rate = 0.85;
+                        utterance.pitch = 1.0;
+                    }
+
+                    // Try to use a natural English voice
+                    const voices = speechSynthesis.getVoices();
+                    const englishVoice = voices.find(voice =>
+                        voice.lang.startsWith('en') &&
+                        (voice.name.includes('Female') || voice.name.includes('Male') ||
+                         voice.name.includes('Samantha') || voice.name.includes('Victoria') ||
+                         voice.name.includes('Alex') || voice.name.includes('Daniel'))
+                    );
+                    if (englishVoice) {
+                        utterance.voice = englishVoice;
+                    }
+
+                    utterance.onend = () => {
+                        resolve();
+                    };
+
+                    utterance.onerror = (error) => {
+                        console.error('Speech synthesis error:', error);
+                        resolve(); // Resolve anyway to continue
+                    };
+
+                    speechSynthesis.speak(utterance);
+                } else {
+                    // Fallback: just resolve immediately
+                    console.warn('Speech synthesis not supported');
+                    resolve();
+                }
+            });
+        }
+
+        // Load GD topics from backend
+        async function loadGDTopic() {
+            try {
+                const response = await fetch('/gd/preview', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        topics = data.topics;
+                        currentTopicIndex = data.current_topic_index;
+                        totalTopics = data.total_topics;
+                        companyName = data.company;
+
+                        // Display current topic
+                        displayCurrentTopic();
+
+                        // Load company-specific questions
+                        loadCompanyQuestions(data.company);
+                    } else {
+                        if (data.error && data.error.includes('select a company')) {
+                            document.getElementById('topicTitle').textContent = 'Company Not Selected';
+                            document.getElementById('topicDescription').textContent = 'Please select a company from your dashboard first.';
+                            // Add a button to redirect to dashboard
+                            const actionButtons = document.querySelector('.action-buttons');
+                            if (actionButtons) {
+                                const selectCompanyBtn = document.createElement('button');
+                                selectCompanyBtn.className = 'btn-start';
+                                selectCompanyBtn.innerHTML = '<i class="fas fa-building me-2"></i>Select Company';
+                                selectCompanyBtn.onclick = () => window.location.href = '/dashboard';
+                                actionButtons.insertBefore(selectCompanyBtn, actionButtons.firstChild);
+                                document.getElementById('startBtn').style.display = 'none';
+                            }
+                        } else {
+                            document.getElementById('topicTitle').textContent = 'No topics available';
+                            document.getElementById('topicDescription').textContent = data.error || 'Please try again later.';
+                        }
+                    }
+                } else {
+                    console.error('Failed to load GD topics');
+                    document.getElementById('topicTitle').textContent = 'Error loading topics';
+                    document.getElementById('topicDescription').textContent = 'Please refresh the page and try again.';
+                }
+            } catch (error) {
+                console.error('Error loading GD topics:', error);
+                document.getElementById('topicTitle').textContent = 'Error loading topics';
+                document.getElementById('topicDescription').textContent = 'Please check your connection and try again.';
+            }
+        }
+
+        // Load company-specific questions
+        async function loadCompanyQuestions(companyName) {
+            try {
+                const response = await fetch(`/gd/company-questions/${encodeURIComponent(companyName)}`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.questions && data.questions.length > 0) {
+                        displayCompanyQuestions(data.questions);
+                        document.getElementById('companyQuestionsSection').style.display = 'block';
+                    } else {
+                        console.log('No company-specific questions found');
+                        document.getElementById('companyQuestionsSection').style.display = 'none';
+                    }
+                } else {
+                    console.error('Failed to load company questions');
+                    document.getElementById('companyQuestionsSection').style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error loading company questions:', error);
+                document.getElementById('companyQuestionsSection').style.display = 'none';
+            }
+        }
+
+        // Display company questions
+        function displayCompanyQuestions(questions) {
+            const questionsList = document.getElementById('companyQuestionsList');
+            questionsList.innerHTML = '';
+
+            questions.forEach(question => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'company-question-item';
+
+                const difficultyBadge = getDifficultyBadge(question.difficulty);
+                const categoryBadge = question.category ? `<span class="badge bg-secondary ms-2">${question.category}</span>` : '';
+
+                questionDiv.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <strong>${question.topic}</strong>
+                            ${question.description ? `<br><small class="text-muted">${question.description}</small>` : ''}
+                        </div>
+                        <div class="ms-2">
+                            ${difficultyBadge}
+                            ${categoryBadge}
+                        </div>
+                    </div>
+                `;
+
+                questionsList.appendChild(questionDiv);
+            });
+        }
+
+        // Get difficulty badge
+        function getDifficultyBadge(difficulty) {
+            const badges = {
+                'Easy': '<span class="badge bg-success">Easy</span>',
+                'Medium': '<span class="badge bg-warning">Medium</span>',
+                'Hard': '<span class="badge bg-danger">Hard</span>'
+            };
+            return badges[difficulty] || '<span class="badge bg-secondary">Medium</span>';
+        }
+
+        // Display current topic
+        function displayCurrentTopic() {
+            if (topics.length > 0 && currentTopicIndex < topics.length) {
+                const currentTopic = topics[currentTopicIndex];
+                document.getElementById('topicTitle').textContent = currentTopic.topic;
+                document.getElementById('topicDescription').textContent = currentTopic.description || 'Discuss this topic with your group members.';
+            }
+        }
+
+        // Skip to next topic
+        function skipToNextTopic() {
+            if (currentTopicIndex < topics.length - 1) {
+                // Mark current topic as discussed
+                topicsDiscussed.add(currentTopicIndex);
+
+                // Move to next topic
+                currentTopicIndex++;
+                displayCurrentTopic();
+
+                // Reset round and speaker for new topic
+                currentRound = 0;
+                currentSpeakerIndex = 0;
+                discussionFlow = [];
+                roundTranscripts = {};
+                participantTranscripts = {};
+
+                // Update UI
+                updateSpeakerIndicator();
+                document.getElementById('turnIndicator').style.display = 'block';
+                document.getElementById('transcriptText').textContent = 'Topic changed. Start discussing the new topic...';
+
+                // Start new round with new topic
+                setTimeout(() => startRound(), 1000);
+
+                console.log(`Skipped to topic ${currentTopicIndex + 1}/${totalTopics}`);
+            } else {
+                // No more topics, check if minimum requirement met
+                if (topicsDiscussed.size < 2) {
+                    alert('You need to discuss at least 2 topics before ending the GD session.');
+                    return;
+                }
+                // End GD if we've discussed enough topics
+                endGD();
+            }
+        }
+
+        // Analyze content in real-time
+        function analyzeContent(text) {
+            // Simple AI simulation - in production, use actual AI APIs
+            const words = text.toLowerCase().split(' ');
+
+            // Update metrics based on content
+            if (words.length > 10) {
+                updateMetric('content', Math.min(100, getMetricValue('content') + 2));
+            }
+
+            // Check for filler words
+            const fillerWords = ['um', 'uh', 'like', 'you know'];
+            const hasFillers = words.some(word => fillerWords.includes(word));
+            if (hasFillers) {
+                updateMetric('clarity', Math.max(0, getMetricValue('clarity') - 1));
+                addSuggestion('Try to minimize filler words');
+            }
+
+            // Check for confident language
+            const confidentWords = ['certainly', 'definitely', 'believe', 'think'];
+            const hasConfidentWords = words.some(word => confidentWords.includes(word));
+            if (hasConfidentWords) {
+                updateMetric('confidence', Math.min(100, getMetricValue('confidence') + 1));
+            }
+
+            // Simulate teamwork and leadership analysis
+            if (Math.random() > 0.8) {
+                updateMetric('teamwork', Math.min(100, getMetricValue('teamwork') + 1));
+                updateMetric('leadership', Math.min(100, getMetricValue('leadership') + 1));
+            }
+        }
+
+        // Get current metric value
+        function getMetricValue(metricName) {
+            const scoreEl = document.getElementById(`${metricName}Score`);
+            return parseInt(scoreEl.textContent) || 0;
+        }
+
+        // Update metric
+        function updateMetric(metricName, value) {
+            const bar = document.getElementById(`${metricName}Bar`);
+            const score = document.getElementById(`${metricName}Score`);
+
+            bar.style.width = value + '%';
+            score.textContent = Math.round(value) + '%';
+
+            // Update bar color based on score
+            bar.className = 'metric-fill';
+            if (value >= 85) bar.classList.add('excellent');
+            else if (value >= 70) bar.classList.add('good');
+            else if (value >= 50) bar.classList.add('average');
+            else bar.classList.add('poor');
+        }
+
+        // Add suggestion
+        function addSuggestion(suggestion) {
+            const list = document.getElementById('suggestionsList');
+            const li = document.createElement('li');
+            li.textContent = suggestion;
+            li.style.color = '#ef4444';
+            li.style.fontWeight = '600';
+            list.insertBefore(li, list.firstChild);
+
+            // Remove after 10 seconds
+            setTimeout(() => li.remove(), 10000);
+        }
+
+        // Toggle microphone
+        function toggleMic() {
+            const audioTracks = mediaStream.getAudioTracks();
+            const micBtn = document.getElementById('micBtn');
+
+            audioTracks.forEach(track => {
+                track.enabled = !track.enabled;
+                if (track.enabled) {
+                    micBtn.classList.remove('muted');
+                    micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+                } else {
+                    micBtn.classList.add('muted');
+                    micBtn.innerHTML = '<i class="fas fa-microphone-slash"></i>';
+                }
+            });
+        }
+
+        // Toggle camera
+        function toggleCamera() {
+            const videoTracks = mediaStream.getVideoTracks();
+            const cameraBtn = document.getElementById('cameraBtn');
+
+            videoTracks.forEach(track => {
+                track.enabled = !track.enabled;
+                if (track.enabled) {
+                    cameraBtn.classList.remove('off');
+                    cameraBtn.innerHTML = '<i class="fas fa-video"></i>';
+                } else {
+                    cameraBtn.classList.add('off');
+                    cameraBtn.innerHTML = '<i class="fas fa-video-slash"></i>';
+                }
+            });
+        }
+
+        // Start timer
+        function startTimer() {
+            console.log(`Starting timer with ${timeRemaining} seconds`);
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                console.log(`Timer: ${timeRemaining} seconds remaining`);
+
+                updateTimerDisplay();
+
+                if (timeRemaining <= 0) {
+                    console.log('Timer expired, moving to next speaker');
+                    clearInterval(timerInterval);
+                    nextSpeaker();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            const timerEl = document.getElementById('gdTimer');
+            timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            if (timeRemaining <= 30) {
+                timerEl.classList.add('warning');
+            }
+        }
+
+        // Start GD
+        function startGD() {
+            currentRound = 0;
+            currentSpeakerIndex = 0;
+            discussionFlow = [];
+            isRecording = true;
+            topicsDiscussed = new Set(); // Reset discussed topics
+
+            document.getElementById('recordingIndicator').classList.add('active');
+            document.getElementById('startBtn').style.display = 'none';
+            document.getElementById('skipBtn').style.display = totalTopics > 1 ? 'block' : 'none'; // Show skip button if multiple topics
+            document.getElementById('turnIndicator').style.display = 'block';
+            document.getElementById('feedbackSection').style.display = 'block';
+            document.getElementById('suggestionsBox').style.display = 'block';
+
+            updateSpeakerIndicator();
+            startRound();
+        }
+
+        // Start a new round
+        function startRound() {
+            currentSpeakerIndex = 0;
+            console.log(`Starting round ${currentRound + 1}`);
+            updateSpeakerIndicator();
+            setTimeout(() => nextSpeaker(), 1000); // Brief pause between rounds
+        }
+
+        // Move to next speaker
+        function nextSpeaker() {
+            clearInterval(timerInterval);
+            console.log(`Moving to next speaker. Current: ${currentSpeakerIndex}, Round: ${currentRound}`);
+
+            // Record speaking time for previous speaker
+            if (discussionFlow.length > 0) {
+                const lastEntry = discussionFlow[discussionFlow.length - 1];
+                lastEntry.duration = 60 - timeRemaining;
+                console.log(`Recorded duration for ${lastEntry.speaker}: ${lastEntry.duration}s`);
+            }
+
+            currentSpeakerIndex++;
+
+            // Check if round is complete
+            if (currentSpeakerIndex >= participants.length) {
+                console.log(`Round ${currentRound} completed. Starting next round.`);
+                currentRound++;
+                if (currentRound >= maxRounds) {
+                    console.log('All rounds completed. Ending GD.');
+                    endGD();
+                    return;
+                }
+                startRound();
+                return;
+            }
+
+            updateSpeakerIndicator();
+            const currentParticipant = participants[currentSpeakerIndex];
+            console.log(`Now speaking: ${currentParticipant.name} (User: ${currentParticipant.isUser})`);
+
+            // Add to discussion flow BEFORE starting timer/speech
+            discussionFlow.push({
+                round: currentRound,
+                speaker: currentParticipant.name,
+                isUser: currentParticipant.isUser,
+                startTime: Date.now(),
+                duration: 0
+            });
+
+            if (currentParticipant.isUser) {
+                // User's turn - start timer immediately
+                isUserTurn = true;
+                timeRemaining = 60;
+                updateTimerDisplay();
+                document.getElementById('gdTimer').classList.remove('warning');
+                document.getElementById('listeningBadge').style.display = 'inline-block';
+
+                console.log('Starting user timer');
+                startTimer();
+                if (recognition) {
+                    recognition.start();
+                }
+            } else {
+                // AI participant's turn - no timer, just speaking
+                isUserTurn = false;
+                document.getElementById('listeningBadge').style.display = 'none';
+                document.getElementById('gdTimer').textContent = '--:--'; // Hide timer for AI
+
+                // Start AI speaking with a delay
+                setTimeout(() => {
+                    const responseText = aiResponses[currentParticipant.name][currentRound];
+                    if (responseText) {
+                        console.log(`AI speaking: ${currentParticipant.name} in round ${currentRound}`);
+                        simulateParticipantSpeech(currentParticipant.name, currentRound);
+                    } else {
+                        console.warn(`No response for ${currentParticipant.name} in round ${currentRound}`);
+                        setTimeout(() => nextSpeaker(), 1000);
+                    }
+                }, 1500); // Longer delay for AI
+            }
+        }
+
+        // Update speaker indicator
+        function updateSpeakerIndicator() {
+            const indicator = document.getElementById('turnIndicator');
+            const h6 = indicator.querySelector('h6');
+            const p = indicator.querySelector('p');
+
+            const currentParticipant = participants[currentSpeakerIndex];
+            const speakerName = currentParticipant.name;
+            const topicInfo = totalTopics > 1 ? ` (Topic ${currentTopicIndex + 1}/${totalTopics})` : '';
+
+            h6.innerHTML = `<i class="fas fa-microphone me-2"></i>Round ${currentRound + 1}${topicInfo} - ${speakerName} Speaking`;
+            p.textContent = currentParticipant.isUser ?
+                `You have 60 seconds to express your views on the topic.` :
+                `${speakerName} is sharing their perspective...`;
+
+            // Update participant highlighting
+            document.querySelectorAll('.participant-item').forEach((item, index) => {
+                item.classList.toggle('current-speaker', index === currentSpeakerIndex);
+            });
+
+            console.log(`Updated speaker indicator: ${speakerName} (Round ${currentRound + 1}, Topic ${currentTopicIndex + 1})`);
+        }
+
+        // End GD
+        async function endGD() {
+            // Check if minimum topics requirement is met
+            const topicsDiscussedCount = topicsDiscussed.size + (currentRound > 0 ? 1 : 0); // Include current topic if rounds were completed
+            if (topicsDiscussedCount < 2) {
+                alert(`You need to discuss at least 2 topics. Currently discussed: ${topicsDiscussedCount} topic(s). Please skip to another topic or continue with the current one.`);
+                return;
+            }
+
+            clearInterval(timerInterval);
+            isRecording = false;
+            console.log('Ending GD session');
+
+            document.getElementById('recordingIndicator').classList.remove('active');
+            document.getElementById('listeningBadge').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('skipBtn').style.display = 'none';
+            document.getElementById('endBtn').style.display = 'block';
+
+            if (recognition) {
+                recognition.stop();
+            }
+
+            // Stop any ongoing speech
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+            }
+
+            // Calculate final scores and show results
+            await showGDResults();
+        }
+
+        // Show GD results
+        async function showGDResults() {
+            // Combine all participant transcripts
+            const fullTranscript = Object.values(participantTranscripts).join(' ');
+
+            // Get current topic ID for evaluation
+            const currentTopic = topics[currentTopicIndex];
+            const topicId = currentTopic ? currentTopic.id : null;
+
+            const result = {
+                transcript: fullTranscript,
+                topic_id: topicId,
+                participant_transcripts: participantTranscripts,
+                discussion_flow: discussionFlow,
+                rounds_completed: currentRound,
+                total_duration: discussionFlow.reduce((sum, entry) => sum + entry.duration, 0),
+                topics_discussed: Array.from(topicsDiscussed).concat(currentRound > 0 ? [currentTopicIndex] : []),
+                total_topics: totalTopics
+            };
+
+            // Save results using backend evaluation
+            await saveGDResults(result);
+
+            // Calculate comprehensive scores (considering all topics discussed)
+            const userEntries = discussionFlow.filter(entry => entry.isUser);
+            const totalPossibleRounds = (topicsDiscussed.size + (currentRound > 0 ? 1 : 0)) * maxRounds;
+            const userParticipationRate = userEntries.length / (totalPossibleRounds * participants.filter(p => p.isUser).length);
+
+            const avgClarity = getMetricValue('clarity');
+            const avgConfidence = getMetricValue('confidence');
+            const avgContent = getMetricValue('content');
+            const avgTeamwork = Math.min(100, getMetricValue('teamwork') + (userParticipationRate * 20));
+            const avgLeadership = Math.min(100, getMetricValue('leadership') + (userParticipationRate * 15));
+
+            // Tougher evaluation criteria
+            let overallScore = Math.round((avgClarity + avgConfidence + avgContent + avgTeamwork + avgLeadership) / 5);
+
+            // Deduct points for poor performance
+            if (avgClarity < 60) overallScore -= 10;
+            if (avgConfidence < 60) overallScore -= 10;
+            if (avgContent < 60) overallScore -= 15;
+            if (userParticipationRate < 0.8) overallScore -= 20; // Less than 80% participation
+
+            overallScore = Math.max(0, Math.min(100, overallScore));
+
+            // Generate detailed feedback
+            let feedbackMessage = `Group Discussion Complete!\n\nOverall Score: ${overallScore}%\n\n`;
+            feedbackMessage += `Performance Breakdown:\n`;
+            feedbackMessage += `• Clarity: ${avgClarity}% ${avgClarity < 70 ? '(Needs improvement)' : '(Good)'}\n`;
+            feedbackMessage += `• Confidence: ${avgConfidence}% ${avgConfidence < 70 ? '(Work on presence)' : '(Strong)'}\n`;
+            feedbackMessage += `• Content Quality: ${avgContent}% ${avgContent < 70 ? '(More depth needed)' : '(Well-structured)'}\n`;
+            feedbackMessage += `• Teamwork: ${avgTeamwork}% ${avgTeamwork < 70 ? '(Better engagement)' : '(Collaborative)'}\n`;
+            feedbackMessage += `• Leadership: ${avgLeadership}% ${avgLeadership < 70 ? '(Show more initiative)' : '(Leadership qualities)'}\n\n`;
+
+            // Add specific recommendations
+            feedbackMessage += `Key Recommendations:\n`;
+            if (overallScore < 60) {
+                feedbackMessage += `• Focus on building confidence and clarity\n`;
+                feedbackMessage += `• Practice active listening and response techniques\n`;
+                feedbackMessage += `• Work on structuring your thoughts before speaking\n`;
+            } else if (overallScore < 80) {
+                feedbackMessage += `• Continue improving content depth and examples\n`;
+                feedbackMessage += `• Practice leading discussions when appropriate\n`;
+                feedbackMessage += `• Work on seamless integration with others' points\n`;
+            } else {
+                feedbackMessage += `• Excellent performance! Consider leadership roles\n`;
+                feedbackMessage += `• Your communication skills are well-developed\n`;
+                feedbackMessage += `• Ready for advanced professional discussions\n`;
+            }
+
+            // Store feedback data for modal
+            window.gdFeedbackData = {
+                overallScore: overallScore,
+                clarity: avgClarity,
+                confidence: avgConfidence,
+                content: avgContent,
+                teamwork: avgTeamwork,
+                leadership: avgLeadership,
+                recommendations: []
+            };
+
+            // Generate recommendations based on scores
+            if (overallScore < 60) {
+                window.gdFeedbackData.recommendations = [
+                    "Focus on building confidence and clarity in your communication",
+                    "Practice active listening and response techniques",
+                    "Work on structuring your thoughts before speaking",
+                    "Consider taking communication skills workshops"
+                ];
+            } else if (overallScore < 80) {
+                window.gdFeedbackData.recommendations = [
+                    "Continue improving content depth and examples",
+                    "Practice leading discussions when appropriate",
+                    "Work on seamless integration with others' points",
+                    "Focus on building stronger teamwork skills"
+                ];
+            } else {
+                window.gdFeedbackData.recommendations = [
+                    "Excellent performance! Consider leadership roles",
+                    "Your communication skills are well-developed",
+                    "Ready for advanced professional discussions",
+                    "Consider mentoring others in group discussion skills"
+                ];
+            }
+
+            // Show completion buttons
+            document.getElementById('completionButtons').style.display = 'flex';
+            document.getElementById('endBtn').style.display = 'none';
+        }
+
+        // Save GD results using backend evaluation
+        async function saveGDResults(results) {
+            try {
+                const response = await fetch('/gd/evaluate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        transcript: results.transcript,
+                        topic_id: results.topic_id,
+                        duration: results.total_duration,
+                        participant_transcripts: results.participant_transcripts,
+                        discussion_flow: results.discussion_flow,
+                        rounds_completed: results.rounds_completed,
+                        topics_discussed: results.topics_discussed,
+                        total_topics: results.total_topics
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        console.log('GD results saved successfully!');
+                        // Update metrics with backend AI-driven scores
+                        if (data.scores) {
+                            updateMetric('clarity', data.scores.clarity || getMetricValue('clarity'));
+                            updateMetric('confidence', data.scores.confidence || getMetricValue('confidence'));
+                            updateMetric('content', data.scores.content || getMetricValue('content'));
+                            updateMetric('teamwork', data.scores.teamwork || getMetricValue('teamwork'));
+                            updateMetric('leadership', data.scores.leadership || getMetricValue('leadership'));
+                        }
+                    } else {
+                        console.log('Failed to save GD results:', data.error);
+                    }
+                } else {
+                    console.log('Failed to save GD results:', await response.text());
+                }
+            } catch (err) {
+                console.log('Error saving GD results:', err);
+            }
+        }
+
+        // Initialize on load
+        window.onload = async () => {
+            console.log('Initializing GD application...');
+            await initMedia();
+            initSpeechRecognition();
+            await loadGDTopic();
+            console.log('GD application initialized successfully');
+        };
+
+        // Show feedback modal
+        function showFeedback() {
+            if (!window.gdFeedbackData) {
+                alert('Feedback data not available. Please try again.');
+                return;
+            }
+
+            const data = window.gdFeedbackData;
+
+            // Update overall score
+            document.getElementById('overallScoreText').textContent = data.overallScore + '%';
+            const scoreCircle = document.getElementById('overallScoreCircle');
+            scoreCircle.className = 'score-circle';
+            if (data.overallScore >= 85) scoreCircle.classList.add('score-excellent');
+            else if (data.overallScore >= 70) scoreCircle.classList.add('score-good');
+            else if (data.overallScore >= 50) scoreCircle.classList.add('score-average');
+            else scoreCircle.classList.add('score-poor');
+
+            // Update metrics
+            const metricsContainer = document.getElementById('feedbackMetrics');
+            metricsContainer.innerHTML = `
+                <div class="metric-card">
+                    <div class="metric-name">Clarity</div>
+                    <div class="metric-value">${data.clarity}%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-name">Confidence</div>
+                    <div class="metric-value">${data.confidence}%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-name">Content Quality</div>
+                    <div class="metric-value">${data.content}%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-name">Teamwork</div>
+                    <div class="metric-value">${data.teamwork}%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-name">Leadership</div>
+                    <div class="metric-value">${data.leadership}%</div>
+                </div>
+            `;
+
+            // Update recommendations
+            const recommendationsList = document.getElementById('feedbackRecommendations');
+            recommendationsList.innerHTML = data.recommendations.map(rec => `<li>${rec}</li>`).join('');
+
+            // Show modal
+            document.getElementById('feedbackModal').classList.add('active');
+        }
+
+        // Close feedback modal
+        function closeFeedback() {
+            document.getElementById('feedbackModal').classList.remove('active');
+        }
+
+        // Continue to HR Interview
+        function continueToHR() {
+            if (confirm('Are you ready to proceed to the HR Interview?')) {
+                window.location.href = '/hr';
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('feedbackModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeFeedback();
+            }
+        });
+
+        // Cleanup on page unload
+        window.onbeforeunload = () => {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+            }
+            if (isRecording) {
+                return "GD is in progress. Are you sure you want to leave?";
+            }
+        };
+    </script>
+</body>
+</html>

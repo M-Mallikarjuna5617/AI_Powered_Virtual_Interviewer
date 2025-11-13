@@ -1,0 +1,61 @@
+{
+  "time_limit": 3600,
+  "technical": [
+    {
+      "id": "cognizant_t1",
+      "title": "Array Rotation Problem",
+      "description": "Given an array and a rotation count k, rotate the array to the right by k positions. For example, if array is [1,2,3,4,5] and k=2, result should be [4,5,1,2,3].",
+      "input_format": "n k\narr elements",
+      "output_format": "rotated array elements separated by space",
+      "constraints": "n <= 1000, k <= n",
+      "difficulty": "Easy",
+      "points": 50,
+      "starter_code": "def solve():\n    pass\n\nif __name__=='__main__':\n    solve()",
+      "answers": {
+        "python": "def solve():\n    n, k = map(int, input().split())\n    arr = list(map(int, input().split()))\n    k = k % n\n    rotated = arr[-k:] + arr[:-k]\n    print(' '.join(map(str, rotated)))\n\nif __name__=='__main__':\n    solve()",
+        "java": "import java.util.Scanner;\n\npublic class Solution {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int k = sc.nextInt();\n        int[] arr = new int[n];\n        for(int i = 0; i < n; i++) {\n            arr[i] = sc.nextInt();\n        }\n        k = k % n;\n        for(int i = n - k; i < n; i++) {\n            System.out.print(arr[i] + \" \");\n        }\n        for(int i = 0; i < n - k; i++) {\n            System.out.print(arr[i] + \" \");\n        }\n        System.out.println();\n    }\n}",
+        "c": "#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n    int n, k;\n    scanf(\"%d %d\", &n, &k);\n    int* arr = (int*)malloc(n * sizeof(int));\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &arr[i]);\n    }\n    k = k % n;\n    for(int i = n - k; i < n; i++) {\n        printf(\"%d \", arr[i]);\n    }\n    for(int i = 0; i < n - k; i++) {\n        printf(\"%d \", arr[i]);\n    }\n    printf(\"\n\");\n    free(arr);\n    return 0;\n}",
+        "cpp": "#include <iostream>\n#include <vector>\n\nint main() {\n    int n, k;\n    std::cin >> n >> k;\n    std::vector<int> arr(n);\n    for(int i = 0; i < n; i++) {\n        std::cin >> arr[i];\n    }\n    k = k % n;\n    for(int i = n - k; i < n; i++) {\n        std::cout << arr[i] << \" \";\n    }\n    for(int i = 0; i < n - k; i++) {\n        std::cout << arr[i] << \" \";\n    }\n    std::cout << std::endl;\n    return 0;\n}",
+        "javascript": "const fs = require('fs');\nconst input = fs.readFileSync(0, 'utf-8').split('\n');\nlet line = 0;\n\nconst [n, k] = input[line++].trim().split(' ').map(Number);\nconst arr = input[line++].trim().split(' ').map(Number);\n\nconst effectiveK = k % n;\nconst rotated = arr.slice(-effectiveK).concat(arr.slice(0, n - effectiveK));\nconsole.log(rotated.join(' '));"
+      },
+      "testcases": [
+        {
+          "input": "5 2\n1 2 3 4 5\n",
+          "output": "4 5 1 2 3\n"
+        },
+        {
+          "input": "4 1\n10 20 30 40\n",
+          "output": "40 10 20 30\n"
+        }
+      ]
+    },
+    {
+      "id": "cognizant_t2",
+      "title": "String Palindrome Check",
+      "description": "Given a string, check if it is a palindrome (reads the same forwards and backwards). Ignore case and non-alphanumeric characters. For example, 'A man, a plan, a canal: Panama' is a palindrome.",
+      "input_format": "single line string",
+      "output_format": "YES if palindrome, NO otherwise",
+      "constraints": "string length <= 1000",
+      "difficulty": "Medium",
+      "points": 50,
+      "starter_code": "def solve():\n    s = input().strip()\n    # Your code here\n    pass\n\nif __name__=='__main__':\n    solve()",
+      "answers": {
+        "python": "def solve():\n    s = input().strip().lower()\n    # Remove non-alphanumeric characters\n    clean = ''.join(c for c in s if c.isalnum())\n    # Check palindrome\n    print('YES' if clean == clean[::-1] else 'NO')\n\nif __name__=='__main__':\n    solve()",
+        "java": "import java.util.Scanner;\n\npublic class Solution {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String s = sc.nextLine().toLowerCase();\n        StringBuilder clean = new StringBuilder();\n        for(char c : s.toCharArray()) {\n            if(Character.isLetterOrDigit(c)) {\n                clean.append(c);\n            }\n        }\n        String cleaned = clean.toString();\n        boolean isPalindrome = true;\n        for(int i = 0; i < cleaned.length() / 2; i++) {\n            if(cleaned.charAt(i) != cleaned.charAt(cleaned.length() - 1 - i)) {\n                isPalindrome = false;\n                break;\n            }\n        }\n        System.out.println(isPalindrome ? \"YES\" : \"NO\");\n    }\n}",
+        "c": "#include <stdio.h>\n#include <string.h>\n#include <ctype.h>\n\nint main() {\n    char s[1001];\n    fgets(s, sizeof(s), stdin);\n    s[strcspn(s, \"\n\")] = 0;\n    \n    // Convert to lowercase and remove non-alphanumeric\n    char clean[1001];\n    int j = 0;\n    for(int i = 0; s[i]; i++) {\n        char c = tolower(s[i]);\n        if(isalnum(c)) {\n            clean[j++] = c;\n        }\n    }\n    clean[j] = 0;\n    \n    // Check palindrome\n    int len = strlen(clean);\n    int isPalindrome = 1;\n    for(int i = 0; i < len / 2; i++) {\n        if(clean[i] != clean[len - 1 - i]) {\n            isPalindrome = 0;\n            break;\n        }\n    }\n    printf(\"%s\n\", isPalindrome ? \"YES\" : \"NO\");\n    return 0;\n}",
+        "cpp": "#include <iostream>\n#include <string>\n#include <algorithm>\n\nint main() {\n    std::string s;\n    std::getline(std::cin, s);\n    \n    // Convert to lowercase\n    std::transform(s.begin(), s.end(), s.begin(), ::tolower);\n    \n    // Remove non-alphanumeric\n    std::string clean;\n    for(char c : s) {\n        if(std::isalnum(c)) {\n            clean += c;\n        }\n    }\n    \n    // Check palindrome\n    std::string rev = clean;\n    std::reverse(rev.begin(), rev.end());\n    std::cout << (clean == rev ? \"YES\" : \"NO\") << std::endl;\n    return 0;\n}",
+        "javascript": "const fs = require('fs');\nconst s = fs.readFileSync(0, 'utf-8').trim().toLowerCase();\n\nconst clean = s.replace(/[^a-z0-9]/g, '');\nconst isPalindrome = clean === clean.split('').reverse().join('');\nconsole.log(isPalindrome ? 'YES' : 'NO');"
+      },
+      "testcases": [
+        {
+          "input": "A man, a plan, a canal: Panama\n",
+          "output": "YES\n"
+        },
+        {
+          "input": "race a car\n",
+          "output": "NO\n"
+        }
+      ]
+    }
+  ]
+}

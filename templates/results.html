@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Eligible Companies</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #4e73df, #1cc88a);
+      color: #fff;
+      text-align: center;
+      padding: 40px;
+    }
+    table {
+      width: 80%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background: rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+  <h2>Eligible Companies</h2>
+  {% if companies %}
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Package</th>
+        <th>Location</th>
+      </tr>
+      {% for comp in companies %}
+      <tr>
+        <td>{{ comp['name'] }}</td>
+        <td>{{ comp['role'] }}</td>
+        <td>{{ comp['package_offered'] }}</td>
+        <td>{{ comp['location'] }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>No eligible companies found 😢</p>
+  {% endif %}
+</body>
+</html>

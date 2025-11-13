@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Recommendations</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .company-card {
+            background: white;
+            border: none;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .company-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 5px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .company-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+        
+        .company-card.selected {
+            border: 2px solid #667eea;
+            background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%);
+        }
+        
+        .company-card.selected::before {
+            width: 8px;
+        }
+        
+        .company-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .skill-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            color: #667eea;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin: 3px;
+            font-weight: 600;
+        }
+        
+        .skill-badge.matched {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+        
+        .match-score {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        
+        .match-score.high-match {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        
+        .match-score.medium-match {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .match-score.low-match {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+        }
+        
+        .algorithm-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-size: 0.7rem;
+            margin-top: 5px;
+        }
+        
+        .selected-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        
+        .btn-select {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-select:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+        
+        .info-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .page-header {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4" href="{{ url_for('routes.dashboard') }}">
+                <i class="fas fa-robot me-2"></i> AI Virtual Interviewer
+            </a>
+            <div class="ms-auto">
+                <a href="{{ url_for('routes.dashboard') }}" class="btn btn-light btn-sm">
+                    <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h2 class="mb-2"><i class="fas fa-building me-3 text-primary"></i>Company Recommendations</h2>
+            <p class="text-muted mb-0">Based on your resume analysis, here are the companies that match your profile</p>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, msg in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show rounded-4" role="alert">
+                        {{ msg }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Selected Company Banner -->
+        {% if selected_company %}
+        <div class="alert alert-success rounded-4 mb-4" role="alert">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-check-circle fa-2x me-3"></i>
+                    <div>
+                        <h5 class="mb-1">Currently Preparing For: <strong>{{ selected_company.name }}</strong></h5>
+                        <p class="mb-0 small">All interview modules will be customized for {{ selected_company.name }}</p>
+                    </div>
+                </div>
+                <div class="d-flex gap-2 flex-wrap">
+                    <a href="/aptitude/" class="btn btn-primary btn-sm">
+                        <i class="fas fa-brain me-1"></i>Start Aptitude
+                    </a>
+                    <a href="/technical/" class="btn btn-warning btn-sm">
+                        <i class="fas fa-code me-1"></i>Start Technical
+                    </a>
+                    <a href="/gd/" class="btn btn-info btn-sm">
+                        <i class="fas fa-users me-1"></i>Start GD
+                    </a>
+                    <a href="/hr/" class="btn btn-success btn-sm">
+                        <i class="fas fa-user-tie me-1"></i>Start HR
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Companies List -->
+        {% if companies %}
+        <div class="row">
+            {% for company in companies %}
+            <div class="col-12">
+                <div class="company-card {% if selected_company and selected_company.id == company.id %}selected{% endif %}">
+                    <!-- Match Score or Selected Badge -->
+                    {% if selected_company and selected_company.id == company.id %}
+                        <div class="selected-badge">
+                            <i class="fas fa-star me-1"></i> SELECTED
+                        </div>
+                    {% else %}
+                        {% set match_class = 'low-match' %}
+                        {% if company.get('match_percentage') %}
+                            {% if company.match_percentage >= 70 %}
+                                {% set match_class = 'high-match' %}
+                            {% elif company.match_percentage >= 55 %}
+                                {% set match_class = 'medium-match' %}
+                            {% endif %}
+                        {% endif %}
+                        
+                        <div class="match-score {{ match_class }}">
+                            {% if company.get('match_percentage') %}
+                                <div><strong>{{ company.match_percentage }}%</strong> Match</div>
+                                <div class="algorithm-badge" title="Random Forest Prediction">
+                                    🌲 Random Forest
+                                </div>
+                            {% elif company.get('selection_probability') %}
+                                {{ company.selection_probability }}% Match
+                                <small style="display:block; font-size:0.7rem; margin-top:2px;">
+                                    {% if company.get('recommendation_type') == 'random_forest' %}
+                                        🤖 ML Prediction
+                                    {% elif company.get('recommendation_type') == 'decision_tree' %}
+                                        🌳 Decision Tree
+                                    {% else %}
+                                        📊 Rule-Based
+                                    {% endif %}
+                                </small>
+                            {% elif company.get('skill_match') %}
+                                {{ company.skill_match }}% Match
+                                <small style="display:block; font-size:0.7rem; margin-top:2px;">📊 Skill Match</small>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                    <div class="row align-items-center">
+                        <!-- Company Logo -->
+                        <div class="col-auto">
+                            <div class="company-logo">
+                                {{ company.name[0] }}
+                            </div>
+                        </div>
+
+                        <!-- Company Details -->
+                        <div class="col">
+                            <h4 class="mb-2 fw-bold">{{ company.name }}</h4>
+                            <h6 class="text-primary mb-3">{{ company.role }}</h6>
+                            
+                            <!-- Info Badges -->
+                            <div class="mb-3">
+                                <span class="info-badge">
+                                    <i class="fas fa-money-bill-wave text-success"></i>
+                                    <strong>{{ company.package }}</strong>
+                                </span>
+                                <span class="info-badge">
+                                    <i class="fas fa-map-marker-alt text-danger"></i>
+                                    {{ company.location }}
+                                </span>
+                                <span class="info-badge">
+                                    <i class="fas fa-industry text-info"></i>
+                                    {{ company.industry }}
+                                </span>
+                                <span class="info-badge">
+                                    <i class="fas fa-graduation-cap text-warning"></i>
+                                    Min CGPA: {{ company.min_cgpa }}
+                                </span>
+                            </div>
+                            
+                            <!-- ML Algorithm Details (if available) -->
+                            {% if company.get('rf_prediction') and company.get('dt_prediction') %}
+                            <div class="mb-3">
+                                <small class="text-muted d-block mb-1"><strong>ML Predictions:</strong></small>
+                                <span class="info-badge" style="background: #e3f2fd;">
+                                    <i class="fas fa-tree text-success"></i>
+                                    Random Forest: {{ company.rf_prediction }}%
+                                </span>
+                                <span class="info-badge" style="background: #fff3e0;">
+                                    <i class="fas fa-sitemap text-warning"></i>
+                                    Decision Tree: {{ company.dt_prediction }}%
+                                </span>
+                            </div>
+                            {% endif %}
+
+                            <!-- Skills -->
+<div class="mb-3">
+    <strong class="d-block mb-2">Required Skills:</strong>
+    {% if company.get('required_skills') %}
+        {% for skill in company.required_skills.split(',') %}
+            {% set skill_lower = skill.strip()|lower %}
+            {% set matched = false %}
+            {% if company.get('matched_skills') %}
+                {% for s in company.matched_skills %}
+                    {% if s|lower == skill_lower %}
+                        {% set matched = true %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            
+            {% if matched %}
+                <span class="skill-badge matched">
+                    <i class="fas fa-check-circle me-1"></i>{{ skill.strip() }}
+                </span>
+            {% else %}
+                <span class="skill-badge">{{ skill.strip() }}</span>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <span class="skill-badge">General Skills Required</span>
+    {% endif %}
+</div>
+
+
+                            <!-- Select Button -->
+                            {% if not selected_company or selected_company.id != company.id %}
+                            <form method="POST" action="{{ url_for('routes.select_company', company_id=company.id) }}" class="d-inline">
+                                <button type="submit" class="btn btn-select">
+                                    <i class="fas fa-check-circle me-2"></i>Select This Company
+                                </button>
+                            </form>
+                            {% else %}
+                            <button class="btn btn-success" disabled>
+                                <i class="fas fa-check me-2"></i>Currently Selected
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-sad-tear fa-5x text-muted mb-4"></i>
+            <h3 class="mb-3">No Companies Match Your Profile (≥40%)</h3>
+            <div class="alert alert-warning d-inline-block text-start" style="max-width: 600px;">
+                <h5><i class="fas fa-info-circle me-2"></i>Why no matches?</h5>
+                <ul class="mb-0">
+                    <li>Your skills may not match company requirements</li>
+                    <li>Your CGPA might be below minimum requirements</li>
+                    <li>Resume may not have enough technical skills</li>
+                </ul>
+            </div>
+            <div class="mt-4">
+                <h5 class="mb-3">What you can do:</h5>
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="{{ url_for('dashboard.upload_resume') }}" class="btn btn-primary">
+                        <i class="fas fa-upload me-2"></i>Update Resume with Skills
+                    </a>
+                    <a href="{{ url_for('routes.dashboard') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+                <p class="text-muted mt-3 small">
+                    <strong>Tip:</strong> Make sure your resume includes technical skills like Python, Java, SQL, Data Structures, etc.
+                </p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

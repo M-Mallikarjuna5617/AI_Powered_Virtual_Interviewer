@@ -1,0 +1,214 @@
+{
+  "aptitude": [
+    {
+      "id": "ibm_a1",
+      "q": "What is 40% of 750?",
+      "options": ["280", "290", "300", "310"],
+      "correct_answer": "C",
+      "topic": "Percentages"
+    },
+    {
+      "id": "ibm_a2",
+      "q": "A bus travels 240 km in 4 hours. Average speed?",
+      "options": ["55 km/h", "58 km/h", "60 km/h", "62 km/h"],
+      "correct_answer": "C",
+      "topic": "Time and Distance"
+    },
+    {
+      "id": "ibm_a3",
+      "q": "Next in pattern: 4, 9, 16, 25, 36, ?",
+      "options": ["45", "49", "52", "56"],
+      "correct_answer": "B",
+      "topic": "Number Series"
+    },
+    {
+      "id": "ibm_a4",
+      "q": "Solve: 7x + 2 = 51",
+      "options": ["x = 6", "x = 7", "x = 8", "x = 9"],
+      "correct_answer": "B",
+      "topic": "Algebra"
+    },
+    {
+      "id": "ibm_a5",
+      "q": "Item marked $800, sold at $640 after discount. Discount %?",
+      "options": ["15%", "18%", "20%", "22%"],
+      "correct_answer": "C",
+      "topic": "Profit and Loss"
+    },
+    {
+      "id": "ibm_a6",
+      "q": "Rectangle area: length 15 cm, width 8 cm?",
+      "options": ["110 sq cm", "115 sq cm", "120 sq cm", "125 sq cm"],
+      "correct_answer": "C",
+      "topic": "Geometry"
+    },
+    {
+      "id": "ibm_a7",
+      "q": "Divide $840 in ratio 2:3:4.",
+      "options": ["$160,$240,$440", "$168,$252,$420", "$180,$270,$390", "$192,$288,$360"],
+      "correct_answer": "B",
+      "topic": "Ratios"
+    },
+    {
+      "id": "ibm_a8",
+      "q": "CP $450, SP $540. Profit amount?",
+      "options": ["$80", "$85", "$90", "$95"],
+      "correct_answer": "C",
+      "topic": "Profit and Loss"
+    },
+    {
+      "id": "ibm_a9",
+      "q": "CI on $8000 at 12% for 2 years?",
+      "options": ["$1920", "$1953", "$1986", "$2019"],
+      "correct_answer": "B",
+      "topic": "Compound Interest"
+    },
+    {
+      "id": "ibm_a10",
+      "q": "Average of 12, 15, 18, 21, 24?",
+      "options": ["16", "17", "18", "19"],
+      "correct_answer": "C",
+      "topic": "Averages"
+    },
+    {
+      "id": "ibm_a11",
+      "q": "Boat speed 18 km/h, current 5 km/h. Downstream?",
+      "options": ["21 km/h", "22 km/h", "23 km/h", "24 km/h"],
+      "correct_answer": "C",
+      "topic": "Boats and Streams"
+    },
+    {
+      "id": "ibm_a12",
+      "q": "Three coins tossed. P(exactly 2 heads)?",
+      "options": ["1/8", "2/8", "3/8", "4/8"],
+      "correct_answer": "C",
+      "topic": "Probability"
+    },
+    {
+      "id": "ibm_a13",
+      "q": "55% of a number is 110. What is 85%?",
+      "options": ["160", "165", "170", "175"],
+      "correct_answer": "C",
+      "topic": "Percentages"
+    },
+    {
+      "id": "ibm_a14",
+      "q": "Next: 11, 13, 17, 19, 23, ?",
+      "options": ["25", "27", "29", "31"],
+      "correct_answer": "C",
+      "topic": "Number Series"
+    },
+    {
+      "id": "ibm_a15",
+      "q": "A and B together finish in 6 days. A takes 10 days. B takes?",
+      "options": ["12 days", "13 days", "14 days", "15 days"],
+      "correct_answer": "D",
+      "topic": "Work and Time"
+    },
+    {
+      "id": "ibm_a16",
+      "q": "LCM of 18, 24, 30?",
+      "options": ["120", "150", "180", "210"],
+      "correct_answer": "C",
+      "topic": "LCM and HCF"
+    },
+    {
+      "id": "ibm_a17",
+      "q": "If tanθ = 5/12, cosθ = ?",
+      "options": ["5/13", "9/13", "10/13", "12/13"],
+      "correct_answer": "D",
+      "topic": "Trigonometry"
+    },
+    {
+      "id": "ibm_a18",
+      "q": "Bag has 6 white, 4 black balls. P(white)?",
+      "options": ["3/5", "4/5", "5/5", "6/5"],
+      "correct_answer": "A",
+      "topic": "Probability"
+    },
+    {
+      "id": "ibm_a19",
+      "q": "Square area with side 12 cm?",
+      "options": ["144 sq cm", "150 sq cm", "156 sq cm", "162 sq cm"],
+      "correct_answer": "A",
+      "topic": "Geometry"
+    },
+    {
+      "id": "ibm_a20",
+      "q": "If x + y = 7, xy = 10, find x² + y².",
+      "options": ["39", "41", "43", "45"],
+      "correct_answer": "B",
+      "topic": "Algebra"
+    },
+    {
+      "id": "ibm_a21",
+      "q": "SI on $6000 at 8.5% for 3 years?",
+      "options": ["$1530", "$1545", "$1560", "$1575"],
+      "correct_answer": "A",
+      "topic": "Simple Interest"
+    },
+    {
+      "id": "ibm_a22",
+      "q": "Tribonacci: 0, 0, 1, 1, 2, 4, 7, ?",
+      "options": ["11", "12", "13", "14"],
+      "correct_answer": "C",
+      "topic": "Number Series"
+    },
+    {
+      "id": "ibm_a23",
+      "q": "Solve: 4x + 3y = 17, 2x + y = 9",
+      "options": ["x=2,y=5", "x=3,y=4", "x=4,y=3", "x=5,y=2"],
+      "correct_answer": "A",
+      "topic": "Linear Equations"
+    },
+    {
+      "id": "ibm_a24",
+      "q": "Pyramid volume: base 10x10 cm, height 12 cm?",
+      "options": ["400 cu cm", "450 cu cm", "500 cu cm", "550 cu cm"],
+      "correct_answer": "A",
+      "topic": "Mensuration"
+    },
+    {
+      "id": "ibm_a25",
+      "q": "Variance of 2, 4, 6, 8?",
+      "options": ["4", "5", "6", "7"],
+      "correct_answer": "B",
+      "topic": "Statistics"
+    },
+    {
+      "id": "ibm_a26",
+      "q": "A does 2/3 work in 12 days. Total time?",
+      "options": ["16 days", "17 days", "18 days", "19 days"],
+      "correct_answer": "C",
+      "topic": "Work and Time"
+    },
+    {
+      "id": "ibm_a27",
+      "q": "Square root of 324?",
+      "options": ["16", "17", "18", "19"],
+      "correct_answer": "C",
+      "topic": "Squares and Square Roots"
+    },
+    {
+      "id": "ibm_a28",
+      "q": "Train 250m long crosses tunnel 350m in 25 seconds. Speed?",
+      "options": ["22.4 m/s", "24 m/s", "25.6 m/s", "27.2 m/s"],
+      "correct_answer": "B",
+      "topic": "Time and Distance"
+    },
+    {
+      "id": "ibm_a29",
+      "q": "If secθ = √2, θ = ?",
+      "options": ["30°", "45°", "60°", "90°"],
+      "correct_answer": "B",
+      "topic": "Trigonometry"
+    },
+    {
+      "id": "ibm_a30",
+      "q": "HCF of 45, 60, 75?",
+      "options": ["10", "15", "20", "25"],
+      "correct_answer": "B",
+      "topic": "LCM and HCF"
+    }
+  ]
+}

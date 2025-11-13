@@ -1,0 +1,364 @@
+{
+  "aptitude": [
+    {
+      "id": "google_a1",
+      "q": "You have 8 balls, one of which is heavier than the others. Using a balance scale, what is the minimum number of weighings needed to identify the heavy ball?",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "1"
+      ],
+      "correct_answer": "A",
+      "topic": "Logic Puzzles"
+    },
+    {
+      "id": "google_a2",
+      "q": "There are 25 horses and you can race 5 at a time. What is the minimum number of races needed to find the top 3 fastest horses?",
+      "options": [
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "correct_answer": "C",
+      "topic": "Logic Puzzles"
+    },
+    {
+      "id": "google_a3",
+      "q": "A lily pad doubles in size every day. It covers the entire pond in 30 days. On which day did it cover half the pond?",
+      "options": [
+        "15",
+        "29",
+        "28",
+        "1"
+      ],
+      "correct_answer": "B",
+      "topic": "Logic Puzzles"
+    },
+    {
+      "id": "google_a4",
+      "q": "You have 3 switches outside a room with 3 bulbs. You can flip switches any way you want, then enter once. How do you determine which switch controls which bulb?",
+      "options": [
+        "Flip all switches, enter",
+        "Flip one, wait, flip another, enter",
+        "It's impossible",
+        "Flip two, enter"
+      ],
+      "correct_answer": "B",
+      "topic": "Logic Puzzles"
+    },
+    {
+      "id": "google_a5",
+      "q": "How many times can you subtract 6 from 36?",
+      "options": [
+        "1",
+        "6",
+        "0",
+        "Infinite"
+      ],
+      "correct_answer": "A",
+      "topic": "Logic Puzzles"
+    },
+    {
+      "id": "google_a6",
+      "q": "A man has to transport a wolf, a goat, and a cabbage across a river. He can only take one at a time. If left together, wolf eats goat, goat eats cabbage. How does he do it?",
+      "options": [
+        "Wolf, back, goat, back, cabbage, back, goat",
+        "Goat, back, wolf, back, cabbage, back, goat",
+        "Wolf, goat, back, wolf, back, cabbage",
+        "Cabbage, back, goat, back, wolf"
+      ],
+      "correct_answer": "B",
+      "topic": "Logic Puzzles"
+    },
+    {
+      "id": "google_a7",
+      "q": "What comes next in the sequence: O, T, T, F, F, S, S, ...?",
+      "options": [
+        "E",
+        "N",
+        "T",
+        "S"
+      ],
+      "correct_answer": "A",
+      "topic": "Sequences"
+    },
+    {
+      "id": "google_a8",
+      "q": "You have 9 coins, one counterfeit (either heavier or lighter). Using a balance scale 3 times, how do you find the fake?",
+      "options": [
+        "Divide into 3 groups of 3",
+        "Weigh 1 vs 1, then adjust",
+        "It's impossible",
+        "Weigh all"
+      ],
+      "correct_answer": "A",
+      "topic": "Logic Puzzles"
+    },
+    {
+      "id": "google_a9",
+      "q": "A rope over a pulley holds a weight. You have 2 ropes of different burn times. How to measure 45 minutes with 1 hour ropes?",
+      "options": [
+        "Burn both ends",
+        "Burn one, then the other",
+        "Fold them",
+        "Burn sequentially"
+      ],
+      "correct_answer": "A",
+      "topic": "Logic Puzzles"
+    },
+    {
+      "id": "google_a10",
+      "q": "There are 12 balls, one heavier. Minimum weighings to find it?",
+      "options": [
+        "3",
+        "4",
+        "2",
+        "5"
+      ],
+      "correct_answer": "A",
+      "topic": "Logic Puzzles"
+    },
+    {
+      "id": "google_a11",
+      "q": "A train leaves station A at 10am towards B, another from B to A at 10am. They meet at noon. Which is faster?",
+      "options": [
+        "First train",
+        "Second train",
+        "Same speed",
+        "Depends on distance"
+      ],
+      "correct_answer": "C",
+      "topic": "Logic Puzzles"
+    },
+    {
+      "id": "google_a12",
+      "q": "How many squares are on a chessboard?",
+      "options": [
+        "64",
+        "65",
+        "204",
+        "256"
+      ],
+      "correct_answer": "C",
+      "topic": "Mathematics"
+    },
+    {
+      "id": "google_a13",
+      "q": "You have 8 balls, one lighter. Find with 2 weighings.",
+      "options": [
+        "Weigh 3 vs 3, then adjust",
+        "Weigh 1 vs 1, etc.",
+        "Impossible",
+        "Weigh 4 vs 4"
+      ],
+      "correct_answer": "A",
+      "topic": "Logic Puzzles"
+    },
+    {
+      "id": "google_a14",
+      "q": "A lily pad grows exponentially. When did it cover 1/4 pond?",
+      "options": [
+        "Day 28",
+        "Day 29",
+        "Day 15",
+        "Day 1"
+      ],
+      "correct_answer": "B",
+      "topic": "Logic Puzzles"
+    },
+    {
+      "id": "google_a15",
+      "q": "Egg dropping: 2 eggs, 100 floors. Minimum drops to find highest safe floor?",
+      "options": [
+        "14",
+        "50",
+        "100",
+        "7"
+      ],
+      "correct_answer": "A",
+      "topic": "Logic Puzzles"
+    },
+    {
+      "id": "google_a16",
+      "q": "Bridge crossing: 4 people, times 1,2,5,10 min. Torch needed. Minimum time?",
+      "options": [
+        "17",
+        "19",
+        "15",
+        "21"
+      ],
+      "correct_answer": "A",
+      "topic": "Logic Puzzles"
+    },
+    {
+      "id": "google_a17",
+      "q": "Sequence: 1, 11, 21, 1211, 111221, ... next?",
+      "options": [
+        "312211",
+        "111222",
+        "211112",
+        "122111"
+      ],
+      "correct_answer": "A",
+      "topic": "Sequences"
+    },
+    {
+      "id": "google_a18",
+      "q": "You have 3 hats, 2 black 1 white. Blindfolded, distributed. What's the probability each guesses correctly if they see others?",
+      "options": [
+        "1/2",
+        "2/3",
+        "1/3",
+        "0"
+      ],
+      "correct_answer": "B",
+      "topic": "Probability"
+    },
+    {
+      "id": "google_a19",
+      "q": "A man is looking at a portrait. Someone asks 'Whose picture is that?' He says 'Brothers and sisters I have none, but that man's father is my father's son.' Who is it?",
+      "options": [
+        "His son",
+        "His father",
+        "Himself",
+        "His brother"
+      ],
+      "correct_answer": "A",
+      "topic": "Logic Puzzles"
+    },
+    {
+      "id": "google_a20",
+      "q": "You have 4 people to get across a bridge with a flashlight. Times: 1,2,5,10. Minimum time?",
+      "options": [
+        "17",
+        "15",
+        "19",
+        "21"
+      ],
+      "correct_answer": "A",
+      "topic": "Logic Puzzles"
+    },
+    {
+      "id": "google_a21",
+      "q": "How many zeros in 100! ?",
+      "options": [
+        "24",
+        "20",
+        "25",
+        "22"
+      ],
+      "correct_answer": "A",
+      "topic": "Mathematics"
+    },
+    {
+      "id": "google_a22",
+      "q": "A bat and ball cost $1.10. Bat costs $1 more than ball. How much ball?",
+      "options": [
+        "$0.05",
+        "$0.10",
+        "$1.00",
+        "$0.01"
+      ],
+      "correct_answer": "A",
+      "topic": "Mathematics"
+    },
+    {
+      "id": "google_a23",
+      "q": "You have 3 switches, 3 bulbs. Determine which switch for which bulb in one entry.",
+      "options": [
+        "Flip one on for 5 min, off, flip another on, enter",
+        "Flip all on, enter",
+        "Flip one on, enter",
+        "Impossible"
+      ],
+      "correct_answer": "A",
+      "topic": "Logic Puzzles"
+    },
+    {
+      "id": "google_a24",
+      "q": "Sequence: 2, 3, 5, 7, 11, 13, ... next?",
+      "options": [
+        "15",
+        "17",
+        "19",
+        "21"
+      ],
+      "correct_answer": "B",
+      "topic": "Sequences"
+    },
+    {
+      "id": "google_a25",
+      "q": "A lily pad covers pond in 30 days. When was pond 1/8 covered?",
+      "options": [
+        "Day 27",
+        "Day 28",
+        "Day 29",
+        "Day 30"
+      ],
+      "correct_answer": "A",
+      "topic": "Logic Puzzles"
+    },
+    {
+      "id": "google_a26",
+      "q": "You have 9 coins, 1 fake. Find with 2 weighings.",
+      "options": [
+        "Weigh 3 vs 3, then 1 vs 1",
+        "Weigh 4 vs 4",
+        "Impossible",
+        "Weigh all"
+      ],
+      "correct_answer": "A",
+      "topic": "Logic Puzzles"
+    },
+    {
+      "id": "google_a27",
+      "q": "How many times can you subtract 7 from 49?",
+      "options": [
+        "7",
+        "1",
+        "0",
+        "Infinite"
+      ],
+      "correct_answer": "B",
+      "topic": "Logic Puzzles"
+    },
+    {
+      "id": "google_a28",
+      "q": "A man has 17 sheep, all but 9 die. How many left?",
+      "options": [
+        "9",
+        "8",
+        "17",
+        "0"
+      ],
+      "correct_answer": "A",
+      "topic": "Logic Puzzles"
+    },
+    {
+      "id": "google_a29",
+      "q": "Egg dropping with 1 egg, 100 floors. Minimum drops?",
+      "options": [
+        "100",
+        "50",
+        "1",
+        "99"
+      ],
+      "correct_answer": "A",
+      "topic": "Logic Puzzles"
+    },
+    {
+      "id": "google_a30",
+      "q": "You have 4 ropes burning at different rates. Measure 15 min with 30 min ropes.",
+      "options": [
+        "Burn two at once from both ends",
+        "Burn sequentially",
+        "Fold",
+        "Impossible"
+      ],
+      "correct_answer": "A",
+      "topic": "Logic Puzzles"
+    }
+  ]
+}

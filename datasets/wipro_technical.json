@@ -1,0 +1,47 @@
+{
+  "time_limit": 3600,
+  "technical": [
+    {
+      "id": "wipro_t1",
+      "title": "Software-Services Problem 1 - Arrays",
+      "description": "Given an array and a target, find two indices whose values sum to target.",
+      "input_format": "n\\narr elements\\ntarget\\n",
+      "output_format": "two indices separated by space",
+      "constraints": "n up to 10000",
+      "difficulty": "Easy",
+      "points": 50,
+      "starter_code": "def solve():\\n    pass\\n\\nif __name__=='__main__':\\n    solve()",
+      "testcases": [
+        {
+          "input": "4\n2 7 11 15\n9\n",
+          "output": "0 1\n"
+        },
+        {
+          "input": "3\n3 2 4\n6\n",
+          "output": "1 2\n"
+        }
+      ]
+    },
+    {
+      "id": "wipro_t2",
+      "title": "Software-Services Problem 2 - String/Processing",
+      "description": "Given a sentence, reverse the order of words and normalize spaces.",
+      "input_format": "single line string",
+      "output_format": "reversed words",
+      "constraints": "len <= 1000",
+      "difficulty": "Medium",
+      "points": 50,
+      "starter_code": "def solve():\\n    s = input().strip()\\n    print(' '.join(s.split()[::-1]))\\n\\nif __name__=='__main__':\\n    solve()",
+      "testcases": [
+        {
+          "input": "the sky is blue\n",
+          "output": "blue is sky the\n"
+        },
+        {
+          "input": "  hello   world  \n",
+          "output": "world hello\n"
+        }
+      ]
+    }
+  ]
+}

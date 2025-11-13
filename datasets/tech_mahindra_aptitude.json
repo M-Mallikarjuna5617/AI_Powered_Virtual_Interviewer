@@ -1,0 +1,214 @@
+{
+  "aptitude": [
+    {
+      "id": "tech_mahindra_a1",
+      "q": "What is 45% of 900?",
+      "options": ["380", "390", "400", "410"],
+      "correct_answer": "D",
+      "topic": "Percentages"
+    },
+    {
+      "id": "tech_mahindra_a2",
+      "q": "A runner covers 1500m in 4 minutes. Speed in m/s?",
+      "options": ["6.15", "6.25", "6.35", "6.45"],
+      "correct_answer": "B",
+      "topic": "Time and Distance"
+    },
+    {
+      "id": "tech_mahindra_a3",
+      "q": "Next: 5, 11, 19, 29, 41, ?",
+      "options": ["53", "55", "57", "59"],
+      "correct_answer": "B",
+      "topic": "Number Series"
+    },
+    {
+      "id": "tech_mahindra_a4",
+      "q": "Solve: 8x - 3 = 45",
+      "options": ["x = 5", "x = 6", "x = 7", "x = 8"],
+      "correct_answer": "B",
+      "topic": "Algebra"
+    },
+    {
+      "id": "tech_mahindra_a5",
+      "q": "CP $1500, sold at 20% profit after 15% discount. SP?",
+      "options": ["$1320", "$1350", "$1380", "$1410"],
+      "correct_answer": "C",
+      "topic": "Profit and Loss"
+    },
+    {
+      "id": "tech_mahindra_a6",
+      "q": "Rhombus area with diagonals 16 cm, 12 cm?",
+      "options": ["96 sq cm", "100 sq cm", "104 sq cm", "108 sq cm"],
+      "correct_answer": "A",
+      "topic": "Geometry"
+    },
+    {
+      "id": "tech_mahindra_a7",
+      "q": "A:B = 5:7, total 144. What is A's share?",
+      "options": ["60", "65", "70", "75"],
+      "correct_answer": "B",
+      "topic": "Ratios"
+    },
+    {
+      "id": "tech_mahindra_a8",
+      "q": "SP $720, loss 10%. CP?",
+      "options": ["$780", "$790", "$800", "$810"],
+      "correct_answer": "C",
+      "topic": "Profit and Loss"
+    },
+    {
+      "id": "tech_mahindra_a9",
+      "q": "CI on $10000 at 15% for 2 years?",
+      "options": ["$3225", "$3250", "$3275", "$3300"],
+      "correct_answer": "A",
+      "topic": "Compound Interest"
+    },
+    {
+      "id": "tech_mahindra_a10",
+      "q": "Weighted average of 40kg at 60%, 60kg at 70%?",
+      "options": ["64%", "65%", "66%", "67%"],
+      "correct_answer": "C",
+      "topic": "Averages"
+    },
+    {
+      "id": "tech_mahindra_a11",
+      "q": "Swimmer speed 8 km/h, current 3 km/h. Upstream?",
+      "options": ["4 km/h", "5 km/h", "6 km/h", "7 km/h"],
+      "correct_answer": "B",
+      "topic": "Boats and Streams"
+    },
+    {
+      "id": "tech_mahindra_a12",
+      "q": "P(rolling 6 on die twice in a row)?",
+      "options": ["1/36", "1/30", "1/25", "1/20"],
+      "correct_answer": "A",
+      "topic": "Probability"
+    },
+    {
+      "id": "tech_mahindra_a13",
+      "q": "80% of number is 640. What is 120%?",
+      "options": ["920", "940", "960", "980"],
+      "correct_answer": "C",
+      "topic": "Percentages"
+    },
+    {
+      "id": "tech_mahindra_a14",
+      "q": "Next: 9, 16, 25, 36, 49, ?",
+      "options": ["60", "64", "68", "72"],
+      "correct_answer": "B",
+      "topic": "Number Series"
+    },
+    {
+      "id": "tech_mahindra_a15",
+      "q": "Two pipes fill tank in 12, 18 hours. Together?",
+      "options": ["7.0 hours", "7.2 hours", "7.4 hours", "7.6 hours"],
+      "correct_answer": "B",
+      "topic": "Work and Time"
+    },
+    {
+      "id": "tech_mahindra_a16",
+      "q": "LCM of 25, 30, 35?",
+      "options": ["400", "425", "450", "475"],
+      "correct_answer": "C",
+      "topic": "LCM and HCF"
+    },
+    {
+      "id": "tech_mahindra_a17",
+      "q": "If cosθ = 8/17, tanθ = ?",
+      "options": ["8/15", "9/15", "10/15", "11/15"],
+      "correct_answer": "A",
+      "topic": "Trigonometry"
+    },
+    {
+      "id": "tech_mahindra_a18",
+      "q": "Box has 8 red, 6 green, 4 blue. P(not red)?",
+      "options": ["4/9", "5/9", "6/9", "7/9"],
+      "correct_answer": "B",
+      "topic": "Probability"
+    },
+    {
+      "id": "tech_mahindra_a19",
+      "q": "Trapezoid area: parallel sides 10, 6 cm, height 8 cm?",
+      "options": ["56 sq cm", "60 sq cm", "64 sq cm", "68 sq cm"],
+      "correct_answer": "C",
+      "topic": "Geometry"
+    },
+    {
+      "id": "tech_mahindra_a20",
+      "q": "If (x + y)² = 49, xy = 6, find x² + y².",
+      "options": ["31", "33", "35", "37"],
+      "correct_answer": "D",
+      "topic": "Algebra"
+    },
+    {
+      "id": "tech_mahindra_a21",
+      "q": "SI on $8000 at 11% for 2.5 years?",
+      "options": ["$2200", "$2250", "$2300", "$2350"],
+      "correct_answer": "A",
+      "topic": "Simple Interest"
+    },
+    {
+      "id": "tech_mahindra_a22",
+      "q": "Geometric: 3, 6, 12, 24, ?",
+      "options": ["36", "42", "48", "54"],
+      "correct_answer": "C",
+      "topic": "Number Series"
+    },
+    {
+      "id": "tech_mahindra_a23",
+      "q": "Solve: 5x - 4y = 3, 3x + 2y = 19",
+      "options": ["x=3,y=3", "x=4,y=2", "x=5,y=1", "x=6,y=0"],
+      "correct_answer": "C",
+      "topic": "Linear Equations"
+    },
+    {
+      "id": "tech_mahindra_a24",
+      "q": "Frustum volume: radii 8, 4 cm, height 6 cm? (π = 3.14)",
+      "options": ["351.68 cu cm", "360 cu cm", "375 cu cm", "390 cu cm"],
+      "correct_answer": "A",
+      "topic": "Mensuration"
+    },
+    {
+      "id": "tech_mahindra_a25",
+      "q": "Standard deviation of 5, 5, 5, 5, 5?",
+      "options": ["0", "1", "2", "5"],
+      "correct_answer": "A",
+      "topic": "Statistics"
+    },
+    {
+      "id": "tech_mahindra_a26",
+      "q": "A completes 3/5 work in 9 days. Total days?",
+      "options": ["13.5", "14.0", "14.5", "15.0"],
+      "correct_answer": "D",
+      "topic": "Work and Time"
+    },
+    {
+      "id": "tech_mahindra_a27",
+      "q": "Cube root of 729?",
+      "options": ["7", "8", "9", "10"],
+      "correct_answer": "C",
+      "topic": "Cubes and Cube Roots"
+    },
+    {
+      "id": "tech_mahindra_a28",
+      "q": "Relative speed of two trains approaching at 60, 40 km/h?",
+      "options": ["90 km/h", "95 km/h", "100 km/h", "105 km/h"],
+      "correct_answer": "C",
+      "topic": "Time and Distance"
+    },
+    {
+      "id": "tech_mahindra_a29",
+      "q": "If sin²θ = 0.25, sinθ = ?",
+      "options": ["0.3", "0.4", "0.5", "0.6"],
+      "correct_answer": "C",
+      "topic": "Trigonometry"
+    },
+    {
+      "id": "tech_mahindra_a30",
+      "q": "HCF of 56, 84, 112?",
+      "options": ["14", "16", "18", "20"],
+      "correct_answer": "A",
+      "topic": "LCM and HCF"
+    }
+  ]
+}

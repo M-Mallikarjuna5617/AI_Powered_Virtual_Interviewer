@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aptitude Test - AI Virtual Interviewer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        body {
+            background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .test-container {
+            max-width: 900px;
+            margin: 30px auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .timer-section {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .timer {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .timer.warning {
+            color: #fbbf24;
+            animation: pulse 1s infinite;
+        }
+
+        .timer.danger {
+            color: #fca5a5;
+            animation: pulse 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .progress-bar-custom {
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: white;
+            transition: width 1s linear;
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border-left: 5px solid #667eea;
+        }
+
+        .question-number {
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #1e293b;
+            margin: 15px 0;
+            line-height: 1.6;
+        }
+
+        .option-btn {
+            width: 100%;
+            text-align: left;
+            padding: 18px 25px;
+            margin: 10px 0;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .option-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+
+        .option-btn.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+            font-weight: 600;
+        }
+
+        .option-btn.correct {
+            border-color: var(--success);
+            background: #d1fae5;
+        }
+
+        .option-btn.incorrect {
+            border-color: var(--danger);
+            background: #fee2e2;
+        }
+
+        .option-label {
+            width: 35px;
+            height: 35px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .btn-primary-custom {
+            background: var(--primary);
+            border: none;
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .result-container {
+            display: none;
+        }
+
+        .result-container.show {
+            display: block;
+        }
+
+        .feedback-section {
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #e0e7ff;
+            color: #4f46e5;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .difficulty-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .difficulty-badge.easy {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .difficulty-badge.medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .difficulty-badge.hard {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .quit-btn {
+            background: white;
+            border: 2px solid #ef4444;
+            color: #ef4444;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quit-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn-prev, .btn-next {
+            flex: 1;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-prev {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-prev:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-next {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-next:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <!-- Timer Section -->
+        <div class="timer-section">
+            <div class="header-section">
+                <h4 class="mb-0"><i class="fas fa-building me-2"></i><span id="companyName">{{ company.name if company else 'General' }}</span> - Aptitude Test</h4>
+                <button class="quit-btn" onclick="confirmQuit()">
+                    <i class="fas fa-times me-2"></i>Quit Test
+                </button>
+            </div>
+            <div class="timer" id="timer">30:00</div>
+            <div class="progress-bar-custom">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="mt-3">
+                <span id="questionProgress">Question 1 of 10</span>
+            </div>
+        </div>
+
+        <!-- Question Section -->
+        <div id="questionSection">
+            <div class="question-card">
+                <span class="question-number">Question <span id="currentQ">1</span></span>
+                <span class="category-badge" id="categoryBadge">Logical Reasoning</span>
+                <span class="difficulty-badge medium" id="difficultyBadge">Medium</span>
+                
+                <p class="question-text" id="questionText">
+                    If in a certain code, GRAPE is written as 27354 and FOUR is written as 1687, how is GROUP written in that code?
+                </p>
+
+                <div id="optionsContainer">
+                    <button class="option-btn" onclick="selectOption(0)">
+                        <div class="option-label">A</div>
+                        <div class="option-text">27685</div>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(1)">
+                        <div class="option-label">B</div>
+                        <div class="option-text">27865</div>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(2)">
+                        <div class="option-label">C</div>
+                        <div class="option-text">27684</div>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(3)">
+                        <div class="option-label">D</div>
+                        <div class="option-text">27864</div>
+                    </button>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn-prev" onclick="previousQuestion()" id="prevBtn" disabled>
+                        <i class="fas fa-arrow-left me-2"></i>Previous
+                    </button>
+                    <button class="btn-next" onclick="nextQuestion()" id="nextBtn">
+                        Next<i class="fas fa-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Section -->
+        <div id="resultSection" class="result-container">
+            <!-- Results will be dynamically inserted here after submission -->
+        </div>
+    </div>
+
+    <script>
+/* ---------- CONFIG ---------- */
+let currentQuestionIndex = 0;
+let selectedAnswers = [];
+let timeRemaining = 1800;
+let timerInterval;
+let testStartTime = Date.now();
+let testCompleted = false;
+let questions = [];
+
+/* ---------- INITIALIZE TEST ---------- */
+async function initTest() {
+    try {
+        console.log("🔄 Fetching company-specific questions...");
+        const company = document.getElementById("companyName").textContent.trim();
+        const response = await fetch(`/aptitude/get-questions/${company}`);
+        const data = await response.json();
+
+        if (data.success && Array.isArray(data.questions) && data.questions.length) {
+            questions = data.questions.map(q => ({
+                id: q.id,
+                category: q.category || "General",
+                difficulty: q.difficulty || "Medium",
+                question: q.question || "No question text provided.",
+                options: q.options || [],
+                correctAnswer: q.correct_answer ? q.correct_answer.charCodeAt(0) - 65 : null,
+                explanation: q.explanation || "",
+            }));
+
+            console.log(`✅ Loaded ${questions.length} questions for ${company}`);
+            document.getElementById("companyName").textContent = company;
+            document.getElementById("questionProgress").textContent = `Question 1 of ${questions.length}`;
+            loadQuestion(0);
+            startTimer();
+        } else {
+            throw new Error(data.error || "Empty or invalid question dataset.");
+        }
+    } catch (err) {
+        console.error("❌ Test initialization failed:", err);
+        alert("Could not load questions. Please refresh or try again later.");
+    }
+}
+
+/* ---------- LOAD QUESTION ---------- */
+function loadQuestion(index) {
+    if (index >= questions.length) return showResults();
+    const q = questions[index];
+    currentQuestionIndex = index;
+
+    document.getElementById("currentQ").textContent = index + 1;
+    document.getElementById("questionProgress").textContent = `Question ${index + 1} of ${questions.length}`;
+    document.getElementById("categoryBadge").textContent = q.category;
+    document.getElementById("difficultyBadge").textContent = q.difficulty;
+    document.getElementById("difficultyBadge").className = `difficulty-badge ${q.difficulty.toLowerCase()}`;
+    document.getElementById("questionText").textContent = q.question;
+
+    const optionsContainer = document.getElementById("optionsContainer");
+    optionsContainer.innerHTML = "";
+
+    q.options.forEach((option, i) => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        if (selectedAnswers[index] === i) btn.classList.add("selected");
+        btn.onclick = () => selectOption(i);
+        btn.innerHTML = `
+            <div class="option-label">${String.fromCharCode(65 + i)}</div>
+            <div class="option-text">${option}</div>`;
+        optionsContainer.appendChild(btn);
+    });
+
+    document.getElementById("prevBtn").disabled = index === 0;
+    const nextBtn = document.getElementById("nextBtn");
+    nextBtn.innerHTML = index === questions.length - 1
+        ? 'Submit Test<i class="fas fa-check ms-2"></i>'
+        : 'Next<i class="fas fa-arrow-right ms-2"></i>';
+}
+
+/* ---------- SELECTION LOGIC ---------- */
+function selectOption(i) {
+    selectedAnswers[currentQuestionIndex] = i;
+    document.querySelectorAll(".option-btn").forEach((b, idx) => {
+        b.classList.toggle("selected", idx === i);
+    });
+}
+
+function nextQuestion() {
+    if (currentQuestionIndex < questions.length - 1) loadQuestion(++currentQuestionIndex);
+    else showResults();
+}
+
+function previousQuestion() {
+    if (currentQuestionIndex > 0) loadQuestion(--currentQuestionIndex);
+}
+
+/* ---------- TIMER ---------- */
+function startTimer() {
+    timerInterval = setInterval(() => {
+        timeRemaining--;
+        updateTimerDisplay();
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            alert("⏰ Time is up! Submitting test...");
+            showResults();
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    const min = Math.floor(timeRemaining / 60);
+    const sec = timeRemaining % 60;
+    const timerEl = document.getElementById("timer");
+    timerEl.textContent = `${min.toString().padStart(2, "0")}:${sec.toString().padStart(2, "0")}`;
+    timerEl.className = "timer";
+    if (timeRemaining <= 300) timerEl.classList.add("danger");
+    else if (timeRemaining <= 600) timerEl.classList.add("warning");
+
+    const progress = ((1800 - timeRemaining) / 1800) * 100;
+    document.getElementById("progressFill").style.width = `${progress}%`;
+}
+
+/* ---------- RESULTS ---------- */
+async function showResults() {
+    clearInterval(timerInterval);
+    testCompleted = true;
+    document.getElementById("questionSection").style.display = "none";
+    document.getElementById("resultSection").classList.add("show");
+    document.getElementById("resultSection").innerHTML = `
+        <div class="text-center mb-4">
+            <div style="font-size:4rem;color:#667eea;margin-bottom:20px;">
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <h2 class="mb-3">Submitting your test...</h2>
+            <p class="text-muted">Please wait while we save and analyze your responses.</p>
+        </div>`;
+    await saveTestResults();
+}
+
+/* ---------- SAVE RESULTS ---------- */
+async function saveTestResults() {
+    try {
+        const timeTaken = Math.floor((Date.now() - testStartTime) / 1000);
+        const responses = questions.map((q, i) => ({
+            question_id: q.id,
+            selected_answer: selectedAnswers[i] !== undefined
+                ? String.fromCharCode(65 + selectedAnswers[i])
+                : null,
+            time_spent: 60
+        }));
+
+        const response = await fetch("/aptitude/complete-test", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ responses, time_taken: timeTaken })
+        });
+        const data = await response.json();
+
+        if (!data.success) throw new Error(data.error || "Server error");
+
+        sessionStorage.setItem("last_aptitude_attempt_id", data.attempt_id);
+        document.getElementById("resultSection").innerHTML = `
+            <div class="text-center mb-4">
+                <div style="font-size:4rem;color:#10b981;margin-bottom:20px;">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2>🎉 Test Completed!</h2>
+                <div style="background:linear-gradient(135deg,#667eea,#764ba2);color:white;padding:30px;border-radius:20px;max-width:500px;margin:30px auto;">
+                    <div style="font-size:3rem;font-weight:700;">${data.score}%</div>
+                    <div style="opacity:0.9;">Your Score</div>
+                    <div style="margin-top:15px;border-top:1px solid rgba(255,255,255,0.3);padding-top:15px;">
+                        <b>${data.correct_answers}</b> / ${data.total_questions} correct
+                    </div>
+                </div>
+                <p class="text-muted">Awesome work! Your results are saved.</p>
+            </div>
+            <div class="text-center mt-4">
+                <button class="btn-primary-custom me-3" onclick="window.location.href='/feedback?type=aptitude'">
+                    <i class="fas fa-chart-line me-2"></i> View AI Feedback
+                </button>
+                <button class="btn-primary-custom me-3" onclick="window.location.href='/technical/'">
+                    <i class="fas fa-code me-2"></i> Continue to Technical Round
+                </button>
+                <button class="btn-secondary-custom" onclick="window.location.href='/dashboard'" style="background:white;border:2px solid #667eea;color:#667eea;">
+                    <i class="fas fa-home me-2"></i> Dashboard
+                </button>
+            </div>`;
+    } catch (err) {
+        console.error("❌ Result save failed:", err);
+        alert("Something went wrong while saving results. Try again later.");
+    }
+}
+
+/* ---------- MISC ---------- */
+function confirmQuit() {
+    if (confirm("⚠️ Quit the test? Your progress will be lost.")) window.location.href = "/dashboard";
+}
+
+window.onload = initTest;
+window.onbeforeunload = () => {
+    if (!testCompleted && timeRemaining > 0 && questions.length > 0)
+        return "⚠️ Test in progress. Are you sure you want to leave?";
+};
+</script>
+</body>
+</html>

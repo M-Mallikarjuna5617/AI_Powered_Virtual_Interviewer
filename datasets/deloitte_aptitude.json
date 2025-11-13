@@ -1,0 +1,364 @@
+{
+  "aptitude": [
+    {
+      "id": "deloitte_a1",
+      "q": "What is the next number in the series: 3, 7, 11, 15, 19 ?",
+      "options": [
+        "23",
+        "24",
+        "22",
+        "25"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a2",
+      "q": "If 6x + 9 = 63, find x.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a3",
+      "q": "A box has 2 red and 3 blue balls. One ball is drawn at random. What is probability of blue?",
+      "options": [
+        "0.6",
+        "0.5",
+        "0.25",
+        "0.75"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a4",
+      "q": "Person A can finish a job in 3 days and B in 3 days. Together they take how many days?",
+      "options": [
+        "1.5",
+        "3",
+        "3",
+        "6"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a5",
+      "q": "If 2x + 3 = 11, what is x?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a6",
+      "q": "What is the next number in the series: 5, 8, 11, 14, 17 ?",
+      "options": [
+        "20",
+        "21",
+        "19",
+        "22"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a7",
+      "q": "If 4x + 6 = 30, find x.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a8",
+      "q": "A box has 2 red and 3 blue balls. One ball is drawn at random. What is probability of blue?",
+      "options": [
+        "0.6",
+        "0.5",
+        "0.25",
+        "0.75"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a9",
+      "q": "Person A can finish a job in 4 days and B in 5 days. Together they take how many days?",
+      "options": [
+        "2.22",
+        "4",
+        "5",
+        "9"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a10",
+      "q": "If 2x + 3 = 11, what is x?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a11",
+      "q": "What is the next number in the series: 10, 14, 18, 22, 26 ?",
+      "options": [
+        "30",
+        "31",
+        "29",
+        "32"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a12",
+      "q": "If 8x + 11 = 99, find x.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a13",
+      "q": "A box has 6 red and 7 blue balls. One ball is drawn at random. What is probability of blue?",
+      "options": [
+        "0.54",
+        "0.5",
+        "0.25",
+        "0.75"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a14",
+      "q": "Person A can finish a job in 6 days and B in 3 days. Together they take how many days?",
+      "options": [
+        "2.0",
+        "6",
+        "3",
+        "9"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a15",
+      "q": "If 2x + 3 = 11, what is x?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a16",
+      "q": "What is the next number in the series: 1, 6, 11, 16, 21 ?",
+      "options": [
+        "26",
+        "27",
+        "25",
+        "28"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a17",
+      "q": "If 10x + 2 = 22, find x.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a18",
+      "q": "A box has 6 red and 7 blue balls. One ball is drawn at random. What is probability of blue?",
+      "options": [
+        "0.54",
+        "0.5",
+        "0.25",
+        "0.75"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a19",
+      "q": "Person A can finish a job in 3 days and B in 6 days. Together they take how many days?",
+      "options": [
+        "2.0",
+        "3",
+        "6",
+        "9"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a20",
+      "q": "If 2x + 3 = 11, what is x?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a21",
+      "q": "What is the next number in the series: 4, 8, 12, 16, 20 ?",
+      "options": [
+        "24",
+        "25",
+        "23",
+        "26"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a22",
+      "q": "If 12x + 8 = 104, find x.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a23",
+      "q": "A box has 6 red and 7 blue balls. One ball is drawn at random. What is probability of blue?",
+      "options": [
+        "0.54",
+        "0.5",
+        "0.25",
+        "0.75"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a24",
+      "q": "Person A can finish a job in 4 days and B in 2 days. Together they take how many days?",
+      "options": [
+        "1.33",
+        "4",
+        "2",
+        "6"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a25",
+      "q": "If 2x + 3 = 11, what is x?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a26",
+      "q": "What is the next number in the series: 10, 14, 18, 22, 26 ?",
+      "options": [
+        "30",
+        "31",
+        "29",
+        "32"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a27",
+      "q": "If 8x + 6 = 54, find x.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a28",
+      "q": "A box has 2 red and 3 blue balls. One ball is drawn at random. What is probability of blue?",
+      "options": [
+        "0.6",
+        "0.5",
+        "0.25",
+        "0.75"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a29",
+      "q": "Person A can finish a job in 6 days and B in 5 days. Together they take how many days?",
+      "options": [
+        "2.73",
+        "6",
+        "5",
+        "11"
+      ],
+      "correct_answer": "A",
+      "topic": "General Aptitude"
+    },
+    {
+      "id": "deloitte_a30",
+      "q": "If 2x + 3 = 11, what is x?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correct_answer": "B",
+      "topic": "General Aptitude"
+    }
+  ]
+}
